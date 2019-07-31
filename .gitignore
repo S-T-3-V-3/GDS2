@@ -34,3 +34,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Unity Folders
+Library/
+Logs/
+Packages/
+Temp/
