@@ -2,32 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileManager : MonoBehaviour
+public class MapManager : MonoBehaviour
 {
-    public GameObject tilePrefab;
-    public float size;
-    public float padding = 0;
-    [Space]
     public List<Tile> tiles;
     public List<Tile> walls;
-    public int innerRadius = 10;
-    public int outerRadius = 5;
-    [Range(0,100)]
-    public float falloff;
-    [Range(0,10)]
-    public int numAdditionalZones;
-    [Range(0,10)]
-    public int numObstacles;
-
+    
     GameObject tileParent;
     GameObject wallParent;
     GameManager gameManager;
+    MapSettings mapSettings;
 
     bool innerRadiusSpawned = false;
     bool wallsSpawned = false;
 
     void Start() {
         gameManager = this.GetComponent<GameManager>();
+        mapSettings = gameManager.GetMapSettings();
+
+        tiles = new List<Tile>();
+        walls = new List<Tile>();
         
         if (tileParent == null)
         {
@@ -42,6 +35,22 @@ public class TileManager : MonoBehaviour
         CreateTile(Vector3.zero, -1);
     }
 
+    public void UnloadMap() {
+        foreach (Tile t in tiles)
+            GameObject.Destroy(t.gameObject);
+
+        foreach (Tile w in walls)
+            GameObject.Destroy(w.gameObject);
+
+        tiles.Clear();
+        walls.Clear();
+
+        GameObject.Destroy(tileParent.gameObject);
+        GameObject.Destroy(wallParent.gameObject);
+
+        Destroy(this);
+    }
+
     void Update() {
         if (!innerRadiusSpawned) {
             CalculateEdges();
@@ -51,12 +60,14 @@ public class TileManager : MonoBehaviour
                 SpawnTiles(currentEdgeTile);
             }
 
-            if (tiles[tiles.Count -1].distanceFromCenter >= innerRadius)
+            if (tiles[tiles.Count -1].distanceFromCenter >= mapSettings.innerRadius)
                 innerRadiusSpawned = true;
         }
         else if (innerRadiusSpawned && !wallsSpawned)
         {
             CalculateEdges();
+
+            tiles[0].isEdge = false;
 
             SpawnWalls();
             wallsSpawned = true;
@@ -68,7 +79,7 @@ public class TileManager : MonoBehaviour
 
     void CalculateEdges() {
         foreach (Tile t in tiles.Where(x => x.isEdge || x.isInitialized == false))
-            t.FindNeighbours(); 
+            t.FindNeighbours();
     }
 
     void SpawnTiles(Tile currenTile) {
@@ -99,7 +110,7 @@ public class TileManager : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             if (currentTile.neighbours[i] == null) {
-                tiles.Add(GameObject.Instantiate(tilePrefab,tileParent.transform).GetComponent<Tile>());
+                tiles.Add(GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>());
             }
         }
     } 
@@ -113,8 +124,8 @@ public class TileManager : MonoBehaviour
 
         if(!isWall) {
             if (tiles.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile tile = GameObject.Instantiate(tilePrefab,tileParent.transform).GetComponent<Tile>();
-                tile.Init(gameManager, distanceFromCenter, size+padding);
+                Tile tile = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                tile.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 tile.transform.position = newPosition;
                 tiles.Add(tile);
 
@@ -123,8 +134,8 @@ public class TileManager : MonoBehaviour
         }
         else {
             if (walls.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile wall = GameObject.Instantiate(tilePrefab,tileParent.transform).GetComponent<Tile>();
-                wall.Init(gameManager, distanceFromCenter, size+padding);
+                Tile wall = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                wall.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 wall.transform.position = newPosition;
                 wall.transform.parent = wallParent.transform;
                 walls.Add(wall);
@@ -137,7 +148,7 @@ public class TileManager : MonoBehaviour
     }
 
     Vector3 GetNeighbouringPosition(int index) {
-        float distance = size + padding;
+        float distance = mapSettings.tileSize + mapSettings.tilePadding;
         switch (index) {
             case 0:
                 return new Vector3(0,0,2f*distance);
@@ -155,4 +166,18 @@ public class TileManager : MonoBehaviour
                 return Vector3.zero;
         }
     }
+}
+
+[System.Serializable]
+public class MapSettings {
+    public float tileSize = 0.85f;
+    public float tilePadding = 0.15f;
+    public int innerRadius = 10;
+    public int outerRadius = 5;
+    [Range(0,100)]
+    public float falloff = 50;
+    [Range(0,10)]
+    public int numAdditionalZones = 3;
+    [Range(0,10)]
+    public int numObstacles = 3;
 }

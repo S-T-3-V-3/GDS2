@@ -15,12 +15,14 @@ public class Tile : MonoBehaviour
 
     TeamID currentTeam = TeamID.NONE;
     GameManager gameManager;
-    TileManager tileManager;
+    MapManager mapManager;
     float meshSize;
+
+    Vector3 wallOffset = new Vector3(0,1,0);
 
     public void Init(GameManager gameManager, int distanceFromCenter, float meshSize) {
         this.gameManager = gameManager;
-        this.tileManager = gameManager.GetComponent<TileManager>();
+        this.mapManager = gameManager.GetComponent<MapManager>();
         this.distanceFromCenter = distanceFromCenter;
         this.meshSize = meshSize;
     }
@@ -34,7 +36,7 @@ public class Tile : MonoBehaviour
         PlayerController overlappingPlayer = other.GetComponent<PlayerController>();
 
         if (currentTeam != overlappingPlayer.teamID) {
-            gameManager.sessionData.score.UpdateScore(currentTeam,overlappingPlayer.teamID);
+            gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayer.teamID);
             currentTeam = overlappingPlayer.teamID;
             gameManager.OnScoreUpdated.Invoke();
         }
@@ -51,7 +53,7 @@ public class Tile : MonoBehaviour
 
         for (int i = 0; i < 6; i++)
         {
-            neighbours[i] = FindNeighbour(i);
+            neighbours[i] = GetNeighbour(i);
         }
 
         isEdge = neighbours.Where(x => x == null).Count() > 0 ? true : false;
@@ -63,13 +65,18 @@ public class Tile : MonoBehaviour
         isWall = true;
         this.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeamColor(TeamID.PURPLE);
         this.GetComponent<MeshCollider>().enabled = true;
-        this.transform.position += new Vector3(0,1,0);
+        this.transform.position += wallOffset;
     }
 
-    Tile FindNeighbour(int index) {
+    Tile GetNeighbour(int index) {
         Vector3 neighbourPosition = this.transform.position + GetNeighbouringPosition(index);
-        if (tileManager.tiles.Where(x => x.transform.position == neighbourPosition).Count() > 0) {
-            return tileManager.tiles.Where(x => x.transform.position == neighbourPosition).First();
+
+        if (isWall) {
+            neighbourPosition -= wallOffset;
+        }
+
+        if (mapManager.tiles.Where(x => x.transform.position == neighbourPosition).Count() > 0) {
+            return mapManager.tiles.Where(x => x.transform.position == neighbourPosition).First();
         }
         else
         {

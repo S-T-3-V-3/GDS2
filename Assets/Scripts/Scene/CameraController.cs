@@ -19,6 +19,7 @@ public class CameraController : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         gameManager.OnPlayersChanged.AddListener(SetTargets);
         aspectRatio = Camera.main.aspect;
+        targets = new List<Transform>();
 
         if (gameManager.sessionData == null)
             this.gameObject.SetActive(false);
@@ -36,7 +37,7 @@ public class CameraController : MonoBehaviour
 
     // Runs on change in player count, sets references to player gameobjects for the camera to track
     void SetTargets() {
-        targets = new List<Transform>();
+        targets.Clear();
 
         foreach (PlayerController player in gameManager.currentPlayers) {
             targets.Add(player.gameObject.transform);

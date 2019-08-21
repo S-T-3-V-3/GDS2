@@ -10,6 +10,11 @@ public class TeamManager : MonoBehaviour
         currentTeams.Where(x => x.ID == teamID).First().AddPlayer(player);
     }
 
+    public void LeaveTeam(PlayerController player, TeamID teamID) {
+        currentTeams.Where(x => x.ID == teamID).First().RemovePlayer(player);
+    }
+
+
     public Material GetTeamColor(TeamID teamID) {
         return currentTeams.Where(x => x.ID == teamID).First().teamColor;
     }
@@ -25,10 +30,14 @@ public class Team {
     public TeamID ID;
     public Material teamColor;
 
-    public int currentScore;
+    public int numTiles;
 
     public void AddPlayer(PlayerController player) {
         players.Add(player);
+    }
+
+    public void RemovePlayer(PlayerController player) {
+        players.Remove(player);
     }
 }
 
