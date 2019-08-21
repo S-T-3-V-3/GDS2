@@ -155,7 +155,6 @@ GameObject:
   - component: {fileID: 2904255144304306630}
   - component: {fileID: -1400938693047457808}
   - component: {fileID: -7743813311491200148}
-  - component: {fileID: 8039523455562895564}
   - component: {fileID: 7127059969283177922}
   - component: {fileID: 5037480160064404774}
   - component: {fileID: 3333941077887600664}
@@ -195,7 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0957e74ec0f7b074591b905403f3b422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teamID: 0
+  teamID: 6
   healthText: {fileID: 0}
 --- !u!114 &-7743813311491200148
 MonoBehaviour:
@@ -346,19 +345,6 @@ MonoBehaviour:
   m_DefaultActionMap: 7b60fd86-a81f-48f0-a0da-91b1f9c6cbdc
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &8039523455562895564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7981276829858343310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39abc4d1d8f4e4f4b960518b481e3490, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  highlightColor: {fileID: 2100000, guid: 616329b657dc72c4e82a28f5cac2d23b, type: 2}
 --- !u!33 &7127059969283177922
 MeshFilter:
   m_ObjectHideFlags: 0

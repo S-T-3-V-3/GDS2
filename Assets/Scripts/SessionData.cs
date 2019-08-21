@@ -4,16 +4,15 @@ using System.Collections.Generic;
 
 public class SessionData {
     public bool isStarted = false;
-    public Score score;
+    public ScoreHandler score;
     public UnityEvent OnSessionStart;
 
-    public void Init() {
-        score = new Score();
-        score.Tiles = new List<int>();
-        score.currentScores = new List<int>();
+    public SessionData(GameManager gameManager) {
+        score = new ScoreHandler(gameManager);
     }
 
     public void StartSession() {
         isStarted = true;
+        score.Reset();
     }
 }

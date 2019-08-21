@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem.PlayerInput;
@@ -17,18 +18,13 @@ public class GameManager : MonoBehaviour
     public HUDManager hud;
 
     void Awake() {
-        sessionData = new SessionData();
+        sessionData = new SessionData(this);
         sessionData.isStarted = false;
         hud = FindObjectOfType<HUDManager>();
     }
 
     void StartGame() {
-        sessionData.Init();
         sessionData.StartSession();
-        foreach (HexTileManager currentTile in FindObjectsOfType<HexTileManager>()) {
-            currentTile.Init(this);
-            sessionData.score.AddTile();
-        }
     }
 
     // Runs every time a player joins the game, will trigger session start if first player connected.
@@ -39,14 +35,20 @@ public class GameManager : MonoBehaviour
             StartGame();
         }
 
-        // Remove on team implementation
-        newController.teamID = currentPlayers.Count;
-        sessionData.score.currentScores.Add(0);
-        //
-
         currentPlayers.Add(newController);
         newController.SetGameManager(this);
-        setPlayerSpawn(newController);
+        SetPlayerSpawn(newController);
+
+        // Add player to random team
+        List<TeamID> teamList = new List<TeamID>();
+        teamList.Add(TeamID.BLUE);
+        teamList.Add(TeamID.RED);
+        teamList.Add(TeamID.GREEN);
+        teamList.Add(TeamID.ORANGE);
+        teamList.Add(TeamID.YELLOW);
+        TeamID randomTeam = teamList[Random.Range(0,teamList.Count-1)];
+        GetTeamManager().currentTeams.Where(x => x.ID == randomTeam).First().AddPlayer(newController);
+        newController.teamID = randomTeam;
 
         OnPlayersChanged.Invoke();
     }
@@ -60,12 +62,16 @@ public class GameManager : MonoBehaviour
         OnPlayersChanged.Invoke();
     }
 
+    public TeamManager GetTeamManager() {
+        return this.GetComponent<TeamManager>();
+    }
+
     public GunType GetDefaultGun() {
         return availableGuns[0];
     }
 
     // Set player spawn point, currently random spawn location
-    void setPlayerSpawn(PlayerController player) {
+    void SetPlayerSpawn(PlayerController player) {
         player.gameObject.transform.position = spawnpoints[Random.Range(0,spawnpoints.Count)].transform.position;
     }
 }

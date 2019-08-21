@@ -1,26 +1,43 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TeamManager : MonoBehaviour
 {
-    public List<Material> teamColors;
     public List<Team> currentTeams;
 
-    public void newTeam(PlayerController player) {
-        Team newTeam = new Team();
-        newTeam.players.Add(player);
-        newTeam.teamID = currentTeams.Count;
-        newTeam.teamColor = teamColors[newTeam.teamID];
+    public void JoinTeam(PlayerController player, TeamID teamID) {
+        currentTeams.Where(x => x.ID == teamID).First().AddPlayer(player);
     }
 
-    public Material getTeamColor(int teamID) {
-        return teamColors[teamID];
+    public Material GetTeamColor(TeamID teamID) {
+        return currentTeams.Where(x => x.ID == teamID).First().teamColor;
+    }
+
+    public Team GetTeam(TeamID teamID) {
+        return currentTeams.Where(x => x.ID == teamID).First();
     }
 }
 
+[System.Serializable]
 public class Team {
     public List<PlayerController> players;
-    public int teamID;
+    public TeamID ID;
     public Material teamColor;
+
+    public int currentScore;
+
+    public void AddPlayer(PlayerController player) {
+        players.Add(player);
+    }
+}
+
+public enum TeamID {
+    BLUE,
+    GREEN,
+    RED,
+    YELLOW,
+    PURPLE,
+    ORANGE,
+    NONE
 }
