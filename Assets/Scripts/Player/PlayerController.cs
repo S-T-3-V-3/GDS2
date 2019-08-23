@@ -40,10 +40,14 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if (!gameManager.sessionData.isStarted) return;
+
         doMovement();
     }
 
     void Update() {
+        if (!gameManager.sessionData.isStarted) return;
+        
         if (isShooting) {
             foreach (GunComponent gun in equippedGuns) {
                 gun.RequestShoot();

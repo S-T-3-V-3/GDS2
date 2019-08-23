@@ -23,19 +23,13 @@ public class GameManager : MonoBehaviour
     MapManager mapManager;
 
     void Awake() {
-        sessionData = new SessionData(this);
+        sessionData = this.gameObject.AddComponent<SessionData>();
         sessionData.isStarted = false;
         hud = FindObjectOfType<HUDManager>();
-
-        StartGame();
     }
 
-    void StartGame() {
+    public void StartGame() {
         if (sessionData.isStarted) return;
-
-        if (gameSettings.roundMapSettings.Count == 0) {
-            gameSettings.roundMapSettings.Add(new MapSettings());
-        }
 
         sessionData.StartSession();
     }
@@ -47,7 +41,7 @@ public class GameManager : MonoBehaviour
         mapManager = this.gameObject.AddComponent<MapManager>();
     }
 
-    void UnloadMap() {
+    public void UnloadMap() {
         if (mapManager == null) return;
 
         sessionData.score.Reset();
@@ -63,10 +57,6 @@ public class GameManager : MonoBehaviour
     // Runs every time a player joins the game, will trigger session start if first player connected.
     public void OnPlayerJoined(PlayerInput newPlayer) {
         PlayerController newController = newPlayer.GetComponent<PlayerController>();
-
-        if (!sessionData.isStarted) {
-            StartGame();
-        }
 
         currentPlayers.Add(newController);
         newController.SetGameManager(this);
@@ -97,7 +87,10 @@ public class GameManager : MonoBehaviour
     }
 
     public MapSettings GetMapSettings() {
-        return (gameSettings.roundMapSettings[sessionData.currentRound]);
+        if (gameSettings.roundMapSettings.Count == 0)
+            gameSettings.roundMapSettings.Add(new MapSettings());
+
+        return gameSettings.roundMapSettings[sessionData.currentRound.roundNumber];
     }
 
     // Set player spawn point, currently random spawn location
