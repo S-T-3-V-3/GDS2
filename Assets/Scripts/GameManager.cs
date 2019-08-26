@@ -124,6 +124,7 @@ public class GameManager : MonoBehaviour
         int index = Random.Range(0,tilePositions.Count-1);
 
         player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
+        player.model.transform.position = new Vector3(0,player.model.transform.position.y,0);
         tilePositions.RemoveAt(index);
         
         OnPlayersChanged.Invoke();
