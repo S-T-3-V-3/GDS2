@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     public GameObject projectileBody;
     public ProjectileEvent OnProjectileOverlap;
 
+    PlayerController owningPlayer;
     GameObject owner;
     Vector3 movementDirection;
     bool initialized = false;
@@ -14,9 +15,10 @@ public class Projectile : MonoBehaviour
     float moveSpeed;
     int damage;
 
-    public void Init(GameObject owner, Vector3 forwardVector, GunType gun)
+    public void Init(PlayerController owningPlayer, Vector3 forwardVector, GunType gun)
     {
-        this.owner = owner;
+        this.owningPlayer = owningPlayer;
+        this.owner = owningPlayer.model;
         this.lifeTime = gun.projectileLifetime;
 
         movementDirection = forwardVector;
@@ -53,11 +55,17 @@ public class Projectile : MonoBehaviour
     void OnCollision(GameObject other) {
         if (other == owner) return;
 
-        if (other.GetComponent<PlayerController>() != null) {
-            PlayerController hitPlayer = other.GetComponent<PlayerController>();
+        if (other.transform.parent.GetComponent<PlayerController>() != null) {
+            PlayerController hitPlayer = other.transform.parent.GetComponent<PlayerController>();
 
             hitPlayer.currentStats.TakeDamage(damage);
+            
+            if (hitPlayer.currentStats.health <= 0) {
+                FindObjectOfType<GameManager>().OnPlayerKilled(owningPlayer, hitPlayer);
+            }   
         }
+
+        
 
         OnDestroy();
     }

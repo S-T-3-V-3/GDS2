@@ -5,15 +5,11 @@ using UnityEngine;
 public class GunComponent : MonoBehaviour
 {
     public GunType gun;
-
+    public PlayerController owner;
     GameObject gunModel;
-    GameManager gameManager;
     float reloadCooldown = 0f;
 
     void Start() {
-        gameManager = FindObjectOfType<GameManager>();
-        gun = gameManager.GetDefaultGun();
-
         gunModel = GameObject.Instantiate(gun.gunPrefab,this.gameObject.transform);
         gunModel.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
     }
@@ -31,20 +27,7 @@ public class GunComponent : MonoBehaviour
     }
 
     void DoShoot() {
-        Projectile newProjectile = GameObject.Instantiate(gun.projectilePrefab, this.transform.position, this.transform.rotation, gameManager.gameObject.transform).GetComponent<Projectile>();
-        newProjectile.Init(this.transform.parent.gameObject, this.gameObject.transform.forward, gun);
+        Projectile newProjectile = GameObject.Instantiate(gun.projectilePrefab, this.transform.position, this.transform.rotation).GetComponent<Projectile>();
+        newProjectile.Init(owner, this.gameObject.transform.forward, gun);
     }
-}
-
-// Note: Look at creating class for projectiles
-[System.Serializable]
-public class GunType {
-    public string gunName;
-    public GameObject gunPrefab;
-    public GameObject projectilePrefab;
-    public float reloadTime;
-    public float projectileSize;
-    public float projectileSpeed;
-    public int projectileDamage;
-    public float projectileLifetime;
 }
