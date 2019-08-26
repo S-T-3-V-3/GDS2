@@ -21,7 +21,7 @@ public class Stats {
         moveSpeed = PlayerStatsBase.moveSpeed;
         acceleration = PlayerStatsBase.acceleration;
         health = PlayerStatsBase.health;
-        isAlive = true;
+        isAlive = false;
 
         reloadSpeed = PlayerStatsBase.reloadSpeed;
         damage = PlayerStatsBase.damage;
@@ -29,6 +29,13 @@ public class Stats {
 
         OnDeath = new UnityEvent();
         OnTakeDamage = new UnityEvent();
+    }
+
+    public void Respawn() {
+        moveSpeed = PlayerStatsBase.moveSpeed;
+        acceleration = PlayerStatsBase.acceleration;
+        health = PlayerStatsBase.health;
+        isAlive = true;
     }
 
     public void TakeDamage(int damage) {
