@@ -31,14 +31,15 @@ public class Tile : MonoBehaviour
     // Player primary control allows for status of friendly/enemy territory update prior to capture
     void OnTriggerEnter(Collider other)
     {   
-        if (other.GetComponent<PlayerController>() == null || isWall) return;
-
-        PlayerController overlappingPlayer = other.GetComponent<PlayerController>();
+        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;
+        
+        if (other.transform.parent.GetComponent<PlayerController>() == null || isWall) return;
+        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
 
         if (currentTeam != overlappingPlayer.teamID) {
             gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayer.teamID);
             currentTeam = overlappingPlayer.teamID;
-            gameManager.OnScoreUpdated.Invoke();
+            gameManager.OnTilesChanged.Invoke();
         }
 
         this.gameObject.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeamColor(overlappingPlayer.teamID);

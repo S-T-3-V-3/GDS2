@@ -60,8 +60,13 @@ public class MapManager : MonoBehaviour
                 SpawnTiles(currentEdgeTile);
             }
 
-            if (tiles[tiles.Count -1].distanceFromCenter >= mapSettings.innerRadius)
+            if (tiles[tiles.Count -1].distanceFromCenter >= mapSettings.innerRadius) {
                 innerRadiusSpawned = true;
+
+                gameManager.tilePositions.Clear();
+                gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
+            }
+                
         }
         else if (innerRadiusSpawned && !wallsSpawned)
         {
@@ -74,6 +79,8 @@ public class MapManager : MonoBehaviour
 
             foreach(Tile w in walls)
                 w.SetWall();
+            
+            gameManager.OnMapLoaded.Invoke();
         }
     }
 
