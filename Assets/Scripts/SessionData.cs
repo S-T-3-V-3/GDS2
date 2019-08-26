@@ -4,60 +4,48 @@ using System.Collections.Generic;
 
 public class SessionData : MonoBehaviour{
     public bool isStarted = false;
-    public Round currentRound;
+    public RoundManager roundManager;
     public ScoreHandler score;
-    public UnityEvent OnSessionStart;
+    public UnityEvent OnRoundPrepare;
+    public UnityEvent OnRoundBegin;
+    public UnityEvent OnRoundComplete;
+    public UnityEvent OnCarouselBegin;
+    public UnityEvent OnCarouselEnd;
 
     GameManager gameManager;
 
     void Awake() {
-        gameManager = this.gameObject.GetComponent<GameManager>();
-        score = new ScoreHandler(gameManager);
-        currentRound = new Round();
+        OnRoundPrepare = new UnityEvent();
+        OnRoundBegin = new UnityEvent();
+        OnRoundComplete = new UnityEvent();
+        OnCarouselBegin = new UnityEvent();
+        OnCarouselEnd = new UnityEvent();
+
+        gameManager = this.GetComponent<GameManager>();
+        roundManager = this.gameObject.AddComponent<RoundManager>();
+        score = new ScoreHandler(gameManager);   
     }
 
     public void StartSession() {
-        if (currentRound == null)
-            currentRound = new Round();
-
-        currentRound.Reset();
+        if (isStarted) return;
+        
         score.Reset();
-
         isStarted = true;
+        gameManager.OnSessionStart.Invoke();
     }
 
-    void Update() {
-        if (!isStarted) return;
-
-        currentRound.Update();
-    }
-}
-
-public class Round {
-    public int roundNumber = 0;
-    public float elapsedTime = 0f;
-    public bool isStarted = false;
-
-    public void Reset() {
-        elapsedTime = 0f;
+    public void StartRound() {
+        roundManager.SetState<RoundCountdownState>();
     }
 
-    public void Start() {
-        isStarted = true;
+    public void StopRound() {
+        foreach (PlayerController player in gameManager.currentPlayers) {
+            if (player.teamID != TeamID.NONE)
+                player.SetState<PlayerInactiveState>();
+        }
     }
 
-    public void Stop() {
+    public void StopSession() {
         isStarted = false;
-    }
-
-    public void Update() {
-        if (!isStarted) return;
-
-        elapsedTime += Time.deltaTime;
-    }
-
-    public void OnRoundComplete() {
-        Stop();
-        roundNumber++;
     }
 }

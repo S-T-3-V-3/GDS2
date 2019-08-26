@@ -2,36 +2,80 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.PlayerInput;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject playerPrefab;
     public GameObject tilePrefab;
+    public GameObject announcementPrefab;
+    public Transform playerParent;
     [Space]
     public GameSettings gameSettings;
     public HUDManager hud;
     public List<PlayerController> currentPlayers;
     public List<GameObject> spawnpoints;
     public List<GunType> availableGuns;
+    public List<Vector3> tilePositions;
     [Space]
     public SessionData sessionData;
     [Space]
+    public UnityEvent OnSessionStart;
     public UnityEvent OnPlayersChanged;
+    public UnityEvent OnNewCameraTarget;
     public UnityEvent OnScoreUpdated;
+    public UnityEvent OnTilesChanged;
+    public UnityEvent OnMapLoaded;
 
     MapManager mapManager;
 
     void Awake() {
         sessionData = this.gameObject.AddComponent<SessionData>();
+
         sessionData.isStarted = false;
-        hud = FindObjectOfType<HUDManager>();
+    }
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
+        if (!sessionData.isStarted) return;
+        
+        if (!sessionData.roundManager.roundIsStarted) return;
+        sessionData.score.ScoreUpdate();
     }
 
     public void StartGame() {
         if (sessionData.isStarted) return;
+        
+        StartNextRound();
+    }
 
-        sessionData.StartSession();
+    public void StartNextRound() {
+        OnMapLoaded.AddListener(SpawnPlayers);
+
+        this.LoadMap();
+        sessionData.StartRound();
+    }
+
+    public void SpawnPlayers() {
+        OnMapLoaded.RemoveListener(SpawnPlayers);
+
+        foreach (PlayerController player in currentPlayers) {
+            if (player.teamID != TeamID.NONE) {
+                this.SpawnPlayer(player);
+
+                player.SetState<PlayerActiveState>();
+            }       
+        }
+
+        OnNewCameraTarget.Invoke();
+        OnPlayersChanged.Invoke();
+    }
+
+    public void StopGame() {
+        if (!sessionData.isStarted) return;
+
+        sessionData.StopSession();
     }
 
     public void LoadMap() {       
@@ -43,31 +87,19 @@ public class GameManager : MonoBehaviour
 
     public void UnloadMap() {
         if (mapManager == null) return;
-
-        sessionData.score.Reset();
         mapManager.UnloadMap();
     }
 
-    void Update() {
-        if (!sessionData.isStarted) return;
-            
-        sessionData.score.Calculate();
+    public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
+        sessionData.score.PlayerKilled(killer.teamID);
+        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, Color.red);
     }
-
+ 
     // Runs every time a player joins the game, will trigger session start if first player connected.
     public void OnPlayerJoined(PlayerInput newPlayer) {
         PlayerController newController = newPlayer.GetComponent<PlayerController>();
-
+        newController.transform.parent = playerParent;
         currentPlayers.Add(newController);
-        newController.SetGameManager(this);
-        SetPlayerSpawn(newController);
-
-        // Add player to random team
-        List<TeamID> teamList = GetTeamManager().currentTeams.Select(x => x.ID).Where(x => x != TeamID.NONE).ToList();
-
-        TeamID randomTeam = teamList[Random.Range(0,teamList.Count-1)];
-        GetTeamManager().JoinTeam(newController, randomTeam);
-        newController.teamID = randomTeam;
 
         OnPlayersChanged.Invoke();
     }
@@ -75,37 +107,25 @@ public class GameManager : MonoBehaviour
     public void OnPlayerLeft(PlayerInput exitingPlayer) {
         currentPlayers.Remove(exitingPlayer.GetComponent<PlayerController>());
         GetTeamManager().LeaveTeam(exitingPlayer.GetComponent<PlayerController>(), exitingPlayer.GetComponent<PlayerController>().teamID);
-        OnPlayersChanged.Invoke();
+
+        OnNewCameraTarget.Invoke();
     }
 
     public TeamManager GetTeamManager() {
         return this.GetComponent<TeamManager>();
     }
 
-    public GunType GetDefaultGun() {
-        return availableGuns[0];
-    }
-
     public MapSettings GetMapSettings() {
-        if (gameSettings.roundMapSettings.Count == 0)
-            gameSettings.roundMapSettings.Add(new MapSettings());
-
-        return gameSettings.roundMapSettings[sessionData.currentRound.roundNumber];
+        return gameSettings.roundMapSettings[sessionData.roundManager.roundNumber];
     }
 
     // Set player spawn point, currently random spawn location
-    void SetPlayerSpawn(PlayerController player) {
-        player.gameObject.transform.position = spawnpoints[Random.Range(0,spawnpoints.Count)].transform.position;
-    }
-}
+    public void SpawnPlayer(PlayerController player) {
+        int index = Random.Range(0,tilePositions.Count-1);
 
-[System.Serializable]
-public class GameSettings {
-    public int numRounds = 4;
-    public float roundTime = 90f;
-    [Space]
-    public int baseTileValue = 1;
-    public int specialTileValue = 10;
-    [Space]
-    public List<MapSettings> roundMapSettings;
+        player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
+        tilePositions.RemoveAt(index);
+        
+        OnPlayersChanged.Invoke();
+    }
 }
