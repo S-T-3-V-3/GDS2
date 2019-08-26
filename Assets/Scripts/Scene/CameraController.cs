@@ -13,20 +13,28 @@ public class CameraController : MonoBehaviour
     GameManager gameManager;
     List<Transform> targets;
     Vector3 currentVelocity;
+
+    Vector3 resetPos;
     float aspectRatio;
+    bool isResetting = false;
 
     void Start() {
         gameManager = FindObjectOfType<GameManager>();
-        gameManager.OnPlayersChanged.AddListener(SetTargets);
+
+        gameManager.OnNewCameraTarget.AddListener(SetTargets);
+        gameManager.sessionData.OnRoundComplete.AddListener(Reset);
+
         aspectRatio = Camera.main.aspect;
         targets = new List<Transform>();
+        resetPos = this.transform.position;
 
         if (gameManager.sessionData == null)
             this.gameObject.SetActive(false);
     }
 
     void FixedUpdate() {
-        if (!gameManager.sessionData.isStarted) return;
+        if (isResetting) doReset();
+        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
         if (targets.Count == 0) return;
 
         Vector3 centerPosition = GetCenterPosition();
@@ -35,12 +43,25 @@ public class CameraController : MonoBehaviour
         this.gameObject.transform.position = Vector3.SmoothDamp(this.gameObject.transform.position, centerPosition+distanceOffset, ref currentVelocity, smoothTime);
     }
 
+    public void Reset() {
+        isResetting = true;
+    }
+
+    void doReset() {
+        this.gameObject.transform.position = Vector3.SmoothDamp(this.gameObject.transform.position, resetPos, ref currentVelocity, smoothTime);
+
+        if ((this.gameObject.transform.position - resetPos).magnitude < 1f)
+            isResetting = false;
+    }
+
     // Runs on change in player count, sets references to player gameobjects for the camera to track
     void SetTargets() {
+        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        
         targets.Clear();
 
-        foreach (PlayerController player in gameManager.currentPlayers) {
-            targets.Add(player.gameObject.transform);
+        foreach (PlayerController player in gameManager.currentPlayers.Where(x => x.currentStats.isAlive)) {
+            targets.Add(player.model.gameObject.transform);
         }
     }
 
