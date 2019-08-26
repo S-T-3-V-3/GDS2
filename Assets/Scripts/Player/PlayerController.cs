@@ -1,52 +1,74 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     public TeamID teamID;
+    public TMPro.TextMeshPro healthText;
+    public StateManager playerState;
+    public PlayerCharacter character;
+    public GameObject model;
+    [Space]
+
     public Stats currentStats;
     public SkillPoints skillPoints;
-    public TextMesh healthText; 
 
+
+    void Awake() {
+        currentStats = new Stats();
+        currentStats.Init();
+
+        if (playerState == null)
+            playerState = this.gameObject.AddComponent<StateManager>();
+
+        playerState.AddState<CharacterSelectState>();
+    }
+
+    public void SetState<T>() where T : State {
+        playerState.AddState<T>();
+    }
+}
+
+public class PlayerActiveState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
     List<GunComponent> equippedGuns;
     Vector2 currentMovement;
-    GameManager gameManager;
     Rigidbody rigidBody;
 
     float deadZoneRange = 0.17f;
     bool isShooting = false;
 
-    void Start() {
-        if (equippedGuns == null)
-            equippedGuns = new List<GunComponent>();
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = GameObject.FindObjectOfType<GameManager>();
 
-        foreach (GunComponent gun in this.transform.GetComponentsInChildren<GunComponent>()) {
-            equippedGuns.Add(gun);
-        }
+        playerController.model.SetActive(true);
+        playerController.healthText.gameObject.SetActive(true);
 
-        currentStats = new Stats();
-        currentStats.Init();
-        currentStats.OnDeath.AddListener(OnDeath);
-        currentStats.OnTakeDamage.AddListener(OnDamaged);
-            
+        playerController.currentStats.Respawn();
+        playerController.currentStats.OnDeath.AddListener(OnDeath);
+        playerController.currentStats.OnTakeDamage.AddListener(OnDamaged);
+
+        this.GetGuns();
+        
         currentMovement = new Vector2(0,0);
+        rigidBody = this.GetComponentInChildren<Rigidbody>(true);
 
-        rigidBody = this.GetComponent<Rigidbody>();
+        if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
+        playerController.healthText.text = playerController.currentStats.health.ToString();        
 
-        if (healthText == null) healthText = GetComponentInChildren<TextMesh>();
-        healthText.text = currentStats.health.ToString();
+        playerController.model.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeam(playerController.teamID).teamColor;
     }
+    
 
-    void FixedUpdate() {
-        if (!gameManager.sessionData.isStarted) return;
-
-        doMovement();
-    }
-
-    void Update() {
-        if (!gameManager.sessionData.isStarted) return;
+    void Update()
+    {
+        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
         
         if (isShooting) {
             foreach (GunComponent gun in equippedGuns) {
@@ -55,31 +77,44 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Called from game manager upon creation to avoid null references
-    public void SetGameManager(GameManager gameManager) {
-        this.gameManager = gameManager;
+    void FixedUpdate()
+    {
+        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+
+        doMovement();
+    }
+
+    void GetGuns() {
+        if (equippedGuns == null)
+            equippedGuns = new List<GunComponent>();
+
+        foreach (GunComponent gun in this.transform.GetComponentsInChildren<GunComponent>()) {
+            equippedGuns.Add(gun);
+            gun.gameObject.SetActive(true);
+            gun.owner = playerController;
+        }
     }
 
     // Fired upon *change* in movement input
-    public void OnMovementReceived(InputAction.CallbackContext movementInput) {
-        currentMovement = movementInput.ReadValue<Vector2>();
+    public void OnLeftStick(InputValue value) {
+        currentMovement = value.Get<Vector2>();
     }
 
     // Fired upon change in rotation input
     // Note: if adding rotation speed, look at trying mathf.min of
     // current-input and current-360-input in positive rotational space
-    public void OnRotationReceived(InputAction.CallbackContext rotationInput) {
-        Vector2 stickPosition = rotationInput.ReadValue<Vector2>();
+    public void OnRightStick(InputValue value) {
+        Vector2 stickPosition = value.Get<Vector2>();
 
         if (stickPosition.magnitude > deadZoneRange) {
             float inputRotation = Mathf.Atan2(stickPosition.x,stickPosition.y) * Mathf.Rad2Deg; 
-            this.gameObject.transform.rotation = Quaternion.Euler(0,inputRotation,0);
+            playerController.model.transform.rotation = Quaternion.Euler(0,inputRotation,0);
         }
     }
 
     // Fired upon change in shoot input
-    public void OnShootReceived(InputAction.CallbackContext shootInput) {
-        float shootValue = shootInput.ReadValue<float>();
+    public void OnRightTrigger(InputValue value) {
+        float shootValue = value.Get<float>();
 
         if(shootValue < deadZoneRange)
             isShooting = false;
@@ -107,10 +142,132 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnDamaged() {
-        healthText.text = currentStats.health.ToString();
+        playerController.healthText.text = playerController.currentStats.health.ToString();
     }
 
     void OnDeath() {
-        GameObject.Destroy(this.gameObject);
+        playerController.SetState<PlayerDeathState>();
+    }
+}
+
+public class CharacterSelectState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
+
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
+
+        foreach (GunComponent gun in this.transform.GetComponentsInChildren<GunComponent>()) {
+            gun.gameObject.SetActive(false);
+        }
+
+        gameManager.GetTeamManager().JoinTeam(playerController,playerController.teamID);
+    }
+
+    public void OnLeftStick(InputValue value) {
+        Vector2 test = (Vector2)value.Get();
+    }
+
+    public void OnBumpers(InputValue value) {        
+        gameManager.GetTeamManager().LeaveTeam(playerController,playerController.teamID);
+        playerController.teamID += (int)value.Get<float>();
+
+        if (playerController.teamID > TeamID.NONE)
+            playerController.teamID = TeamID.BLUE;
+
+        if (playerController.teamID < TeamID.BLUE)
+            playerController.teamID = TeamID.NONE;
+            
+        gameManager.GetTeamManager().JoinTeam(playerController,playerController.teamID);
+
+        gameManager.OnPlayersChanged.Invoke();
+    }
+
+    public void OnStart(InputValue value) {
+        if (playerController.teamID != TeamID.NONE)
+            gameManager.StartGame();
+    }
+
+    void SetCharacter(PlayerCharacter character) {
+        
+    }
+}
+
+public class BuffSelectState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
+
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
+
+        playerController.model.SetActive(false);
+        playerController.currentStats.isAlive = false;
+        gameManager.OnNewCameraTarget.Invoke();
+    }
+
+    public void OnLeftStick(InputValue value) {
+        //Vector2 test = (Vector2)value.Get();
+    }
+
+    public void OnBumpers(InputValue value) {        
+        //int test = value.Get<int>();
+    }
+
+    public void OnStart(InputValue value) {
+        if (playerController.teamID != TeamID.NONE) {
+            gameManager.StartNextRound();
+        }
+    }
+}
+
+public class PlayerInactiveState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
+
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
+    }
+
+    void Update() {
+        float dampSpeed = 3.0f;
+        Rigidbody rigidBody = this.GetComponentInChildren<Rigidbody>(true);
+        rigidBody.velocity = Vector3.Lerp(rigidBody.velocity, Vector3.zero, Time.deltaTime * dampSpeed);
+    }
+}
+
+public class PlayerDeathState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
+    float respawnTime = 3f;
+    float timeElapsed = 0f;
+
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
+
+        // TODO: Do explosion stuff then ->E
+        playerController.model.SetActive(false);
+        playerController.currentStats.isAlive = false;
+        gameManager.OnNewCameraTarget.Invoke();
+    }
+
+    void Update() {
+        timeElapsed += Time.deltaTime;
+
+        if (timeElapsed >= respawnTime) {
+            playerController.SetState<PlayerActiveState>();
+            gameManager.SpawnPlayer(playerController);
+        }
     }
 }
