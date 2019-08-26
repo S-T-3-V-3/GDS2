@@ -6,6 +6,10 @@ public class TeamManager : MonoBehaviour
 {
     public List<Team> currentTeams;
 
+    void Awake() {
+        GameManager gameManager = this.GetComponent<GameManager>();
+    }
+
     public void JoinTeam(PlayerController player, TeamID teamID) {
         currentTeams.Where(x => x.ID == teamID).First().AddPlayer(player);
     }
@@ -29,8 +33,6 @@ public class Team {
     public List<PlayerController> players;
     public TeamID ID;
     public Material teamColor;
-
-    public int numTiles;
 
     public void AddPlayer(PlayerController player) {
         players.Add(player);
