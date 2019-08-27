@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject TilePrefab;
     public GameObject MainMenuPrefab;
     public GameObject AnnouncementPrefab;
+    public Material WallMaterial;
     public Transform playerParent;
 
     [Space]

@@ -64,7 +64,7 @@ public class Tile : MonoBehaviour
 
     public void SetWall() {
         isWall = true;
-        this.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeamColor(TeamID.PURPLE);
+        this.GetComponent<MeshRenderer>().material = gameManager.WallMaterial;
         this.GetComponent<MeshCollider>().enabled = true;
         this.transform.position += wallOffset;
     }

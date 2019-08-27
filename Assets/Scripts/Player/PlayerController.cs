@@ -197,7 +197,7 @@ public class CharacterSelectState : State
 
     public void OnStart(InputValue value) {
         if (playerController.teamID != TeamID.NONE)
-            gameManager.StartGame();
+            gameManager.StartNextRound();
     }
 
     void SetCharacter(PlayerCharacter character) {

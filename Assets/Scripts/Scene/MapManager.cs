@@ -14,8 +14,9 @@ public class MapManager : MonoBehaviour
 
     bool innerRadiusSpawned = false;
     bool wallsSpawned = false;
+    bool obstaclesSpawned = false;
 
-    void Start() {
+    void Awake() {
         gameManager = this.GetComponent<GameManager>();
         mapSettings = gameManager.GetMapSettings();
 
@@ -51,6 +52,7 @@ public class MapManager : MonoBehaviour
         Destroy(this);
     }
 
+    // TODO: This needs to be threaded
     void Update() {
         if (!innerRadiusSpawned) {
             CalculateEdges();
@@ -79,9 +81,35 @@ public class MapManager : MonoBehaviour
 
             foreach(Tile w in walls)
                 w.SetWall();
-            
+        }
+        else if (wallsSpawned && !obstaclesSpawned) {
+            for (int i = 0; i < gameManager.GetMapSettings().numObstacles; i++) {                
+                Tile tile = GetRandomTile();
+                bool isEdge = tile.isEdge;
+
+                while (isEdge) {
+                    tile = GetRandomTile();
+                    isEdge = tile.isEdge;
+                }
+                
+                NewObstacle(tile);
+            }
+
+            obstaclesSpawned = true;
             gameManager.OnMapLoaded.Invoke();
         }
+    }
+
+    void NewObstacle(Tile tile) {
+        tiles.Remove(tile);
+        walls.Add(tile);
+
+        tile.FindNeighbours();
+        tile.SetWall();
+    }
+
+    Tile GetRandomTile() {
+        return tiles[Random.Range(0,tiles.Count - 1)];
     }
 
     void CalculateEdges() {
@@ -185,6 +213,8 @@ public class MapSettings {
     public float falloff = 50;
     [Range(0,10)]
     public int numAdditionalZones = 3;
-    [Range(0,10)]
+    [Range(0,30)]
     public int numObstacles = 3;
+    [Range(0,10)]
+    public int maxObstacleSize = 3;
 }
