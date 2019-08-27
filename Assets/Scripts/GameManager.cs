@@ -133,12 +133,15 @@ public class GameManager : MonoBehaviour
     public void SpawnPlayer(PlayerController player) {
         int index = Random.Range(0,tilePositions.Count-1);
 
+        player.gameObject.transform.position = new Vector3(0,0,0);
         player.model.transform.position = new Vector3(0,0,0);
+
         player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
         
         tilePositions.RemoveAt(index);
         
         OnPlayersChanged.Invoke();
+        OnNewCameraTarget.Invoke();
     }
 
     IEnumerator LoadScene(string scene) {
