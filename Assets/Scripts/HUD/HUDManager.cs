@@ -24,7 +24,7 @@ public class HUDManager : MonoBehaviour
         gameManager.sessionData.OnCarouselBegin.AddListener(OnCarouselBegin);
         gameManager.sessionData.OnCarouselEnd.AddListener(OnCarouselEnd);
 
-        mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
+        Reset();
         
         debugMenu.SetActive(false);
     }
@@ -33,6 +33,16 @@ public class HUDManager : MonoBehaviour
         DebugUpdate();
 
         UpdateTimer();
+    }
+
+    public void Reset() {
+        gameplay.SetActive(false);
+        joinMessage.SetActive(true);
+        connectedPlayers.gameObject.SetActive(true);
+        
+        UpdatePlayers();
+
+        mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
     }
 
     public void Announcement(string message, float time, Color ? color = null) {

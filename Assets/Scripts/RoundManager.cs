@@ -18,6 +18,13 @@ public class RoundManager : MonoBehaviour {
         this.SetState<RoundInctiveState>();
     }
 
+    public void Reset() {
+        roundNumber = 0;
+        elapsedTime = 0f;
+        roundIsStarted = false;
+        this.SetState<RoundInctiveState>();
+    }
+
     public void OnRoundComplete() {
         roundNumber++;
     }
@@ -90,6 +97,10 @@ public class RoundCompleteState : State
 
         gameManager.sessionData.StopRound();
         gameManager.sessionData.OnRoundComplete.Invoke();
+
+        if (manager.roundNumber == gameManager.gameSettings.numRounds) {
+            gameManager.hud.Announcement("Game Over!",transitionTime);
+        }
     }
 
     void Update() {
@@ -99,7 +110,7 @@ public class RoundCompleteState : State
             if (manager.roundNumber < gameManager.gameSettings.numRounds)
                 manager.SetState<CarouselRoundState>();
             else {
-                // TODO: End game
+                gameManager.Reset();
             }
         }
     }

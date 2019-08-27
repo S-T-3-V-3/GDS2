@@ -49,6 +49,18 @@ public class GameManager : MonoBehaviour
         sessionData.score.ScoreUpdate();
     }
 
+    public void Reset() {
+        tilePositions.Clear();
+
+        ResetPlayers();
+        StopGame();
+        UnloadMap();
+
+        sessionData.roundManager.Reset();
+        sessionData.Reset();
+        hud.Reset();
+    }
+
     public void LoadGame() {
         sessionData.isGameLoaded = true;
         OnGameLoaded.Invoke();
@@ -65,6 +77,15 @@ public class GameManager : MonoBehaviour
 
         this.LoadMap();
         sessionData.StartRound();
+    }
+
+    public void ResetPlayers() {
+        foreach (PlayerController player in currentPlayers) {
+            if (player.teamID != TeamID.NONE) {
+                player.SetState<PlayerMenuState>();
+                player.teamID = TeamID.NONE;
+            }       
+        }
     }
 
     public void SpawnPlayers() {

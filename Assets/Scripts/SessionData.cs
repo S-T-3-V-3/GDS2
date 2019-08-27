@@ -27,6 +27,12 @@ public class SessionData : MonoBehaviour{
         score = new ScoreHandler(gameManager);   
     }
 
+    public void Reset() {
+        score.Reset();
+        this.StopSession();
+        isGameLoaded = false;
+    }
+
     public void StartSession() {
         if (isStarted) return;
         

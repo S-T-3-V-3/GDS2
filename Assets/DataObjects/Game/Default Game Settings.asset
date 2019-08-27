@@ -28,24 +28,3 @@ MonoBehaviour:
     falloff: 33
     numAdditionalZones: 2
     numObstacles: 2
-  - tileSize: 0.85
-    tilePadding: 0.1
-    innerRadius: 13
-    outerRadius: 5
-    falloff: 60.8
-    numAdditionalZones: 3
-    numObstacles: 3
-  - tileSize: 0.85
-    tilePadding: 0.1
-    innerRadius: 15
-    outerRadius: 6
-    falloff: 49.8
-    numAdditionalZones: 4
-    numObstacles: 3
-  - tileSize: 0.85
-    tilePadding: 0.1
-    innerRadius: 18
-    outerRadius: 6
-    falloff: 42
-    numAdditionalZones: 5
-    numObstacles: 4

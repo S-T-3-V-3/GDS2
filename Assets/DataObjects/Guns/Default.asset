@@ -21,4 +21,4 @@ MonoBehaviour:
   projectileSize: 0.5
   projectileSpeed: 10
   projectileDamage: 10
-  projectileLifetime: 3
+  projectileLifetime: 1.5

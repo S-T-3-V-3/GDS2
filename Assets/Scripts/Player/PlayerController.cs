@@ -38,10 +38,6 @@ public class PlayerController : MonoBehaviour
     void OnGameLoaded() {
         playerState.AddState<CharacterSelectState>();
     }
-
-    void OnRespawn() {
-
-    }
 }
 
 public class PlayerActiveState : State
@@ -282,5 +278,21 @@ public class PlayerDeathState : State
             playerController.SetState<PlayerActiveState>();
             gameManager.SpawnPlayer(playerController);
         }
+    }
+}
+
+public class PlayerMenuState : State
+{
+    PlayerController playerController;
+    GameManager gameManager;
+
+    public override void BeginState()
+    {
+        playerController = this.GetComponent<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
+
+        playerController.model.SetActive(false);
+        playerController.currentStats.isAlive = false;
+        gameManager.OnNewCameraTarget.Invoke();
     }
 }

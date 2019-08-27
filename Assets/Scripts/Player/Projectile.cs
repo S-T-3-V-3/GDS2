@@ -10,8 +10,8 @@ public class Projectile : MonoBehaviour
     PlayerController owningPlayer;
     GameObject owner;
     Vector3 movementDirection;
-    bool initialized = false;
-    float lifeTime;
+    public bool initialized = false;
+    public float lifeTime;
     float moveSpeed;
     int damage;
 
