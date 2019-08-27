@@ -6,8 +6,6 @@ public class NewGameOnClick : MonoBehaviour
 {
     public void StartGame()
     {
-        Debug.Log("Start Game");
-        SceneManager.LoadScene(1);
-        
+        SceneManager.LoadScene("BattleScene");
     }
 }

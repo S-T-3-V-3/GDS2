@@ -13,8 +13,6 @@ public class GameManager : MonoBehaviour
     public GameSettings gameSettings;
     public HUDManager hud;
     public List<PlayerController> currentPlayers;
-    public List<GameObject> spawnpoints;
-    public List<GunType> availableGuns;
     public List<Vector3> tilePositions;
     [Space]
     public SessionData sessionData;
@@ -123,8 +121,9 @@ public class GameManager : MonoBehaviour
     public void SpawnPlayer(PlayerController player) {
         int index = Random.Range(0,tilePositions.Count-1);
 
+        player.model.transform.position = new Vector3(0,0,0);
         player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
-        player.model.transform.position = new Vector3(0,player.model.transform.position.y,0);
+        
         tilePositions.RemoveAt(index);
         
         OnPlayersChanged.Invoke();
