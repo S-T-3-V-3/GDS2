@@ -82,6 +82,7 @@ MonoBehaviour:
   distanceFromCenter: 0
   isWall: 0
   isEdge: 0
+  isInitialized: 0
 --- !u!33 &4378439142789163315
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -117,7 +117,7 @@ public class MapManager : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             if (currentTile.neighbours[i] == null) {
-                tiles.Add(GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>());
+                tiles.Add(GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>());
             }
         }
     } 
@@ -131,7 +131,7 @@ public class MapManager : MonoBehaviour
 
         if(!isWall) {
             if (tiles.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile tile = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                Tile tile = GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>();
                 tile.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 tile.transform.position = newPosition;
                 tiles.Add(tile);
@@ -141,7 +141,7 @@ public class MapManager : MonoBehaviour
         }
         else {
             if (walls.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile wall = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                Tile wall = GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>();
                 wall.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 wall.transform.position = newPosition;
                 wall.transform.parent = wallParent.transform;

@@ -1,22 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject tilePrefab;
-    public GameObject announcementPrefab;
+    public GameObject TilePrefab;
+    public GameObject MainMenuPrefab;
+    public GameObject AnnouncementPrefab;
     public Transform playerParent;
+
     [Space]
     public GameSettings gameSettings;
+    public SessionData sessionData;
     public HUDManager hud;
+
+    [Space]
     public List<PlayerController> currentPlayers;
     public List<Vector3> tilePositions;
+
     [Space]
-    public SessionData sessionData;
-    [Space]
+    public UnityEvent OnGameLoaded;
     public UnityEvent OnSessionStart;
     public UnityEvent OnPlayersChanged;
     public UnityEvent OnNewCameraTarget;
@@ -40,6 +47,11 @@ public class GameManager : MonoBehaviour
         
         if (!sessionData.roundManager.roundIsStarted) return;
         sessionData.score.ScoreUpdate();
+    }
+
+    public void LoadGame() {
+        sessionData.isGameLoaded = true;
+        OnGameLoaded.Invoke();
     }
 
     public void StartGame() {
@@ -127,5 +139,14 @@ public class GameManager : MonoBehaviour
         tilePositions.RemoveAt(index);
         
         OnPlayersChanged.Invoke();
+    }
+
+    IEnumerator LoadScene(string scene) {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
+
+        while (!asyncOperation.isDone)
+        {
+            yield return null;
+        }
     }
 }

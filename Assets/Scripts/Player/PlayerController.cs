@@ -23,11 +23,20 @@ public class PlayerController : MonoBehaviour
         if (playerState == null)
             playerState = this.gameObject.AddComponent<StateManager>();
 
-        playerState.AddState<CharacterSelectState>();
+        if (FindObjectOfType<GameManager>().sessionData.isGameLoaded) {
+            OnGameLoaded();
+        }
+        else {
+            FindObjectOfType<GameManager>().OnGameLoaded.AddListener(OnGameLoaded);
+        }
     }
 
     public void SetState<T>() where T : State {
         playerState.AddState<T>();
+    }
+
+    void OnGameLoaded() {
+        playerState.AddState<CharacterSelectState>();
     }
 }
 
