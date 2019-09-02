@@ -33,16 +33,20 @@ public class KOTHZone : MonoBehaviour
     }
 
     public void ScoreUpdate() {
+        // Only update if the round is in progress AND there are players inside the area
+        if ((gameManager.sessionData.roundManager.roundIsStarted && currentPlayers.Count > 0) == false) return;
+
         elapsedTime += Time.deltaTime;
 
-        if (elapsedTime >= gameManager.gameSettings.pointDistributionInterval) {
+        if (elapsedTime >= gameManager.gameSettings.KOTHInterval) {
             //ADD SCORE HERE
-            if(currentPlayers.Count != 0){
-                foreach(PlayerController player in currentPlayers){
-                    gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.pointsPerInterval*1.5f);
-                }
+            foreach(PlayerController player in currentPlayers){
+                gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.KOTHPoints);
             }
+
+            // Reset time + inform listeners of score change
             elapsedTime = 0f;
+            gameManager.OnScoreUpdated.Invoke();
         }
     } 
 

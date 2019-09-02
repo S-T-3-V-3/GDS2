@@ -19,6 +19,9 @@ public class GameSettings : ScriptableObject {
     public float pointsPerInterval = 10;
     public float pointDistributionInterval = 2f;
     [Space]
+    public float KOTHPoints = 1;
+    public float KOTHInterval = 0.1f;
+    [Space]
     public List<MapSettings> roundMapSettings;
 
     // Can explore options with alternate game modes including base stat modifiers
