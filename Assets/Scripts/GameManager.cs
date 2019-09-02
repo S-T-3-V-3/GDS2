@@ -14,12 +14,16 @@ public class GameManager : MonoBehaviour
     public Material WallMaterial;
     public Transform playerParent;
 
+    //Sam
+    public GameObject KothPrefab;
+
     [Space]
     public GameSettings gameSettings;
     public SessionData sessionData;
     public HUDManager hud;
 
     [Space]
+    public GameObject currentKoth;
     public List<PlayerController> currentPlayers;
     public List<Vector3> tilePositions;
 
@@ -38,6 +42,8 @@ public class GameManager : MonoBehaviour
         sessionData = this.gameObject.AddComponent<SessionData>();
 
         sessionData.isStarted = false;
+
+        OnMapLoaded.AddListener(SpawnKoth); //Sam
     }
 
     void Update() {
@@ -120,6 +126,7 @@ public class GameManager : MonoBehaviour
     public void UnloadMap() {
         if (mapManager == null) return;
         mapManager.UnloadMap();
+        DespawnKoth(); //Sam
     }
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
@@ -173,5 +180,15 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    //Sam
+    public void SpawnKoth() {
+        currentKoth = GameObject.Instantiate(KothPrefab, new Vector3(0,0.7f,0), transform.rotation);
+    }
+    
+    //Sam
+    void DespawnKoth() {
+        Destroy(currentKoth);
     }
 }

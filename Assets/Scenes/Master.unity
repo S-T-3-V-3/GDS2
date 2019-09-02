@@ -96,7 +96,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: f932f4c80342d6d4195d56d73f077515,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -7500,10 +7501,14 @@ MonoBehaviour:
     type: 3}
   AnnouncementPrefab: {fileID: 1224995922393820747, guid: f8f89aa8201fb28439845c7f7651a283,
     type: 3}
+  WallMaterial: {fileID: 2100000, guid: 94b4103681e3825428a3135e1e9515ea, type: 2}
   playerParent: {fileID: 1569030456}
+  KothPrefab: {fileID: 5252853446406301138, guid: a429382e3e538a04b927f0011b700f05,
+    type: 3}
   gameSettings: {fileID: 11400000, guid: 382b11531d1b49a4e8ae5eb37142f8fd, type: 2}
   sessionData: {fileID: 0}
   hud: {fileID: 738770698}
+  currentKoth: {fileID: 0}
   currentPlayers: []
   tilePositions: []
   OnGameLoaded:

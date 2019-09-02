@@ -18,7 +18,7 @@ MonoBehaviour:
   baseTileValue: 1
   specialTileValue: 10
   pointsPerKill: 10
-  pointsPerInterval: 10
+  pointsPerInterval: 10  
   pointDistributionInterval: 2
   roundMapSettings:
   - tileSize: 0.85

@@ -25,6 +25,7 @@ public class SessionData : MonoBehaviour{
         gameManager = this.GetComponent<GameManager>();
         roundManager = this.gameObject.AddComponent<RoundManager>();
         score = new ScoreHandler(gameManager);   
+
     }
 
     public void Reset() {
