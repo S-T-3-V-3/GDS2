@@ -5456,6 +5456,7 @@ MonoBehaviour:
   debugMenu: {fileID: 780712925}
   joinMessage: {fileID: 1447769083}
   carouselMessage: {fileID: 1255394689}
+  playerLobby: {fileID: 1721186917}
   debugHUD:
     sessionStatusText: {fileID: 1479253021}
     roundStatusText: {fileID: 2023799695}
@@ -6651,7 +6652,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1447769084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7003,7 +7004,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1721186918
 RectTransform:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ public class HUDManager : MonoBehaviour
     public GameObject debugMenu;
     public GameObject joinMessage;
     public GameObject carouselMessage;
+    public GameObject playerLobby;
     public DebugHUD debugHUD;
     public ConnectedPlayers connectedPlayers;
 
@@ -38,6 +39,7 @@ public class HUDManager : MonoBehaviour
     public void Reset() {
         gameplay.SetActive(false);
         joinMessage.SetActive(true);
+        playerLobby.SetActive(true);
         connectedPlayers.gameObject.SetActive(true);
         
         UpdatePlayers();
@@ -104,6 +106,7 @@ public class HUDManager : MonoBehaviour
 
     void OnRoundPrepare() {
         joinMessage.SetActive(false);
+        playerLobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(false);
     }
     

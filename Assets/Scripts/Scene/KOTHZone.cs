@@ -72,7 +72,7 @@ public class KOTHZone : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {   
         if (gameManager.sessionData.roundManager.roundIsStarted == false) return;        
-        if (other.transform.parent.GetComponent<PlayerController>() == null) return;
+        if (other.transform.parent.GetComponent<PlayerActiveState>() == null) return;
 
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
         currentPlayers.Add(overlappingPlayer);
@@ -84,7 +84,6 @@ public class KOTHZone : MonoBehaviour
     void OnTriggerExit (Collider other)
     {
         if (gameManager.sessionData.roundManager.roundIsStarted == false) return;        
-        if (other.transform.parent.GetComponent<PlayerController>() == null) return;
 
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
         currentPlayers.Remove(overlappingPlayer);
