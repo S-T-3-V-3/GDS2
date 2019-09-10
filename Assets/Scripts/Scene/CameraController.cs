@@ -56,7 +56,8 @@ public class CameraController : MonoBehaviour
     }
 
     void doReset() {
-        Vector3 newPos = Vector3.SmoothDamp(this.gameObject.transform.position, resetPos, ref currentVelocity, smoothTime);
+        Vector3 currentPos = new Vector3(this.gameObject.transform.position.x, cameraTransform.localPosition.y, this.gameObject.transform.position.z);
+        Vector3 newPos = Vector3.SmoothDamp(currentPos, resetPos, ref currentVelocity, smoothTime);
 
         this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
         cameraTransform.localPosition = new Vector3(0,newPos.y,0);
