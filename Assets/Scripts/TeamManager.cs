@@ -8,6 +8,12 @@ public class TeamManager : MonoBehaviour
 
     void Awake() {
         GameManager gameManager = this.GetComponent<GameManager>();
+
+        currentTeams = new List<Team>();
+
+        foreach (Team team in gameManager.teamSettings.teams) {
+            currentTeams.Add(team);
+        }
     }
 
     public void JoinTeam(PlayerController player, TeamID teamID) {
@@ -16,11 +22,6 @@ public class TeamManager : MonoBehaviour
 
     public void LeaveTeam(PlayerController player, TeamID teamID) {
         currentTeams.Where(x => x.ID == teamID).First().RemovePlayer(player);
-    }
-
-
-    public Material GetTeamColor(TeamID teamID) {
-        return currentTeams.Where(x => x.ID == teamID).First().teamColor;
     }
 
     public Team GetTeam(TeamID teamID) {
@@ -32,7 +33,10 @@ public class TeamManager : MonoBehaviour
 public class Team {
     public List<PlayerController> players;
     public TeamID ID;
-    public Material teamColor;
+    public Color color;
+    public Material tileMat;
+    public Material playerMat;
+    public Material projectileMat;
 
     public void AddPlayer(PlayerController player) {
         players.Add(player);

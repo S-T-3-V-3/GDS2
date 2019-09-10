@@ -4,9 +4,11 @@ using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
+    public Light projectileLight;
     public GameObject projectileBody;
     public ProjectileEvent OnProjectileOverlap;
 
+    GameManager gameManager;
     PlayerController owningPlayer;
     GameObject owner;
     Vector3 movementDirection;
@@ -17,6 +19,8 @@ public class Projectile : MonoBehaviour
 
     public void Init(PlayerController owningPlayer, Vector3 forwardVector, GunType gun)
     {
+        gameManager = FindObjectOfType<GameManager>();
+
         this.owningPlayer = owningPlayer;
         this.owner = owningPlayer.model;
         this.lifeTime = gun.projectileLifetime;
@@ -26,6 +30,12 @@ public class Projectile : MonoBehaviour
         damage = gun.projectileDamage;
 
         projectileBody.transform.localScale = new Vector3(gun.projectileSize, gun.projectileSize, gun.projectileSize);
+
+        //projectileBody.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(owningPlayer.teamID).projectileMat;
+        projectileBody.GetComponent<MeshRenderer>().material.color = Color.white;
+
+        projectileLight.color = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
+        //projectileLight.color = Color.white;
 
         if (OnProjectileOverlap == null)
             OnProjectileOverlap = new ProjectileEvent();
@@ -73,4 +83,5 @@ public class Projectile : MonoBehaviour
 
 public class ProjectileEvent : UnityEvent<GameObject>
 {
+
 }

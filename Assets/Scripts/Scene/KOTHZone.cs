@@ -4,32 +4,41 @@ using UnityEngine;
 
 public class KOTHZone : MonoBehaviour
 {   
-    GameManager gameManager;
-    Renderer rend;
     public List<PlayerController> currentPlayers;
+    public float moveSpeed = 10f;
+
+    GameManager gameManager;
+    Renderer rend;    
     Color col = Color.white;
+    Vector3 currentVelocity;
+    Vector3 targetPos = Vector3.zero;
 
     float elapsedTime = 0f;
 
-    // Start is called before the first frame update
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        rend = GetComponent<Renderer>();        
+        rend = GetComponent<Renderer>(); 
+        targetPos = gameManager.GetRandomPosition();
     }
 
     // Update is called once per frame
     void Update() {
+        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;
+
         ScoreUpdate();
+
         if(currentPlayers.Count > 0){            
-            col.a = .75f;
-            rend.material.SetColor("_BaseColor", col);
+            col.a = .1f;
+            rend.material.SetColor("_TintColor", col);
             //Debug.Log("LIT");
         } else {
-            col.a = .2f;
-            rend.material.SetColor("_BaseColor", col);
+            col.a = .05f;
+            rend.material.SetColor("_TintColor", col);
             //Debug.Log("UNLIT");
         }
+
+        SeekTarget();
     }
 
     public void ScoreUpdate() {
@@ -48,7 +57,17 @@ public class KOTHZone : MonoBehaviour
             elapsedTime = 0f;
             gameManager.OnScoreUpdated.Invoke();
         }
-    } 
+    }
+
+    void SeekTarget() {
+        if ((this.transform.position - targetPos).magnitude > 0.5f) {
+            this.transform.position = Vector3.SmoothDamp(this.transform.position, targetPos, ref currentVelocity, moveSpeed);
+        }
+        else {
+            targetPos = gameManager.GetRandomPosition();
+            this.transform.position = Vector3.SmoothDamp(this.transform.position, targetPos, ref currentVelocity, moveSpeed);
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {   

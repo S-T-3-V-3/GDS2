@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public StateManager playerState;
     public PlayerCharacter character;
     public GameObject model;
+    public Light playerGlow;
     [Space]
 
     public Stats currentStats;
@@ -59,6 +60,9 @@ public class PlayerActiveState : State
         playerController.model.SetActive(true);
         playerController.healthText.gameObject.SetActive(true);
 
+        playerController.model.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(playerController.teamID).playerMat;
+        playerController.playerGlow.color = gameManager.teamManager.GetTeam(playerController.teamID).color;
+
         playerController.currentStats.Respawn();
         playerController.currentStats.OnDeath.AddListener(OnDeath);
         playerController.currentStats.OnTakeDamage.AddListener(OnDamaged);
@@ -70,8 +74,6 @@ public class PlayerActiveState : State
 
         if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
         playerController.healthText.text = playerController.currentStats.health.ToString();        
-
-        playerController.model.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeam(playerController.teamID).teamColor;
     }
     
 
@@ -173,7 +175,7 @@ public class CharacterSelectState : State
             gun.gameObject.SetActive(false);
         }
 
-        gameManager.GetTeamManager().JoinTeam(playerController,playerController.teamID);
+        gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
     }
 
     public void OnLeftStick(InputValue value) {
@@ -181,7 +183,7 @@ public class CharacterSelectState : State
     }
 
     public void OnBumpers(InputValue value) {        
-        gameManager.GetTeamManager().LeaveTeam(playerController,playerController.teamID);
+        gameManager.teamManager.LeaveTeam(playerController,playerController.teamID);
         playerController.teamID += (int)value.Get<float>();
 
         if (playerController.teamID > TeamID.NONE)
@@ -190,7 +192,7 @@ public class CharacterSelectState : State
         if (playerController.teamID < TeamID.BLUE)
             playerController.teamID = TeamID.NONE;
             
-        gameManager.GetTeamManager().JoinTeam(playerController,playerController.teamID);
+        gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
 
         gameManager.OnPlayersChanged.Invoke();
     }

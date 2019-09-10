@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
+    public Transform cameraTransform;
+    public Camera mainCamera;
     public float smoothTime = 0.3f;
     public float minDistance = 10f;
     public float maxDistance = 3000f;
+    public float angle = 60f;
     
     GameManager gameManager;
     List<Transform> targets;
@@ -16,6 +18,7 @@ public class CameraController : MonoBehaviour
 
     Vector3 resetPos;
     float aspectRatio;
+    float targetAngle;
     bool isResetting = false;
 
     void Start() {
@@ -24,9 +27,10 @@ public class CameraController : MonoBehaviour
         gameManager.OnNewCameraTarget.AddListener(SetTargets);
         gameManager.sessionData.OnRoundComplete.AddListener(Reset);
 
-        aspectRatio = Camera.main.aspect;
+        aspectRatio = mainCamera.aspect;
+        targetAngle = angle;
         targets = new List<Transform>();
-        resetPos = this.transform.position;
+        resetPos = new Vector3(this.transform.position.x, cameraTransform.localPosition.y, this.transform.position.z);
 
         if (gameManager.sessionData == null)
             this.gameObject.SetActive(false);
@@ -40,7 +44,11 @@ public class CameraController : MonoBehaviour
         Vector3 centerPosition = GetCenterPosition();
         Vector3 distanceOffset = new Vector3(0,Mathf.Clamp(GetDistance(), minDistance, maxDistance),0);
 
-        this.gameObject.transform.position = Vector3.SmoothDamp(this.gameObject.transform.position, centerPosition+distanceOffset, ref currentVelocity, smoothTime);
+        Vector3 currentPos = new Vector3(this.gameObject.transform.position.x, cameraTransform.localPosition.y, this.gameObject.transform.position.z);
+        Vector3 newPos = Vector3.SmoothDamp(currentPos, centerPosition+distanceOffset, ref currentVelocity, smoothTime);
+
+        this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
+        cameraTransform.localPosition = new Vector3(0,newPos.y,0);
     }
 
     public void Reset() {
@@ -48,9 +56,12 @@ public class CameraController : MonoBehaviour
     }
 
     void doReset() {
-        this.gameObject.transform.position = Vector3.SmoothDamp(this.gameObject.transform.position, resetPos, ref currentVelocity, smoothTime);
+        Vector3 newPos = Vector3.SmoothDamp(this.gameObject.transform.position, resetPos, ref currentVelocity, smoothTime);
 
-        if ((this.gameObject.transform.position - resetPos).magnitude < 1f)
+        this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
+        cameraTransform.localPosition = new Vector3(0,newPos.y,0);
+
+        if ((newPos - resetPos).magnitude < 1f)
             isResetting = false;
     }
 

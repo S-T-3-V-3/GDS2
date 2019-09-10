@@ -42,7 +42,7 @@ public class Tile : MonoBehaviour
             gameManager.OnTilesChanged.Invoke();
         }
 
-        this.gameObject.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeamColor(overlappingPlayer.teamID);
+        this.gameObject.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
     }
 
     public TeamID GetTeam() {

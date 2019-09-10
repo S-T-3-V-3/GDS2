@@ -12,7 +12,7 @@ public class GunComponent : MonoBehaviour
     void Start() {
         gunModel = GameObject.Instantiate(gun.gunPrefab,this.gameObject.transform);
         gunModel.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
-        gunModel.GetComponent<Renderer>().material = FindObjectOfType<GameManager>().GetTeamManager().GetTeamColor(owner.teamID);
+        gunModel.GetComponent<Renderer>().material = FindObjectOfType<GameManager>().teamManager.GetTeam(owner.teamID).playerMat;
     }
 
     void Update() {

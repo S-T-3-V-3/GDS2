@@ -52,6 +52,11 @@ public class MapManager : MonoBehaviour
         Destroy(this);
     }
 
+    void UpdateTilePositions() {
+        gameManager.tilePositions.Clear();
+        gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
+    }
+
     // TODO: This needs to be threaded
     void Update() {
         if (!innerRadiusSpawned) {
@@ -65,8 +70,7 @@ public class MapManager : MonoBehaviour
             if (tiles[tiles.Count -1].distanceFromCenter >= mapSettings.innerRadius) {
                 innerRadiusSpawned = true;
 
-                gameManager.tilePositions.Clear();
-                gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
+                UpdateTilePositions();
             }
                 
         }
@@ -106,6 +110,8 @@ public class MapManager : MonoBehaviour
 
         tile.FindNeighbours();
         tile.SetWall();
+
+        UpdateTilePositions();
     }
 
     Tile GetRandomTile() {

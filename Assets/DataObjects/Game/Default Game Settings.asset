@@ -18,16 +18,18 @@ MonoBehaviour:
   baseTileValue: 1
   specialTileValue: 10
   pointsPerKill: 10
-  pointsPerInterval: 10  
+  pointsPerInterval: 10
   pointDistributionInterval: 2
+  KOTHPoints: 1
+  KOTHInterval: 0.1
   roundMapSettings:
   - tileSize: 0.85
     tilePadding: 0.1
-    innerRadius: 8
+    innerRadius: 9
     outerRadius: 2
     falloff: 48
     numAdditionalZones: 3
-    numObstacles: 5
+    numObstacles: 10
     maxObstacleSize: 3
   - tileSize: 0.85
     tilePadding: 0.1
@@ -35,5 +37,5 @@ MonoBehaviour:
     outerRadius: 5
     falloff: 48
     numAdditionalZones: 3
-    numObstacles: 12
+    numObstacles: 20
     maxObstacleSize: 5

@@ -9,6 +9,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public GameObject TilePrefab;
+    public GameObject CameraPrefab;
     public GameObject MainMenuPrefab;
     public GameObject AnnouncementPrefab;
     public Material WallMaterial;
@@ -19,11 +20,13 @@ public class GameManager : MonoBehaviour
 
     [Space]
     public GameSettings gameSettings;
+    public TeamSettings teamSettings;
     public SessionData sessionData;
     public HUDManager hud;
+    public TeamManager teamManager;
 
     [Space]
-    public GameObject currentKoth;
+    public GameObject KingOfTheHill;
     public List<PlayerController> currentPlayers;
     public List<Vector3> tilePositions;
 
@@ -37,9 +40,13 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnMapLoaded;
 
     MapManager mapManager;
+    Camera mainCamera;
 
     void Awake() {
         sessionData = this.gameObject.AddComponent<SessionData>();
+        teamManager = this.gameObject.AddComponent<TeamManager>();
+        
+        mainCamera = GameObject.Instantiate(CameraPrefab).GetComponent<CameraController>().mainCamera;
 
         sessionData.isStarted = false;
 
@@ -145,13 +152,9 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerLeft(PlayerInput exitingPlayer) {
         currentPlayers.Remove(exitingPlayer.GetComponent<PlayerController>());
-        GetTeamManager().LeaveTeam(exitingPlayer.GetComponent<PlayerController>(), exitingPlayer.GetComponent<PlayerController>().teamID);
+        teamManager.LeaveTeam(exitingPlayer.GetComponent<PlayerController>(), exitingPlayer.GetComponent<PlayerController>().teamID);
 
         OnNewCameraTarget.Invoke();
-    }
-
-    public TeamManager GetTeamManager() {
-        return this.GetComponent<TeamManager>();
     }
 
     public MapSettings GetMapSettings() {
@@ -173,6 +176,11 @@ public class GameManager : MonoBehaviour
         OnNewCameraTarget.Invoke();
     }
 
+    public Vector3 GetRandomPosition() {
+        int index = Random.Range(0,tilePositions.Count-1);
+        return tilePositions[index];
+    }
+
     IEnumerator LoadScene(string scene) {
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
 
@@ -184,11 +192,11 @@ public class GameManager : MonoBehaviour
 
     //Sam
     public void SpawnKoth() {
-        currentKoth = GameObject.Instantiate(KothPrefab, new Vector3(0,0.7f,0), transform.rotation);
+        KingOfTheHill = GameObject.Instantiate(KothPrefab, new Vector3(0,0.7f,0), transform.rotation);
     }
     
     //Sam
     void DespawnKoth() {
-        Destroy(currentKoth);
+        Destroy(KingOfTheHill);
     }
 }
