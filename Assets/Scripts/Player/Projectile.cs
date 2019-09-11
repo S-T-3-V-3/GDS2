@@ -31,11 +31,9 @@ public class Projectile : MonoBehaviour
 
         projectileBody.transform.localScale = new Vector3(gun.projectileSize, gun.projectileSize, gun.projectileSize);
 
-        //projectileBody.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(owningPlayer.teamID).projectileMat;
         projectileBody.GetComponent<MeshRenderer>().material.color = Color.white;
 
         projectileLight.color = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
-        //projectileLight.color = Color.white;
 
         if (OnProjectileOverlap == null)
             OnProjectileOverlap = new ProjectileEvent();

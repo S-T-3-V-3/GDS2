@@ -78,6 +78,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e5e13762581de41b3957397c2eddb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HexagonEffect: {fileID: 646435394979036664, guid: 258c0778b4bcca94abc42ec204c04b31,
+    type: 3}
+  StarsEffect: {fileID: 8135599288784341108, guid: 45b21c2f53a1c5043aaff4dc9d80d215,
+    type: 3}
   neighbours: []
   distanceFromCenter: 0
   isWall: 0

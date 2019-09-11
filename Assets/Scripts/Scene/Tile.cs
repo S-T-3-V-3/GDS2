@@ -1,9 +1,13 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Tile : MonoBehaviour
 {
+    public GameObject HexagonEffect;
+    public GameObject StarsEffect;
+    [Space]
     public Tile[] neighbours;
     public int distanceFromCenter;
     public bool isWall = false;
@@ -12,13 +16,20 @@ public class Tile : MonoBehaviour
 
 
     Vector3[] traceRotations;
+    Vector3 wallOffset = new Vector3(0,1,0);
 
     TeamID currentTeam = TeamID.NONE;
     GameManager gameManager;
     MapManager mapManager;
+
+    GameObject currentHexEffect;
+    GameObject currentStarsEffect;
+
     float meshSize;
 
-    Vector3 wallOffset = new Vector3(0,1,0);
+    Material newTeamMat;
+
+    
 
     public void Init(GameManager gameManager, int distanceFromCenter, float meshSize) {
         this.gameManager = gameManager;
@@ -40,9 +51,33 @@ public class Tile : MonoBehaviour
             gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayer.teamID);
             currentTeam = overlappingPlayer.teamID;
             gameManager.OnTilesChanged.Invoke();
+
+            if (currentHexEffect != null) {
+                GameObject.Destroy(currentHexEffect);
+            }
+            currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
+            currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+            currentStarsEffect = GameObject.Instantiate(StarsEffect,this.transform.position,this.transform.rotation,this.transform);
+            currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+            ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
+            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
+
+            main = currentStarsEffect.GetComponent<ParticleSystem>().main;
+            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
+
+            newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
+
+            currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(UpdateMaterial);
         }
 
-        this.gameObject.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
+        //this.gameObject.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
+    }
+
+    void UpdateMaterial() {
+        this.gameObject.GetComponent<MeshRenderer>().material = newTeamMat;
+        currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.RemoveListener(UpdateMaterial);
     }
 
     public TeamID GetTeam() {
