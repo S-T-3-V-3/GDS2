@@ -1,22 +1,37 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class KOTHZone : MonoBehaviour
 {   
     public List<PlayerController> currentPlayers;
     public float moveSpeed = 10f;
 
+    UnityEvent OnPlayersChanged;
+
     GameManager gameManager;
     Renderer rend;    
-    Color col = Color.white;
+    Color baseColor = Color.white;
+    Color targetColor, currentColor;
     Vector3 currentVelocity;
     Vector3 targetPos = Vector3.zero;
 
     float elapsedTime = 0f;
+    float activeAlpha = 0.15f;
+    float inactiveAlpha = 0.05f;
+    float targetAlpha;
+    bool isChangingColor = false;
+    int numPlayers = 0;
+
+    float colorChangeTransitionTime = 0.2f;
+    float colorChangeElapsedTime = 0f;
 
     void Start()
     {
+        OnPlayersChanged = new UnityEvent();
+        OnPlayersChanged.AddListener(SetNewColor);
+        
         gameManager = FindObjectOfType<GameManager>();
         rend = GetComponent<Renderer>(); 
         targetPos = gameManager.GetRandomPosition();
@@ -26,30 +41,21 @@ public class KOTHZone : MonoBehaviour
     void Update() {
         if (gameManager.sessionData.roundManager.roundIsStarted == false) return;
 
-        ScoreUpdate();
+        if (numPlayers > 0)
+            DoScoreUpdate();
 
-        if(currentPlayers.Count > 0){            
-            col.a = .1f;
-            rend.material.SetColor("_TintColor", col);
-            //Debug.Log("LIT");
-        } else {
-            col.a = .05f;
-            rend.material.SetColor("_TintColor", col);
-            //Debug.Log("UNLIT");
-        }
+        if (isChangingColor)
+            DoColorUpdate();
 
         SeekTarget();
     }
 
-    public void ScoreUpdate() {
-        // Only update if the round is in progress AND there are players inside the area
-        if ((gameManager.sessionData.roundManager.roundIsStarted && currentPlayers.Count > 0) == false) return;
-
+    public void DoScoreUpdate() {
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= gameManager.gameSettings.KOTHInterval) {
             //ADD SCORE HERE
-            foreach(PlayerController player in currentPlayers){
+            foreach (PlayerController player in currentPlayers) {
                 gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.KOTHPoints);
             }
 
@@ -57,6 +63,33 @@ public class KOTHZone : MonoBehaviour
             elapsedTime = 0f;
             gameManager.OnScoreUpdated.Invoke();
         }
+    }
+
+    void SetNewColor()
+    {
+        numPlayers = currentPlayers.Count;
+        currentColor = rend.material.GetColor("_TintColor");
+        targetAlpha = currentPlayers.Count > 0 ? activeAlpha : inactiveAlpha;
+        targetColor = baseColor;
+
+        foreach (PlayerController p in currentPlayers) {
+            targetColor += gameManager.teamManager.GetTeam(p.teamID).color;
+        }
+
+        targetColor /= numPlayers+1;
+        targetColor.a = targetAlpha;
+
+        isChangingColor = true;
+        colorChangeElapsedTime = 0f;
+    }
+
+    void DoColorUpdate() {
+        rend.material.SetColor("_TintColor", Color.Lerp(currentColor,targetColor,colorChangeElapsedTime/colorChangeTransitionTime));
+
+        if (colorChangeElapsedTime > colorChangeTransitionTime)
+            isChangingColor = false;
+        else
+            colorChangeElapsedTime += Time.deltaTime;
     }
 
     void SeekTarget() {
@@ -77,8 +110,7 @@ public class KOTHZone : MonoBehaviour
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
         currentPlayers.Add(overlappingPlayer);
 
-        //Change colour
-        //this.gameObject.GetComponent<MeshRenderer>().material = gameManager.GetTeamManager().GetTeamColor(overlappingPlayer.teamID);
+        OnPlayersChanged.Invoke();
     }
 
     void OnTriggerExit (Collider other)
@@ -87,5 +119,7 @@ public class KOTHZone : MonoBehaviour
 
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
         currentPlayers.Remove(overlappingPlayer);
+
+        OnPlayersChanged.Invoke();
     }
 }

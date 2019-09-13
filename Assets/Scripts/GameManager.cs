@@ -192,7 +192,9 @@ public class GameManager : MonoBehaviour
 
     //Sam
     public void SpawnKoth() {
-        KingOfTheHill = GameObject.Instantiate(KothPrefab, new Vector3(0,0.7f,0), transform.rotation);
+        Vector3 targetPos = GetRandomPosition();
+        targetPos.y = 0.7f;
+        KingOfTheHill = GameObject.Instantiate(KothPrefab, targetPos, transform.rotation);
     }
     
     //Sam

@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 1
-  m_RendererPriority: 0
+  m_RendererPriority: 5
   m_Materials:
   - {fileID: 2100000, guid: 76aca34ab809ced41aee74d404c90e65, type: 2}
   m_StaticBatchInfo:

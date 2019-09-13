@@ -1,12 +1,11 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Tile : MonoBehaviour
 {
     public GameObject HexagonEffect;
     public GameObject StarsEffect;
+    public TileSprite HexSprite;
     [Space]
     public Tile[] neighbours;
     public int distanceFromCenter;
@@ -16,7 +15,7 @@ public class Tile : MonoBehaviour
 
 
     Vector3[] traceRotations;
-    Vector3 wallOffset = new Vector3(0,1,0);
+    Vector3 wallOffset = new Vector3(0,1.5f,0);
 
     TeamID currentTeam = TeamID.NONE;
     GameManager gameManager;
@@ -69,15 +68,10 @@ public class Tile : MonoBehaviour
 
             newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
 
-            currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(UpdateMaterial);
+            HexSprite.DoColorChange(gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color);
+
+            //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
         }
-
-        //this.gameObject.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
-    }
-
-    void UpdateMaterial() {
-        this.gameObject.GetComponent<MeshRenderer>().material = newTeamMat;
-        currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.RemoveListener(UpdateMaterial);
     }
 
     public TeamID GetTeam() {
