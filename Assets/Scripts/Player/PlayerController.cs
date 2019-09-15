@@ -120,18 +120,22 @@ public class PlayerActiveState : State
         if (stickPosition.magnitude > deadZoneRange) {
             float inputRotation = Mathf.Atan2(stickPosition.x,stickPosition.y) * Mathf.Rad2Deg; 
             playerController.model.transform.rotation = Quaternion.Euler(0,inputRotation,0);
+            isShooting = true;
+        }
+        else {
+            isShooting = false;
         }
     }
 
     // Fired upon change in shoot input
-    public void OnRightTrigger(InputValue value) {
+    /*public void OnRightTrigger(InputValue value) {
         float shootValue = value.Get<float>();
 
         if(shootValue < deadZoneRange)
             isShooting = false;
         else
             isShooting = true;
-    }
+    }*/
 
     // Handles movement of the player
     void doMovement() {
