@@ -38,7 +38,8 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnScoreUpdated;
     public UnityEvent OnTilesChanged;
     public UnityEvent OnMapLoaded;
-
+    [Space]
+    
     MapManager mapManager;
     Camera mainCamera;
 

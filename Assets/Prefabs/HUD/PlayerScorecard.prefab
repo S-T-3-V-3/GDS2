@@ -469,7 +469,7 @@ GameObject:
   - component: {fileID: 7054841142854397614}
   - component: {fileID: 4466854657411632011}
   m_Layer: 5
-  m_Name: InGamePlayerHUD
+  m_Name: PlayerScorecard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,7 +504,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1962081103367103940}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01f7723909fc52746b190dd6399702fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 00ef5d9f11cbf40458ceae104f7e1ce2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerPortrait: {fileID: 1962081102549448648}
