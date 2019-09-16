@@ -2,11 +2,12 @@
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 public class HUDManager : MonoBehaviour
 {
     public GameManager gameManager;
-    public TextMeshProUGUI ScoreText;
+    //public TextMeshProUGUI ScoreText;
     public TextMeshProUGUI RoundTimer;
     public GameObject gameplay;
     public GameObject mainMenu;
@@ -16,6 +17,11 @@ public class HUDManager : MonoBehaviour
     public GameObject playerLobby;
     public DebugHUD debugHUD;
     public ConnectedPlayers connectedPlayers;
+
+    public GameObject upperUI;
+    public GameObject playersLayout;
+    public GameObject playerHUDPrefab;
+    List<PlayerHUDPrefab> currentPlayerHUDs;
 
     void Start() {
         gameManager.OnScoreUpdated.AddListener(UpdateScore);
@@ -74,11 +80,32 @@ public class HUDManager : MonoBehaviour
     }
 
     void UpdateScore() {
-        ScoreText.text = "";
+        //ScoreText.text = "";
 
         foreach (ScoreClass teamScore in gameManager.sessionData.score.currentTeams) {
             if (teamScore.score > 0)
-                ScoreText.text += teamScore.teamID + ": " + (int)teamScore.score + "\n";
+                foreach(PlayerHUDPrefab php in currentPlayerHUDs)
+                {
+                    if(php.teamText.text == ("" + teamScore.teamID))
+                    {
+                        php.pointsText.text = "" + (int)teamScore.score + " pts";
+                    }
+                    
+                }
+                //ScoreText.text += teamScore.teamID + ": " + (int)teamScore.score + "\n";
+        }
+    }
+
+    public void UpdateHealth(PlayerController pc, int health)
+    {
+        //TO:DO Possibly add HUD animation code here? 
+        foreach (PlayerHUDPrefab php in currentPlayerHUDs)
+        {
+            if (php.playerText.text == "Player " + (gameManager.currentPlayers.IndexOf(pc) + 1))
+            {
+                php.playerHPText.text = "" + health.ToString();
+                php.playerHP.uvRect = new Rect((1f-health/100f), 0, 1, 1); //100 for now, might need to change w/HP buffs
+            }
         }
     }
 
@@ -108,6 +135,16 @@ public class HUDManager : MonoBehaviour
         joinMessage.SetActive(false);
         playerLobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(false);
+
+        if (currentPlayerHUDs == null)
+            currentPlayerHUDs = new List<PlayerHUDPrefab>();
+
+        foreach (PlayerController player in gameManager.currentPlayers)
+        {
+           currentPlayerHUDs.Add(CreatePlayerHUD((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+            
+        }
+        upperUI.SetActive(true);
     }
     
     void OnCarouselEnd()
@@ -119,10 +156,28 @@ public class HUDManager : MonoBehaviour
     {
         carouselMessage.SetActive(true);
     }
+
+    public PlayerHUDPrefab CreatePlayerHUD(int playerNumber, TeamID playerTeam)
+    {
+        GameObject newHUDInstance = Instantiate(playerHUDPrefab, playersLayout.transform) as GameObject;
+        PlayerHUDPrefab php = newHUDInstance.GetComponent<PlayerHUDPrefab>();
+        php.playerText.text = "Player " + playerNumber;
+        php.teamText.text = "" + playerTeam;
+        php.teamText.color = gameManager.teamManager.GetTeam(playerTeam).color;
+        php.pointsText.color = gameManager.teamManager.GetTeam(playerTeam).color;
+        php.playerHP.uvRect = new Rect(0, 0, 1, 1);
+
+        //When/if we need to change player portraits -
+        //php.playerPortrait.sprite = ;
+        return php;
+    }
 }
+
+
 
 [System.Serializable]
 public class DebugHUD {
     public Text sessionStatusText;
     public Text roundStatusText;
 }
+

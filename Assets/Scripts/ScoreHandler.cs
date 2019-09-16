@@ -62,6 +62,19 @@ public class ScoreHandler {
         currentTeams.Where(x => x.teamID == oldTeamID).First().numTiles--;
         currentTeams.Where(x => x.teamID == newTeamID).First().numTiles++;
     }
+
+    public float GetTotalTiles()
+    {
+        int numTilesCaptured = 0;
+
+        foreach (ScoreClass team in currentTeams)
+        {
+            if (team.teamID != TeamID.NONE)
+                numTilesCaptured += team.numTiles;
+        }
+        return numTilesCaptured;
+    }
+    
 }
 
 public class ScoreClass {

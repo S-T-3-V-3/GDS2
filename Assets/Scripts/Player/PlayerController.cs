@@ -73,7 +73,9 @@ public class PlayerActiveState : State
         rigidBody = this.GetComponentInChildren<Rigidbody>(true);
 
         if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
-        playerController.healthText.text = playerController.currentStats.health.ToString();        
+        playerController.healthText.text = playerController.currentStats.health.ToString();
+
+        
     }
     
 
@@ -154,6 +156,7 @@ public class PlayerActiveState : State
 
     void OnDamaged() {
         playerController.healthText.text = playerController.currentStats.health.ToString();
+        gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
     }
 
     void OnDeath() {
@@ -279,6 +282,7 @@ public class PlayerDeathState : State
         if (timeElapsed >= respawnTime) {
             playerController.SetState<PlayerActiveState>();
             gameManager.SpawnPlayer(playerController);
+            gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
         }
     }
 }
