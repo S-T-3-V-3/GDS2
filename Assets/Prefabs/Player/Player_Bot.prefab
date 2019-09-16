@@ -43,7 +43,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 2
-  m_Color: {r: 1, g: 0.050477598, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 47.746483
   m_Range: 1
   m_SpotAngle: 30
@@ -302,7 +302,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ecfdf8222d815874ca67aaee0b1621c1, type: 2}
+      objectReference: {fileID: 2100000, guid: ae78c1bc1a36c0c4498504cc23405f49, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04c840f8ea9e8c94ba5fa3981f65991d, type: 3}
 --- !u!4 &5385447580643720999 stripped

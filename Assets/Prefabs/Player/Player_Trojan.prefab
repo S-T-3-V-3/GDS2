@@ -28,6 +28,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2712127231824597754}
+  - {fileID: 6978852742404787595}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -57,12 +58,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6978852742404787594}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.121, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2712127231824597754}
-  m_RootOrder: 2
+  m_Father: {fileID: 6978852741382163035}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &6978852742404787590
 Light:
@@ -297,6 +298,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 87421c8b8179663439aa3983009f4c46, type: 2}
+    - target: {fileID: -6287836789983732601, guid: 39ea1e045bf650c4a9d57c0da08417d9,
+        type: 3}
+      propertyPath: m_Name
+      value: Eyes
+      objectReference: {fileID: 0}
     - target: {fileID: 5552343918351836613, guid: 39ea1e045bf650c4a9d57c0da08417d9,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
