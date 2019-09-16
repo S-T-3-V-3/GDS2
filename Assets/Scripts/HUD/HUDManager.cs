@@ -5,24 +5,27 @@ using System;
 
 public class HUDManager : MonoBehaviour
 {
+    public GameManager gameManager;
     public TextMeshProUGUI ScoreText;
     public TextMeshProUGUI RoundTimer;
+    public GameObject gameplay;
+    public GameObject mainMenu;
     public GameObject debugMenu;
     public GameObject joinMessage;
     public GameObject carouselMessage;
+    public GameObject playerLobby;
     public DebugHUD debugHUD;
     public ConnectedPlayers connectedPlayers;
 
-    GameManager gameManager;
-
     void Start() {
-        gameManager = FindObjectOfType<GameManager>();
-
         gameManager.OnScoreUpdated.AddListener(UpdateScore);
         gameManager.OnPlayersChanged.AddListener(UpdatePlayers);
+        gameManager.OnGameLoaded.AddListener(OnGameLoaded);
         gameManager.sessionData.OnRoundPrepare.AddListener(OnRoundPrepare);
         gameManager.sessionData.OnCarouselBegin.AddListener(OnCarouselBegin);
         gameManager.sessionData.OnCarouselEnd.AddListener(OnCarouselEnd);
+
+        Reset();
         
         debugMenu.SetActive(false);
     }
@@ -33,8 +36,19 @@ public class HUDManager : MonoBehaviour
         UpdateTimer();
     }
 
+    public void Reset() {
+        gameplay.SetActive(false);
+        joinMessage.SetActive(true);
+        playerLobby.SetActive(true);
+        connectedPlayers.gameObject.SetActive(true);
+        
+        UpdatePlayers();
+
+        mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
+    }
+
     public void Announcement(string message, float time, Color ? color = null) {
-        Announcement newAnnouncement = GameObject.Instantiate(gameManager.announcementPrefab, this.transform).GetComponent<Announcement>();
+        Announcement newAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
         newAnnouncement.Init(message, time, color ?? Color.white);
     }
 
@@ -85,8 +99,15 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    void OnGameLoaded() {
+        gameplay.SetActive(true);
+        GameObject.Destroy(mainMenu);
+    }
+
     void OnRoundPrepare() {
         joinMessage.SetActive(false);
+        playerLobby.SetActive(false);
+        connectedPlayers.gameObject.SetActive(false);
     }
     
     void OnCarouselEnd()

@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+
 public class NewGameOnClick : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("BattleScene");
+        FindObjectOfType<GameManager>().LoadGame();
     }
 }

@@ -18,7 +18,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 7185639305933918909, guid: e1d33f1f12ae7a243abad3c35232f70b,
     type: 3}
   reloadTime: 0.3
-  projectileSize: 0.5
-  projectileSpeed: 10
+  projectileSize: 0.4
+  projectileSpeed: 11
   projectileDamage: 10
-  projectileLifetime: 3
+  projectileLifetime: 1.5

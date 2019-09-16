@@ -14,8 +14,9 @@ public class MapManager : MonoBehaviour
 
     bool innerRadiusSpawned = false;
     bool wallsSpawned = false;
+    bool obstaclesSpawned = false;
 
-    void Start() {
+    void Awake() {
         gameManager = this.GetComponent<GameManager>();
         mapSettings = gameManager.GetMapSettings();
 
@@ -51,6 +52,12 @@ public class MapManager : MonoBehaviour
         Destroy(this);
     }
 
+    void UpdateTilePositions() {
+        gameManager.tilePositions.Clear();
+        gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
+    }
+
+    // TODO: This needs to be threaded
     void Update() {
         if (!innerRadiusSpawned) {
             CalculateEdges();
@@ -63,8 +70,7 @@ public class MapManager : MonoBehaviour
             if (tiles[tiles.Count -1].distanceFromCenter >= mapSettings.innerRadius) {
                 innerRadiusSpawned = true;
 
-                gameManager.tilePositions.Clear();
-                gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
+                UpdateTilePositions();
             }
                 
         }
@@ -79,9 +85,37 @@ public class MapManager : MonoBehaviour
 
             foreach(Tile w in walls)
                 w.SetWall();
-            
+        }
+        else if (wallsSpawned && !obstaclesSpawned) {
+            for (int i = 0; i < gameManager.GetMapSettings().numObstacles; i++) {                
+                Tile tile = GetRandomTile();
+                bool isEdge = tile.isEdge;
+
+                while (isEdge) {
+                    tile = GetRandomTile();
+                    isEdge = tile.isEdge;
+                }
+                
+                NewObstacle(tile);
+            }
+
+            obstaclesSpawned = true;
             gameManager.OnMapLoaded.Invoke();
         }
+    }
+
+    void NewObstacle(Tile tile) {
+        tiles.Remove(tile);
+        walls.Add(tile);
+
+        tile.FindNeighbours();
+        tile.SetWall();
+
+        UpdateTilePositions();
+    }
+
+    Tile GetRandomTile() {
+        return tiles[Random.Range(0,tiles.Count - 1)];
     }
 
     void CalculateEdges() {
@@ -117,7 +151,7 @@ public class MapManager : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             if (currentTile.neighbours[i] == null) {
-                tiles.Add(GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>());
+                tiles.Add(GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>());
             }
         }
     } 
@@ -131,7 +165,7 @@ public class MapManager : MonoBehaviour
 
         if(!isWall) {
             if (tiles.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile tile = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                Tile tile = GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>();
                 tile.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 tile.transform.position = newPosition;
                 tiles.Add(tile);
@@ -141,7 +175,7 @@ public class MapManager : MonoBehaviour
         }
         else {
             if (walls.Where(x => x.transform.position == newPosition).Count() == 0) {
-                Tile wall = GameObject.Instantiate(gameManager.tilePrefab,tileParent.transform).GetComponent<Tile>();
+                Tile wall = GameObject.Instantiate(gameManager.TilePrefab,tileParent.transform).GetComponent<Tile>();
                 wall.Init(gameManager, distanceFromCenter, mapSettings.tileSize+mapSettings.tilePadding);
                 wall.transform.position = newPosition;
                 wall.transform.parent = wallParent.transform;
@@ -185,6 +219,8 @@ public class MapSettings {
     public float falloff = 50;
     [Range(0,10)]
     public int numAdditionalZones = 3;
-    [Range(0,10)]
+    [Range(0,30)]
     public int numObstacles = 3;
+    [Range(0,10)]
+    public int maxObstacleSize = 3;
 }

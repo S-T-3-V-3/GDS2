@@ -49,7 +49,7 @@ public class ScoreHandler {
 
         currentTeams = new List<ScoreClass>();
 
-        foreach(TeamID teamID in gameManager.GetTeamManager().currentTeams.Select(x => x.ID)) {
+        foreach(TeamID teamID in gameManager.teamManager.currentTeams.Select(x => x.ID)) {
             ScoreClass newTeam = new ScoreClass();
             newTeam.teamID = teamID;
             currentTeams.Add(newTeam);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class SessionData : MonoBehaviour{
     public bool isStarted = false;
+    public bool isGameLoaded = false;
     public RoundManager roundManager;
     public ScoreHandler score;
     public UnityEvent OnRoundPrepare;
@@ -24,6 +25,13 @@ public class SessionData : MonoBehaviour{
         gameManager = this.GetComponent<GameManager>();
         roundManager = this.gameObject.AddComponent<RoundManager>();
         score = new ScoreHandler(gameManager);   
+
+    }
+
+    public void Reset() {
+        score.Reset();
+        this.StopSession();
+        isGameLoaded = false;
     }
 
     public void StartSession() {
