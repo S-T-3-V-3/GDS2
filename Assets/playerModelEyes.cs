@@ -45,26 +45,69 @@ public class playerModelEyes : MonoBehaviour
     }
     public void SetExpressionWake()
     {
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 6));
+        print("Awake!");
+        StartCoroutine(Fade(8, 1, false, 1));
+
+        //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 6));
     }
 
     public void SetExpressionDie()
     {
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 7));
+        //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 7));
+        print("Die!");
+        StartCoroutine(Fade(8,1,true,1));
     }
 
     public void SetExpressionAngry()
     {
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 2));
+        print("Angry!");
+        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -1));
     }
 
     public void SetExpressionScared()
     {
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 4));
+        print("Scared");
+        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -2));
     }
     public void SetExpressionNormal()
     {
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 8));
+        print("Normal");
+        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 0));
+    }
+    public void SetExpressionSquint()
+    {
+        print("Normal");
+        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -3));
+    }
+
+    IEnumerator Fade(int frameLength,int startFrame,bool reverse,float speed)
+    {
+        int direction;
+        if (reverse) direction = -1;
+        else direction = 1;
+
+        print("coroutine");
+
+        for (int currentFrame = startFrame; currentFrame <= frameLength; currentFrame++)
+        {
+            //Color c = renderer.material.color;
+            //c.a = ft;
+            //renderer.material.color = c;
+
+            
+            if (reverse)
+            {
+                eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction + (.0625f * frameLength)));
+            }
+            else
+            {
+                eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction));
+            }
+
+            print("anim frame " + currentFrame);
+
+            yield return null;
+        }
     }
 
 }

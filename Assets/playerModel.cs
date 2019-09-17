@@ -39,8 +39,27 @@ public class playerModel : MonoBehaviour
 
         if (Input.GetKeyDown("z"))
         {
-            setExpression(Random.Range(0, 5));
-            
+            setExpression(0);
+        }
+        if (Input.GetKeyDown("x"))
+        {
+            setExpression(1);
+        }
+        if (Input.GetKeyDown("c"))
+        {
+            setExpression(2);
+        }
+        if (Input.GetKeyDown("v"))
+        {
+            setExpression(3);
+        }
+        if (Input.GetKeyDown("b"))
+        {
+            setExpression(4);
+        }
+        if (Input.GetKeyDown("n"))
+        {
+            setExpression(5);
         }
 
     }
@@ -67,6 +86,9 @@ public class playerModel : MonoBehaviour
                 break;
             case 4:
                 eyeScript.SetExpressionScared();
+                break;
+            case 5:
+                eyeScript.SetExpressionSquint();
                 break;
             default:
                 eyeScript.SetExpressionNormal();
