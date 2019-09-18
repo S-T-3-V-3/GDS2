@@ -759,6 +759,38 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "FaceButtonSouth",
+                    "type": "Value",
+                    "id": "8657dbb6-df16-4f13-b4d6-9b6a73ed8ff6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "FaceButtonNorth",
+                    "type": "Value",
+                    "id": "735d1c5d-016b-4257-8a39-c9367f03f160",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "FaceButtonEast",
+                    "type": "Value",
+                    "id": "41db9bfc-ff1b-4756-b976-1cc3fce50041",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "FaceButtonWest",
+                    "type": "Value",
+                    "id": "a87fb7a9-7a7d-451a-9589-71963dd90c8f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -913,6 +945,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "LeftTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3bf55fb-afe4-4295-ba15-a612b829f55e",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FaceButtonSouth",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e9a9bc8c-8205-4683-bd10-7c12c13b88c9",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FaceButtonNorth",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "119bfe56-9fe6-4575-8fc3-b20828ad2bce",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FaceButtonEast",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8dd34cb-d3e7-4f69-aa1a-890b75625b85",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FaceButtonWest",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
