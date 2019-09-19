@@ -18,7 +18,7 @@ public class HUDManager : MonoBehaviour
     public GameObject upperUI;
     public GameObject playersLayout;
 
-    List<PlayerScorecard> playerScorecards;
+    public List<PlayerScorecard> playerScorecards;
     GameObject mainMenu;
 
     void Start() {
@@ -33,7 +33,7 @@ public class HUDManager : MonoBehaviour
     }
 
     void Update() {
-        if (gameManager.sessionData.roundManager.roundIsStarted) {
+        if (gameManager.sessionData.roundManager.isStarted) {
             float maxTime = gameManager.gameSettings.roundTime;
             float elapsedTime = gameManager.sessionData.roundManager.elapsedTime;
             float remainingTime = maxTime - elapsedTime;
@@ -90,7 +90,7 @@ public class HUDManager : MonoBehaviour
         {
             if (currentScorecard.playerText.text == "Player " + (gameManager.currentPlayers.IndexOf(pc) + 1))
             {
-                currentScorecard.playerHPText.text = "" + health.ToString();
+                currentScorecard.playerHPText.text = health.ToString();
                 currentScorecard.playerHP.uvRect = new Rect((1f-health/100f), 0, 1, 1); //100 for now, might need to change w/HP buffs
             }
         }
@@ -115,6 +115,8 @@ public class HUDManager : MonoBehaviour
         
         foreach (PlayerScorecard ps in playerScorecards)
             GameObject.Destroy(ps.gameObject);
+
+        playerScorecards.Clear();
 
         foreach (PlayerController player in gameManager.currentPlayers)
            playerScorecards.Add(CreatePlayerScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));

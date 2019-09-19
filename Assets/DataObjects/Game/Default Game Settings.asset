@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01745ca0970f7449ae21babf4858174, type: 3}
   m_Name: Default Game Settings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  roundTime: 90
+  roundTime: 20
   respawnTime: 3
   maxLives: 10
   baseTileValue: 1

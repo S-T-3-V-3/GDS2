@@ -39,7 +39,7 @@ public class KOTHZone : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
 
         if (numPlayers > 0)
             DoScoreUpdate();
@@ -104,7 +104,7 @@ public class KOTHZone : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;        
+        if (gameManager.sessionData.roundManager.isStarted == false) return;        
         if (other.transform.parent.GetComponent<PlayerActiveState>() == null) return;
 
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
@@ -115,7 +115,7 @@ public class KOTHZone : MonoBehaviour
 
     void OnTriggerExit (Collider other)
     {
-        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;        
+        if (gameManager.sessionData.roundManager.isStarted == false) return;        
 
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
         currentPlayers.Remove(overlappingPlayer);

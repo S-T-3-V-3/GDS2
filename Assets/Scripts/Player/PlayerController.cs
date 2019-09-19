@@ -81,7 +81,7 @@ public class PlayerActiveState : State
 
     void Update()
     {
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
         
         if (isShooting) {
             foreach (GunComponent gun in equippedGuns) {
@@ -92,7 +92,7 @@ public class PlayerActiveState : State
 
     void FixedUpdate()
     {
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
 
         doMovement();
     }
@@ -133,6 +133,10 @@ public class PlayerActiveState : State
             isShooting = false;
         else
             isShooting = true;
+    }
+
+    public void OnRightBumper(InputValue value) {
+        playerController.currentStats.TakeDamage(10);
     }
 
     // Handles movement of the player
