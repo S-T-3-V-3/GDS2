@@ -45,9 +45,9 @@ public class ConnectedPlayers : MonoBehaviour
 
         foreach (PlayerController pc in players.Where(x => x.model.activeSelf == false)) {    
             playerLobbyPrefabList.Add(Instantiate(PlayerLobbyPrefab,transform));
+
             playerLobbyPrefabList[playerLobbyPrefabList.Count-1].playerNumber.text = "Player " + (players.IndexOf(pc) + 1);
             playerLobbyPrefabList[playerLobbyPrefabList.Count-1].playerTeam.text = "" + pc.teamID; 
-
             playerLobbyPrefabList[playerLobbyPrefabList.Count-1].playerTeam.color = gameManager.teamManager.GetTeam(pc.teamID).color;
             
             PlayerUI newPlayer = new PlayerUI();
