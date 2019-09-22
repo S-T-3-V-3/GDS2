@@ -5,7 +5,7 @@ using UnityEngine;
 public class RoundManager : MonoBehaviour {
     public int roundNumber = 0;
     public float elapsedTime = 0f;
-    public bool roundIsStarted = false;
+    public bool isStarted = false;
     GameManager gameManager;
 
     StateManager roundState;
@@ -21,7 +21,7 @@ public class RoundManager : MonoBehaviour {
     public void Reset() {
         roundNumber = 0;
         elapsedTime = 0f;
-        roundIsStarted = false;
+        isStarted = false;
         this.SetState<RoundInctiveState>();
     }
 
@@ -47,7 +47,7 @@ public class RoundActiveState : State
         gameManager = this.GetComponent<GameManager>();
         manager = this.GetComponent<RoundManager>();
 
-        manager.roundIsStarted = true;
+        manager.isStarted = true;
         manager.elapsedTime = 0f;
         gameManager.OnNewCameraTarget.Invoke();
 
@@ -76,7 +76,7 @@ public class RoundInctiveState : State
         gameManager = this.GetComponent<GameManager>();
         manager = this.GetComponent<RoundManager>();
 
-        manager.roundIsStarted = false;
+        manager.isStarted = false;
     }
 }
 
@@ -93,7 +93,7 @@ public class RoundCompleteState : State
         gameManager = this.GetComponent<GameManager>();
         manager = this.GetComponent<RoundManager>();
 
-        manager.roundIsStarted = false;
+        manager.isStarted = false;
 
         gameManager.sessionData.StopRound();
         gameManager.sessionData.OnRoundComplete.Invoke();
@@ -130,7 +130,7 @@ public class RoundCountdownState : State
         gameManager = this.GetComponent<GameManager>();
         manager = this.GetComponent<RoundManager>();
 
-        manager.roundIsStarted = false;
+        manager.isStarted = false;
         gameManager.hud.RoundTimer.gameObject.SetActive(true);
 
         gameManager.sessionData.OnRoundPrepare.Invoke();

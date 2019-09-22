@@ -247,7 +247,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     - _fresnelPower: 4
-    - _maxEmissive: 0.2
+    - _maxEmissive: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
@@ -267,4 +267,4 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _color: {r: 0, g: 0, b: 0, a: 0}
+    - _color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}

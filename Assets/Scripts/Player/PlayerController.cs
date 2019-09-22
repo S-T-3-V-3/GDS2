@@ -73,13 +73,15 @@ public class PlayerActiveState : State
         rigidBody = this.GetComponentInChildren<Rigidbody>(true);
 
         if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
-        playerController.healthText.text = playerController.currentStats.health.ToString();        
+        playerController.healthText.text = playerController.currentStats.health.ToString();
+
+        
     }
     
 
     void Update()
     {
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
         
         if (isShooting) {
             foreach (GunComponent gun in equippedGuns) {
@@ -90,7 +92,7 @@ public class PlayerActiveState : State
 
     void FixedUpdate()
     {
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
 
         doMovement();
     }
@@ -133,6 +135,11 @@ public class PlayerActiveState : State
             isShooting = true;
     }
 
+    public void OnRightBumper(InputValue value) {
+        // Debug Inflict Damage
+        // playerController.currentStats.TakeDamage(10);
+    }
+
     // Handles movement of the player
     void doMovement() {
         float dampSpeed = 3f;
@@ -154,6 +161,7 @@ public class PlayerActiveState : State
 
     void OnDamaged() {
         playerController.healthText.text = playerController.currentStats.health.ToString();
+        gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
     }
 
     void OnDeath() {
@@ -279,6 +287,7 @@ public class PlayerDeathState : State
         if (timeElapsed >= respawnTime) {
             playerController.SetState<PlayerActiveState>();
             gameManager.SpawnPlayer(playerController);
+            gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
         }
     }
 }

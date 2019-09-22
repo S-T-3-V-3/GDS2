@@ -41,7 +41,7 @@ public class Tile : MonoBehaviour
     // Player primary control allows for status of friendly/enemy territory update prior to capture
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.roundIsStarted == false) return;
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
         
         if (other.transform.parent.GetComponent<PlayerController>() == null || isWall) return;
         PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();

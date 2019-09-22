@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
 
     void FixedUpdate() {
         if (isResetting) doReset();
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
         if (targets.Count == 0) return;
 
         Vector3 centerPosition = GetCenterPosition();
@@ -68,7 +68,7 @@ public class CameraController : MonoBehaviour
 
     // Runs on change in player count, sets references to player gameobjects for the camera to track
     void SetTargets() {
-        if (!gameManager.sessionData.roundManager.roundIsStarted) return;
+        if (!gameManager.sessionData.roundManager.isStarted) return;
         
         targets.Clear();
 

@@ -38,7 +38,8 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnScoreUpdated;
     public UnityEvent OnTilesChanged;
     public UnityEvent OnMapLoaded;
-
+    [Space]
+    
     MapManager mapManager;
     Camera mainCamera;
 
@@ -59,7 +60,7 @@ public class GameManager : MonoBehaviour
 
         if (!sessionData.isStarted) return;
         
-        if (!sessionData.roundManager.roundIsStarted) return;
+        if (!sessionData.roundManager.isStarted) return;
         sessionData.score.ScoreUpdate();
     }
 
@@ -181,7 +182,7 @@ public class GameManager : MonoBehaviour
         return tilePositions[index];
     }
 
-    IEnumerator LoadScene(string scene) {
+    IEnumerator ILoadScene(string scene) {
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
 
         while (!asyncOperation.isDone)
