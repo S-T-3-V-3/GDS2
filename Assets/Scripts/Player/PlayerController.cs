@@ -136,7 +136,8 @@ public class PlayerActiveState : State
     }
 
     public void OnRightBumper(InputValue value) {
-        playerController.currentStats.TakeDamage(10);
+        // Debug Inflict Damage
+        // playerController.currentStats.TakeDamage(10);
     }
 
     // Handles movement of the player
