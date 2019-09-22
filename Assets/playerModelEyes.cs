@@ -8,16 +8,13 @@ public class playerModelEyes : MonoBehaviour
     Material eyeMat;
     Renderer eyeRenderer;
     Color currentColor;
-
     float eyeFrame;
     float frameSize;
 
     void Start()
     {
         eyeRenderer = gameObject.GetComponent<Renderer>();
-
         eyeFrame = 0;
-
         frameSize = 1 / 16;
     }
 
@@ -46,7 +43,7 @@ public class playerModelEyes : MonoBehaviour
     public void SetExpressionWake()
     {
         print("Awake!");
-        StartCoroutine(Fade(8, 1, false, 1));
+        StartCoroutine(AnimatedSequence(8, 1, false, 1));
 
         //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 6));
     }
@@ -55,7 +52,7 @@ public class playerModelEyes : MonoBehaviour
     {
         //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 7));
         print("Die!");
-        StartCoroutine(Fade(8,1,true,1));
+        StartCoroutine(AnimatedSequence(8,1,true,1));
     }
 
     public void SetExpressionAngry()
@@ -80,7 +77,7 @@ public class playerModelEyes : MonoBehaviour
         eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -3));
     }
 
-    IEnumerator Fade(int frameLength,int startFrame,bool reverse,float speed)
+    IEnumerator AnimatedSequence(int frameLength,int startFrame,bool reverse,float speed)
     {
         int direction;
         if (reverse) direction = -1;

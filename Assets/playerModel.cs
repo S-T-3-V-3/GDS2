@@ -9,6 +9,7 @@ public class playerModel : MonoBehaviour
     playerModelEyes eyeScript;
 
 
+
     Color[] colors;
     void Start()
     {
@@ -26,13 +27,12 @@ public class playerModel : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown("space"))
         {
             Color tempColor = colors[Random.Range(0,6)];
-            SetColor(tempColor);
+            SetPlayerColor(tempColor);
             eyeScript.SetEyeColor(tempColor);
         }
 
@@ -64,11 +64,12 @@ public class playerModel : MonoBehaviour
 
     }
 
-    public void SetColor(Color color)
+    public void SetPlayerColor(Color color)
     {
         underLight.color = color;
-        //eyeMat.color = new Color(0.5f, 0.2f, 0.3f);
     }
+
+
 
     public void setExpression(int expression)
     {
@@ -76,7 +77,6 @@ public class playerModel : MonoBehaviour
         {
             case 1:
                 eyeScript.SetExpressionWake();
-                
                 break;
             case 2:
                 eyeScript.SetExpressionDie();
@@ -96,4 +96,22 @@ public class playerModel : MonoBehaviour
         }
     }
 
+    public void fireLeft()
+    {
+
+    }
+
+    public void fireRight()
+    {
+
+    }
+}
+public enum Expression
+{
+    NORMAL,
+    WAKE,
+    DIE,
+    ANGRY,
+    SCARED,
+    SQUINT
 }
