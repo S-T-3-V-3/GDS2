@@ -136,12 +136,13 @@ public class HUDManager : MonoBehaviour
 
     public PlayerScorecard CreatePlayerScorecard(int playerNumber, TeamID playerTeam)
     {
-        PlayerScorecard newScorecard = GameObject.Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
+        PlayerScorecard newScorecard = Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
         newScorecard.playerText.text = "Player " + playerNumber;
         newScorecard.teamText.text = "" + playerTeam;
         newScorecard.teamText.color = gameManager.teamManager.GetTeam(playerTeam).color;
         newScorecard.pointsText.color = gameManager.teamManager.GetTeam(playerTeam).color;
         newScorecard.playerHP.uvRect = new Rect(0, 0, 1, 1);
+        newScorecard.transform.localScale = Vector3.one;
 
         return newScorecard;
     }

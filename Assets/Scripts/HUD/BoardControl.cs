@@ -8,9 +8,9 @@ public class BoardControl : MonoBehaviour
     public GameManager gameManager;
     public RawImage scoreBarPrefab;
 
-    const int HEIGHT = 40;
+    //const int HEIGHT = 50;
     float totalTiles;
-    List<float> teamScores;    
+    //List<float> teamScores;    
     List<RawImage> teamScoreBars;
 
     // Start is called before the first frame update
@@ -20,6 +20,8 @@ public class BoardControl : MonoBehaviour
         totalTiles = 0;
         gameManager.OnTilesChanged.AddListener(UpdateScore);
         gameManager.OnSessionStart.AddListener(Init);
+        gameManager.OnMapLoaded.AddListener(Clear);
+        
     }
 
     // Update is called once per frame
@@ -30,8 +32,9 @@ public class BoardControl : MonoBehaviour
 
     void UpdateScore()
     {
+        gameObject.SetActive(true);
         totalTiles = gameManager.sessionData.score.GetTotalTiles();
-
+        Debug.Log("Total Tiles: " + totalTiles);
         foreach (ScoreClass teamscore in gameManager.sessionData.score.currentTeams)
         {
             //Inefficient- oops
@@ -39,8 +42,9 @@ public class BoardControl : MonoBehaviour
             {
                 if (ri.color == gameManager.teamManager.GetTeam(teamscore.teamID).color)
                 {
-                    RectTransform rt = ri.GetComponent<RectTransform>();
-                    rt.sizeDelta = new Vector2(teamscore.numTiles / totalTiles * (GetComponent<RectTransform>().rect.width)*0.96f, HEIGHT);
+                    if(teamscore.numTiles > 0) { Debug.Log("Team " + teamscore.teamID + " tiles: " + teamscore.numTiles); }                    
+                    RectTransform rt = ri.GetComponent<RectTransform>();                    
+                    rt.sizeDelta = new Vector2(teamscore.numTiles / totalTiles * (GetComponent<RectTransform>().rect.width)*0.96f, GetComponent<RectTransform>().rect.height*0.7f);
                 }
             }
         }
@@ -48,8 +52,6 @@ public class BoardControl : MonoBehaviour
 
     void Init()
     {
-        if (teamScoreBars == null)
-        {
             teamScoreBars = new List<RawImage>();
             foreach (ScoreClass teamScore in gameManager.sessionData.score.currentTeams)
             {
@@ -57,7 +59,7 @@ public class BoardControl : MonoBehaviour
                 teamScoreBars.Add(CreateTeamScoreBar(teamScore.teamID));
                 //teamScore.score
             }
-        }
+        gameObject.SetActive(false);
     }
 
     public RawImage CreateTeamScoreBar(TeamID playerTeam)
@@ -65,8 +67,24 @@ public class BoardControl : MonoBehaviour
         RawImage newScoreBar = Instantiate(scoreBarPrefab, transform) as RawImage;
         newScoreBar.color = gameManager.teamManager.GetTeam(playerTeam).color;
         RectTransform rt = newScoreBar.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2((GetComponent<RectTransform>().rect.width)/(gameManager.sessionData.score.currentTeams.Count), HEIGHT);
+        rt.sizeDelta = new Vector2((GetComponent<RectTransform>().rect.width)/(gameManager.sessionData.score.currentTeams.Count), GetComponent<RectTransform>().rect.height*0.7f);
 
         return newScoreBar;
     }
+
+    void Clear()
+    {
+        if (teamScoreBars != null)
+        {
+            foreach (RawImage ri in teamScoreBars)
+            {
+                Destroy(ri.gameObject);
+            }
+
+            teamScoreBars.Clear();
+            //teamScoreBars = null;
+            Init();
+        }
+    }
+
 }
