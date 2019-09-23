@@ -2,44 +2,38 @@
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 public class HUDManager : MonoBehaviour
 {
-    public TextMeshProUGUI ScoreText;
+    public GameObject PlayerScorecardPrefab;
+    public GameManager gameManager;
     public TextMeshProUGUI RoundTimer;
-    public GameObject debugMenu;
+    public GameObject gameplay;
     public GameObject joinMessage;
     public GameObject carouselMessage;
-    public DebugHUD debugHUD;
+    public GameObject playerLobby;
     public ConnectedPlayers connectedPlayers;
 
-    GameManager gameManager;
+    public GameObject upperUI;
+    public GameObject playersLayout;
+
+    public List<PlayerScorecard> playerScorecards;
+    GameObject mainMenu;
 
     void Start() {
-        gameManager = FindObjectOfType<GameManager>();
-
         gameManager.OnScoreUpdated.AddListener(UpdateScore);
         gameManager.OnPlayersChanged.AddListener(UpdatePlayers);
+        gameManager.OnGameLoaded.AddListener(OnGameLoaded);
         gameManager.sessionData.OnRoundPrepare.AddListener(OnRoundPrepare);
         gameManager.sessionData.OnCarouselBegin.AddListener(OnCarouselBegin);
         gameManager.sessionData.OnCarouselEnd.AddListener(OnCarouselEnd);
-        
-        debugMenu.SetActive(false);
+
+        Reset();
     }
 
     void Update() {
-        DebugUpdate();
-
-        UpdateTimer();
-    }
-
-    public void Announcement(string message, float time, Color ? color = null) {
-        Announcement newAnnouncement = GameObject.Instantiate(gameManager.announcementPrefab, this.transform).GetComponent<Announcement>();
-        newAnnouncement.Init(message, time, color ?? Color.white);
-    }
-
-    void UpdateTimer() {
-        if (gameManager.sessionData.roundManager.roundIsStarted) {
+        if (gameManager.sessionData.roundManager.isStarted) {
             float maxTime = gameManager.gameSettings.roundTime;
             float elapsedTime = gameManager.sessionData.roundManager.elapsedTime;
             float remainingTime = maxTime - elapsedTime;
@@ -59,12 +53,46 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    void UpdateScore() {
-        ScoreText.text = "";
+    public void Reset() {
+        gameplay.SetActive(false);
+        joinMessage.SetActive(true);
+        playerLobby.SetActive(true);
+        connectedPlayers.gameObject.SetActive(true);
+        
+        UpdatePlayers();
 
+        mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
+    }
+
+    public void Announcement(string message, float time, Color ? color = null) {
+        Announcement newAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
+        newAnnouncement.Init(message, time, color ?? Color.white);
+    }
+
+    void UpdateScore() {
         foreach (ScoreClass teamScore in gameManager.sessionData.score.currentTeams) {
             if (teamScore.score > 0)
-                ScoreText.text += teamScore.teamID + ": " + (int)teamScore.score + "\n";
+                foreach(PlayerScorecard currentScorecard in playerScorecards)
+                {
+                    if(currentScorecard.teamText.text == ("" + teamScore.teamID))
+                    {
+                        currentScorecard.pointsText.text = "" + (int)teamScore.score + " pts";
+                    }
+                    
+                }
+        }
+    }
+
+    public void UpdateHealth(PlayerController pc, int health)
+    {
+        //TO:DO Possibly add HUD animation code here? 
+        foreach (PlayerScorecard currentScorecard in playerScorecards)
+        {
+            if (currentScorecard.playerText.text == "Player " + (gameManager.currentPlayers.IndexOf(pc) + 1))
+            {
+                currentScorecard.playerHPText.text = health.ToString();
+                currentScorecard.playerHP.uvRect = new Rect((1f-health/100f), 0, 1, 1); //100 for now, might need to change w/HP buffs
+            }
         }
     }
 
@@ -72,21 +100,28 @@ public class HUDManager : MonoBehaviour
         connectedPlayers.UpdatePlayerList(gameManager.currentPlayers); 
     }
 
-    void DebugUpdate() {
-        if (Input.GetKeyDown(KeyCode.A)) {
-            debugMenu.SetActive(!debugMenu.activeSelf);
-        }
-
-        if (debugMenu.activeSelf) {
-            debugHUD.sessionStatusText.text = "Session Started: " + gameManager.sessionData.isStarted;
-
-            if (gameManager.sessionData.roundManager != null)
-                debugHUD.roundStatusText.text = "Round Number: " + gameManager.sessionData.roundManager.roundNumber + "\nRound Started: " + gameManager.sessionData.roundManager.roundIsStarted + "\nRound Time: " + gameManager.sessionData.roundManager.elapsedTime.ToString().Substring(0,4);
-        }
+    void OnGameLoaded() {
+        gameplay.SetActive(true);
+        GameObject.Destroy(mainMenu);
     }
 
     void OnRoundPrepare() {
         joinMessage.SetActive(false);
+        playerLobby.SetActive(false);
+        connectedPlayers.gameObject.SetActive(false);
+
+        if (playerScorecards == null)
+            playerScorecards = new List<PlayerScorecard>();
+        
+        foreach (PlayerScorecard ps in playerScorecards)
+            GameObject.Destroy(ps.gameObject);
+
+        playerScorecards.Clear();
+
+        foreach (PlayerController player in gameManager.currentPlayers)
+           playerScorecards.Add(CreatePlayerScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+
+        upperUI.SetActive(true);
     }
     
     void OnCarouselEnd()
@@ -98,10 +133,16 @@ public class HUDManager : MonoBehaviour
     {
         carouselMessage.SetActive(true);
     }
-}
 
-[System.Serializable]
-public class DebugHUD {
-    public Text sessionStatusText;
-    public Text roundStatusText;
+    public PlayerScorecard CreatePlayerScorecard(int playerNumber, TeamID playerTeam)
+    {
+        PlayerScorecard newScorecard = GameObject.Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
+        newScorecard.playerText.text = "Player " + playerNumber;
+        newScorecard.teamText.text = "" + playerTeam;
+        newScorecard.teamText.color = gameManager.teamManager.GetTeam(playerTeam).color;
+        newScorecard.pointsText.color = gameManager.teamManager.GetTeam(playerTeam).color;
+        newScorecard.playerHP.uvRect = new Rect(0, 0, 1, 1);
+
+        return newScorecard;
+    }
 }

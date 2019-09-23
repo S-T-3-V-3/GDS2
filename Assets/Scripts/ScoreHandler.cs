@@ -49,7 +49,7 @@ public class ScoreHandler {
 
         currentTeams = new List<ScoreClass>();
 
-        foreach(TeamID teamID in gameManager.GetTeamManager().currentTeams.Select(x => x.ID)) {
+        foreach(TeamID teamID in gameManager.teamManager.currentTeams.Select(x => x.ID)) {
             ScoreClass newTeam = new ScoreClass();
             newTeam.teamID = teamID;
             currentTeams.Add(newTeam);
@@ -62,6 +62,19 @@ public class ScoreHandler {
         currentTeams.Where(x => x.teamID == oldTeamID).First().numTiles--;
         currentTeams.Where(x => x.teamID == newTeamID).First().numTiles++;
     }
+
+    public float GetTotalTiles()
+    {
+        int numTilesCaptured = 0;
+
+        foreach (ScoreClass team in currentTeams)
+        {
+            if (team.teamID != TeamID.NONE)
+                numTilesCaptured += team.numTiles;
+        }
+        return numTilesCaptured;
+    }
+    
 }
 
 public class ScoreClass {
