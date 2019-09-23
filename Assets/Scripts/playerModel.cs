@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerModel : MonoBehaviour
+public class PlayerModel : MonoBehaviour
 {
     // Start is called before the first frame update
     Light underLight;

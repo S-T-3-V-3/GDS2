@@ -5371,6 +5371,7 @@ MonoBehaviour:
   connectedPlayers: {fileID: 852581718}
   upperUI: {fileID: 1977336826}
   playersLayout: {fileID: 696881018}
+  playerScorecards: []
 --- !u!114 &738770699
 MonoBehaviour:
   m_ObjectHideFlags: 0
