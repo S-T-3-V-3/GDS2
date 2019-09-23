@@ -44,6 +44,7 @@ public class SessionData : MonoBehaviour{
 
     public void StartRound() {
         roundManager.SetState<RoundCountdownState>();
+        score.ResetTileCount();
     }
 
     public void StopRound() {
