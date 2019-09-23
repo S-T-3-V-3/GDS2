@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     public Light projectileLight;
     public GameObject projectileBody;
     public ProjectileEvent OnProjectileOverlap;
+    public ParticleSystem[] particleSystems;
 
     GameManager gameManager;
     PlayerController owningPlayer;
@@ -29,11 +30,19 @@ public class Projectile : MonoBehaviour
         moveSpeed = gun.projectileSpeed;
         damage = gun.projectileDamage;
 
-        projectileBody.transform.localScale = new Vector3(gun.projectileSize, gun.projectileSize, gun.projectileSize);
+        projectileBody.transform.localScale = new Vector3(gun.projectileSize / 2, gun.projectileSize/2, gun.projectileSize / 2);
 
         projectileBody.GetComponent<MeshRenderer>().material.color = Color.white;
 
         projectileLight.color = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
+
+        foreach (ParticleSystem ps in particleSystems)
+        {
+            var main = ps.main;
+            main.startColor = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
+        }
+
+
 
         if (OnProjectileOverlap == null)
             OnProjectileOverlap = new ProjectileEvent();

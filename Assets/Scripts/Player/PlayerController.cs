@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public PlayerCharacter character;
     public GameObject model;
     public Light playerGlow;
+
     [Space]
 
     public Stats currentStats;
@@ -48,7 +49,7 @@ public class PlayerActiveState : State
     List<GunComponent> equippedGuns;
     Vector2 currentMovement;
     Rigidbody rigidBody;
-
+    PlayerModelController playerModelController;
     float deadZoneRange = 0.17f;
     bool isShooting = false;
 
@@ -57,7 +58,11 @@ public class PlayerActiveState : State
         playerController = this.GetComponent<PlayerController>();
         gameManager = GameObject.FindObjectOfType<GameManager>();
 
+        playerModelController = GetComponent<PlayerModelController>();
         playerController.model.SetActive(true);
+
+        
+
         playerController.healthText.gameObject.SetActive(true);
 
         playerController.model.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(playerController.teamID).playerMat;
@@ -75,7 +80,7 @@ public class PlayerActiveState : State
         if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
         playerController.healthText.text = playerController.currentStats.health.ToString();
 
-        
+        playerModelController.Spawn(gameManager.teamManager.GetTeam(playerController.teamID).color, playerController.model.transform);
     }
     
 
