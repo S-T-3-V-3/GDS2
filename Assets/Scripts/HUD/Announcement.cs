@@ -15,6 +15,10 @@ public class Announcement : MonoBehaviour
         maxLifeTime = displayTime;
     }
 
+    public void ForceStop() {
+        elapsedTime = maxLifeTime;
+    }
+
     void Update() {
         elapsedTime += Time.deltaTime;
 

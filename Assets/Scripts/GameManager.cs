@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public GameObject AnnouncementPrefab;
     public GameObject SpawnFXPrefab;
     public GameObject DeathFXPrefab;
+    public GameObject DeathColliderPrefab;
+    public GameObject TextPopupPrefab;
 
     public Material WallMaterial;
     public Transform playerParent;
@@ -140,7 +142,15 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, Color.red);
+        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, teamManager.GetTeam(killer.teamID).color);
+
+        PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
+        deathHandler.transform.position = killed.pawnPosition;
+        deathHandler.targetTeam = killer.teamID;
+
+        TextPopupHandler textPopup = GameObject.Instantiate(TextPopupPrefab).GetComponent<TextPopupHandler>();
+        string textValue = "+" + gameSettings.pointsPerKill.ToString();
+        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeam(killer.teamID).color);
     }
  
     // Runs every time a player joins the game, will trigger session start if first player connected.

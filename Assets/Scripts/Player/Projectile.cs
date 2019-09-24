@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour
     PlayerController owningPlayer;
     GameObject owner;
     Vector3 movementDirection;
+    GunType firedFromGun;
     public bool initialized = false;
     public float lifeTime;
     float moveSpeed;
@@ -21,6 +22,7 @@ public class Projectile : MonoBehaviour
     public void Init(PlayerController owningPlayer, Vector3 forwardVector, GunType gun)
     {
         gameManager = FindObjectOfType<GameManager>();
+        firedFromGun = gun;
 
         this.owningPlayer = owningPlayer;
         this.owner = owningPlayer.playerModel;
@@ -76,6 +78,12 @@ public class Projectile : MonoBehaviour
             PlayerController hitPlayer = other.GetComponent<PlayerModelController>().owner;
 
             hitPlayer.currentStats.TakeDamage(damage, this.movementDirection * moveSpeed);
+            hitPlayer.playerModel.GetComponent<Rigidbody>().AddForce(firedFromGun.projectileSize * this.movementDirection.normalized * gameManager.gameSettings.baseKnockbackValue, ForceMode.Impulse);
+            
+            TextPopupHandler textPopup = GameObject.Instantiate(gameManager.TextPopupPrefab).GetComponent<TextPopupHandler>();
+                string textValue = "-" + damage.ToString();
+                textPopup.Init(this.transform.position, textValue, gameManager.teamManager.GetTeam(owningPlayer.teamID).color, 0.5f);
+                textPopup.lifetime = 0.5f;
             
             if (hitPlayer.currentStats.health <= 0) {
                 FindObjectOfType<GameManager>().OnPlayerKilled(owningPlayer, hitPlayer);

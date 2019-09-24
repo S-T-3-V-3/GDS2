@@ -56,6 +56,11 @@ public class KOTHZone : MonoBehaviour
         if (elapsedTime >= gameManager.gameSettings.KOTHInterval) {
             foreach (PlayerController player in currentPlayers) {
                 gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.KOTHPoints);
+
+                TextPopupHandler textPopup = GameObject.Instantiate(gameManager.TextPopupPrefab).GetComponent<TextPopupHandler>();
+                string textValue = "+" + gameManager.gameSettings.KOTHPoints.ToString();
+                textPopup.Init(player.pawnPosition, textValue, gameManager.teamManager.GetTeam(player.teamID).color, 0.7f);
+                textPopup.lifetime = 0.75f;
             }
 
             // Reset time + inform listeners of score change

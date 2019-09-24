@@ -19,6 +19,8 @@ public class GameSettings : ScriptableObject {
     public int pointsPerKill = 10;
     public float pointsPerInterval = 10;
     public float pointDistributionInterval = 2f;
+    public float baseRecoilValue = 3f;
+    public float baseKnockbackValue = 7f;
     [Space]
     public float KOTHPoints = 1;
     public float KOTHInterval = 0.1f;

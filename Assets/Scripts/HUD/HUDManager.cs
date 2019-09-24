@@ -25,6 +25,7 @@ public class HUDManager : MonoBehaviour
     public List<TeamScoreCard> teamScorecards;
 
     GameObject mainMenu;
+    Announcement currentAnnouncement;
 
     void Start() {
         gameManager.OnScoreUpdated.AddListener(UpdateScore);
@@ -70,8 +71,11 @@ public class HUDManager : MonoBehaviour
     }
 
     public void Announcement(string message, float time, Color ? color = null) {
-        Announcement newAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
-        newAnnouncement.Init(message, time, color ?? Color.white);
+        if (currentAnnouncement != null)
+            currentAnnouncement.ForceStop();
+
+        currentAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
+        currentAnnouncement.Init(message, time, color ?? Color.white);
     }
 
     void UpdateScore() {

@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01745ca0970f7449ae21babf4858174, type: 3}
   m_Name: Default Game Settings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  roundTime: 20
+  roundTime: 60
   respawnTime: 3
   maxLives: 10
   baseTileValue: 1
   specialTileValue: 10
-  pointsPerKill: 10
-  pointsPerInterval: 10
-  pointDistributionInterval: 2
-  KOTHPoints: 1
-  KOTHInterval: 0.1
+  pointsPerKill: 30
+  pointsPerInterval: 50
+  pointDistributionInterval: 5
+  baseRecoilValue: 2
+  baseKnockbackValue: 7
+  KOTHPoints: 5
+  KOTHInterval: 1
   roundMapSettings:
   - tileSize: 0.85
     tilePadding: 0.1
@@ -38,6 +40,14 @@ MonoBehaviour:
     falloff: 48
     numAdditionalZones: 3
     numObstacles: 20
+    maxObstacleSize: 5
+  - tileSize: 0.85
+    tilePadding: 0.1
+    innerRadius: 15
+    outerRadius: 6
+    falloff: 48
+    numAdditionalZones: 3
+    numObstacles: 25
     maxObstacleSize: 5
   characterModels:
   - model: {fileID: 8719067655517832555, guid: 6f1bc64c938929b49842f53e5ed9e941, type: 3}

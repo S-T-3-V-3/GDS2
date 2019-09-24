@@ -28,8 +28,6 @@ public class Tile : MonoBehaviour
 
     Material newTeamMat;
 
-    
-
     public void Init(GameManager gameManager, int distanceFromCenter, float meshSize) {
         this.gameManager = gameManager;
         this.mapManager = gameManager.GetComponent<MapManager>();
@@ -43,12 +41,16 @@ public class Tile : MonoBehaviour
     {   
         if (gameManager.sessionData.roundManager.isStarted == false || isWall) return;
 
-        if (other.tag == "Player") {
-            PlayerController overlappingPlayerController = other.GetComponent<PlayerModelController>().owner;
+        TeamID targetTeamID = currentTeam;
 
-            if (currentTeam != overlappingPlayerController.teamID) {
-                gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayerController.teamID);
-                currentTeam = overlappingPlayerController.teamID;
+        if (other.tag == "Player")
+            targetTeamID = other.GetComponent<PlayerModelController>().owner.teamID;
+        else if (other.GetComponent<PlayerPostDeathHandler>() != null)
+            targetTeamID = other.GetComponent<PlayerPostDeathHandler>().targetTeam;
+
+        if (currentTeam != targetTeamID) {
+                gameManager.sessionData.score.UpdateTileCount(currentTeam,targetTeamID);
+                currentTeam = targetTeamID;
                 gameManager.OnTilesChanged.Invoke();
 
                 if (currentHexEffect != null) {
@@ -61,18 +63,17 @@ public class Tile : MonoBehaviour
                 currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
 
                 ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
-                main.startColor = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color;
+                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
 
                 main = currentStarsEffect.GetComponent<ParticleSystem>().main;
-                main.startColor = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color;
+                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
 
-                newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).tileMat;
+                newTeamMat = gameManager.teamManager.GetTeam(targetTeamID).tileMat;
 
-                HexSprite.DoColorChange(gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color);
+                HexSprite.DoColorChange(gameManager.teamManager.GetTeam(targetTeamID).color);
 
                 //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
             }
-        }
     }
 
     public TeamID GetTeam() {
