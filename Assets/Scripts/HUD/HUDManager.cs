@@ -10,6 +10,7 @@ public class HUDManager : MonoBehaviour
     public GameObject TeamScorecardPrefab;
     public GameManager gameManager;
     public TextMeshProUGUI RoundTimer;
+    public GameObject lobby;
     public GameObject gameplay;
     public GameObject joinMessage;
     public GameObject carouselMessage;
@@ -59,8 +60,7 @@ public class HUDManager : MonoBehaviour
 
     public void Reset() {
         gameplay.SetActive(false);
-        joinMessage.SetActive(true);
-        playerLobby.SetActive(true);
+        lobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(true);
         scoresLayout.SetActive(false);
         
@@ -117,17 +117,18 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-
     void UpdatePlayers() {
         connectedPlayers.UpdatePlayerList(gameManager.currentPlayers); 
     }
 
     void OnGameLoaded() {
-        gameplay.SetActive(true);
+        lobby.SetActive(true);
         GameObject.Destroy(mainMenu);
     }
 
     void OnRoundPrepare() {
+        lobby.SetActive(false);
+        gameplay.SetActive(true);
         joinMessage.SetActive(false);
         playerLobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(false);
