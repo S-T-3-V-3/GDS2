@@ -57,6 +57,14 @@ public class ScoreHandler {
 
         currentTeams.Where(x => x.teamID == TeamID.NONE).First().numTiles = gameManager.GetComponent<MapManager>().tiles.Select(x => x.GetTeam()).Where(x => x == TeamID.NONE).Count();
     }
+    
+    public void ResetTileCount() {
+        if (currentTeams == null) return;
+        
+        foreach(ScoreClass team in currentTeams) {
+            team.numTiles = 0;
+        }
+    }
 
     public void UpdateTileCount(TeamID oldTeamID, TeamID newTeamID) {
         currentTeams.Where(x => x.teamID == oldTeamID).First().numTiles--;

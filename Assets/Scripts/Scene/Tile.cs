@@ -41,36 +41,37 @@ public class Tile : MonoBehaviour
     // Player primary control allows for status of friendly/enemy territory update prior to capture
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.isStarted == false) return;
-        
-        if (other.transform.parent.GetComponent<PlayerController>() == null || isWall) return;
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
+        if (gameManager.sessionData.roundManager.isStarted == false || isWall) return;
 
-        if (currentTeam != overlappingPlayer.teamID) {
-            gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayer.teamID);
-            currentTeam = overlappingPlayer.teamID;
-            gameManager.OnTilesChanged.Invoke();
+        if (other.tag == "Player") {
+            PlayerController overlappingPlayerController = other.GetComponent<PlayerModelController>().owner;
 
-            if (currentHexEffect != null) {
-                GameObject.Destroy(currentHexEffect);
+            if (currentTeam != overlappingPlayerController.teamID) {
+                gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayerController.teamID);
+                currentTeam = overlappingPlayerController.teamID;
+                gameManager.OnTilesChanged.Invoke();
+
+                if (currentHexEffect != null) {
+                    GameObject.Destroy(currentHexEffect);
+                }
+                currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
+                currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+                currentStarsEffect = GameObject.Instantiate(StarsEffect,this.transform.position,this.transform.rotation,this.transform);
+                currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+                ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
+                main.startColor = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color;
+
+                main = currentStarsEffect.GetComponent<ParticleSystem>().main;
+                main.startColor = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color;
+
+                newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).tileMat;
+
+                HexSprite.DoColorChange(gameManager.teamManager.GetTeam(overlappingPlayerController.teamID).color);
+
+                //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
             }
-            currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
-            currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
-
-            currentStarsEffect = GameObject.Instantiate(StarsEffect,this.transform.position,this.transform.rotation,this.transform);
-            currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
-
-            ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
-            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
-
-            main = currentStarsEffect.GetComponent<ParticleSystem>().main;
-            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
-
-            newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
-
-            HexSprite.DoColorChange(gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color);
-
-            //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
         }
     }
 

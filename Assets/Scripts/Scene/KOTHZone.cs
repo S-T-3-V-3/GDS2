@@ -54,7 +54,6 @@ public class KOTHZone : MonoBehaviour
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= gameManager.gameSettings.KOTHInterval) {
-            //ADD SCORE HERE
             foreach (PlayerController player in currentPlayers) {
                 gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.KOTHPoints);
             }
@@ -104,22 +103,25 @@ public class KOTHZone : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.isStarted == false) return;        
-        if (other.transform.parent.GetComponent<PlayerActiveState>() == null) return;
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
 
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
-        currentPlayers.Add(overlappingPlayer);
+        if (other.tag == "Player") {
+            PlayerController overlappingPlayer = other.GetComponent<PlayerModelController>().owner;
+            currentPlayers.Add(overlappingPlayer);
 
-        OnPlayersChanged.Invoke();
+            OnPlayersChanged.Invoke();
+        }        
     }
 
     void OnTriggerExit (Collider other)
     {
-        if (gameManager.sessionData.roundManager.isStarted == false) return;        
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
 
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
-        currentPlayers.Remove(overlappingPlayer);
+        if (other.tag == "Player") {
+            PlayerController overlappingPlayer = other.GetComponent<PlayerModelController>().owner;
+            currentPlayers.Remove(overlappingPlayer);
 
-        OnPlayersChanged.Invoke();
+            OnPlayersChanged.Invoke();
+        }
     }
 }

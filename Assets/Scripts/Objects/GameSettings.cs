@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName="Game Settings")]
@@ -23,7 +24,15 @@ public class GameSettings : ScriptableObject {
     public float KOTHInterval = 0.1f;
     [Space]
     public List<MapSettings> roundMapSettings;
+    public List<PlayerModelConfig> characterModels;
 
     // Can explore options with alternate game modes including base stat modifiers
     //public List<StatModifiers> baseStatModifiers;
 }
+
+[Serializable]
+public class PlayerModelConfig {
+    public GameObject model;
+    public string modelName;
+}
+

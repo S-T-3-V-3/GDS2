@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     public GameObject CameraPrefab;
     public GameObject MainMenuPrefab;
     public GameObject AnnouncementPrefab;
+    public GameObject SpawnFXPrefab;
+    public GameObject DeathFXPrefab;
+
     public Material WallMaterial;
     public Transform playerParent;
 
@@ -108,8 +111,6 @@ public class GameManager : MonoBehaviour
 
         foreach (PlayerController player in currentPlayers) {
             if (player.teamID != TeamID.NONE) {
-                this.SpawnPlayer(player);
-
                 player.SetState<PlayerActiveState>();
             }       
         }
@@ -165,14 +166,10 @@ public class GameManager : MonoBehaviour
     // Set player spawn point, currently random spawn location
     public void SpawnPlayer(PlayerController player) {
         int index = Random.Range(0,tilePositions.Count-1);
+        player.playerModel.transform.position = tilePositions[index] + new Vector3(0,1f,0);
+        player.OnPlayerSpawn.Invoke();
 
-        player.gameObject.transform.position = new Vector3(0,0,0);
-        player.model.transform.position = new Vector3(0,0,0);
-
-        player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
-        
         tilePositions.RemoveAt(index);
-        
         OnPlayersChanged.Invoke();
         OnNewCameraTarget.Invoke();
     }
