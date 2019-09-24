@@ -72,8 +72,8 @@ public class CameraController : MonoBehaviour
         
         targets.Clear();
 
-        foreach (PlayerController player in gameManager.currentPlayers.Where(x => x.currentStats.isAlive)) {
-            targets.Add(player.model.gameObject.transform);
+        foreach (PlayerController player in gameManager.currentPlayers.Where(x => x.hasPawn)) {
+            targets.Add(player.playerModel.transform);
         }
     }
 

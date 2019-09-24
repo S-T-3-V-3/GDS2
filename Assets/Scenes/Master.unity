@@ -6756,6 +6756,10 @@ MonoBehaviour:
     type: 3}
   AnnouncementPrefab: {fileID: 1224995922393820747, guid: f8f89aa8201fb28439845c7f7651a283,
     type: 3}
+  SpawnFXPrefab: {fileID: 1170738029626841203, guid: 3f2406194c4a11a4a92e7dcbc76c6a3c,
+    type: 3}
+  DeathFXPrefab: {fileID: 2955179747389529803, guid: 0353f7b0088fdc2458a1e658be92936a,
+    type: 3}
   WallMaterial: {fileID: 2100000, guid: 94b4103681e3825428a3135e1e9515ea, type: 2}
   playerParent: {fileID: 1569030456}
   KothPrefab: {fileID: 5252853446406301138, guid: a429382e3e538a04b927f0011b700f05,

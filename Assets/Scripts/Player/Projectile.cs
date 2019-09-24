@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
 
         this.owningPlayer = owningPlayer;
-        this.owner = owningPlayer.model;
+        this.owner = owningPlayer.playerModel;
         this.lifeTime = gun.projectileLifetime;
 
         movementDirection = forwardVector;
@@ -72,8 +72,8 @@ public class Projectile : MonoBehaviour
     void OnCollision(GameObject other) {
         if (other == owner) return;
 
-        if (other.transform.parent.GetComponent<PlayerController>() != null) {
-            PlayerController hitPlayer = other.transform.parent.GetComponent<PlayerController>();
+        if (other.tag == "Player") {
+            PlayerController hitPlayer = other.GetComponent<PlayerModelController>().owner;
 
             hitPlayer.currentStats.TakeDamage(damage);
             
@@ -81,8 +81,6 @@ public class Projectile : MonoBehaviour
                 FindObjectOfType<GameManager>().OnPlayerKilled(owningPlayer, hitPlayer);
             }   
         }
-
-        
 
         OnDestroy();
     }

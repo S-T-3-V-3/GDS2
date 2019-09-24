@@ -2,24 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class setColor : MonoBehaviour
+public class PlayerParticle : MonoBehaviour
 {
-    // Start is called before the first frame update
     public LineRenderer[] lineRenderers;
     public ParticleSystem[] particleSystems;
-    float count;
-    void Start()
-    {
-        count = 0;
-    }
+    public float lifetime = 2f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    float elapsedTime = 0f;
 
-    public void updateColors(Color color)
+    public void SetColor(Color color)
     {
         foreach(LineRenderer line in lineRenderers)
         {
@@ -32,5 +23,12 @@ public class setColor : MonoBehaviour
             main.startColor = color;
             ps.Emit(1);
         }
+    }
+
+    void Update() {
+        elapsedTime += Time.deltaTime;
+
+        if (elapsedTime >= lifetime)
+            GameObject.Destroy(this.gameObject);
     }
 }

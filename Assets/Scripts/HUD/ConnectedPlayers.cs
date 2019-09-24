@@ -43,7 +43,7 @@ public class ConnectedPlayers : MonoBehaviour
              Destroy(child.gameObject);
         }
 
-        foreach (PlayerController pc in players.Where(x => x.model.activeSelf == false)) {    
+        foreach (PlayerController pc in players.Where(x => x.hasPawn == false)) {    
             playerLobbyPrefabList.Add(Instantiate(PlayerLobbyPrefab,transform));
 
             playerLobbyPrefabList[playerLobbyPrefabList.Count-1].playerNumber.text = "Player " + (players.IndexOf(pc) + 1);
@@ -51,7 +51,7 @@ public class ConnectedPlayers : MonoBehaviour
             playerLobbyPrefabList[playerLobbyPrefabList.Count-1].playerTeam.color = gameManager.teamManager.GetTeam(pc.teamID).color;
             
             PlayerUI newPlayer = new PlayerUI();
-            newPlayer.playerName = "Team: " + pc.teamID + "\n" + "Character: " + pc.character.name + "\n";
+            newPlayer.playerName = "Team: " + pc.teamID;
             newPlayer.playerID = i;
             newPlayer.playerTeamID = pc.teamID;
             i++;

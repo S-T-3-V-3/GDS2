@@ -39,3 +39,12 @@ MonoBehaviour:
     numAdditionalZones: 3
     numObstacles: 20
     maxObstacleSize: 5
+  characterModels:
+  - model: {fileID: 8719067655517832555, guid: 6f1bc64c938929b49842f53e5ed9e941, type: 3}
+    modelName: Virus
+  - model: {fileID: 6978852741382163034, guid: 65f6e633a7e0ce84eaeef7371e0c63ed, type: 3}
+    modelName: Trojan
+  - model: {fileID: 3047174464732590961, guid: 981b356f4724afb40b3329dcc567c5e1, type: 3}
+    modelName: Spyware
+  - model: {fileID: 1136667167499195962, guid: 9bb2f06f1e85d1340bd5062ef72ab41a, type: 3}
+    modelName: Bot

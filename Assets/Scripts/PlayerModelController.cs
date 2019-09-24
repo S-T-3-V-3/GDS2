@@ -4,62 +4,88 @@ using UnityEngine;
 
 public class PlayerModelController : MonoBehaviour
 {
-    public GameObject SpawnFX;
-    public GameObject DeathFX;
+    public List<Light> lights;
+    public PlayerModelEyeController eyeController;
+    public PlayerController owner;
 
-    GameManager gameManager;
-    PlayerController playerController;
-
-    Color color;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-        gameManager = FindObjectOfType<GameManager>();
-        playerController = GetComponent<PlayerController>();
-
-        color = gameManager.teamManager.GetTeam(playerController.teamID).color;
-        print(color);
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("t"))
+        if (Input.GetKeyDown("z"))
         {
-
-            Spawn(color, transform);
-
+            setExpression(0);
         }
-        if (Input.GetKeyDown("y"))
+        if (Input.GetKeyDown("x"))
         {
-
-            Death(color, transform);
-
+            setExpression(1);
         }
-
+        if (Input.GetKeyDown("c"))
+        {
+            setExpression(2);
+        }
+        if (Input.GetKeyDown("v"))
+        {
+            setExpression(3);
+        }
+        if (Input.GetKeyDown("b"))
+        {
+            setExpression(4);
+        }
+        if (Input.GetKeyDown("n"))
+        {
+            setExpression(5);
+        }
     }
-    public void Spawn(Color col, Transform position)
-    {
-        color = col;
-        InstantiateFX(SpawnFX, 2, position);
-    } 
-    public void Death(Color col, Transform position)
-    {
-        InstantiateFX(DeathFX, 3, position);
-    }
 
-
-
-    void InstantiateFX(GameObject obj, float duration, Transform position)
+    public void SetPlayerColor(Color color)
     {
+        foreach (Light currentLight in lights) {
+            currentLight.color = color;
+        }
         
-        GameObject tempObj = Instantiate(obj, position.position, position.rotation);
-
-        tempObj.transform.position = new Vector3(Random.Range(0, 12), 0, Random.Range(0, 12));
-        tempObj.GetComponent<setColor>().updateColors(color);
-
-        Destroy(tempObj, duration);
-        print("TESTTT");
+        eyeController.SetEyeColor(color);
     }
+
+    public void setExpression(int expression)
+    {
+        switch (expression)
+        {
+            case 1:
+                eyeController.SetExpressionWake();
+                break;
+            case 2:
+                eyeController.SetExpressionDie();
+                break;
+            case 3:
+                eyeController.SetExpressionAngry();
+                break;
+            case 4:
+                eyeController.SetExpressionScared();
+                break;
+            case 5:
+                eyeController.SetExpressionSquint();
+                break;
+            default:
+                eyeController.SetExpressionNormal();
+                break;
+        }
+    }
+
+    public void fireLeft()
+    {
+
+    }
+
+    public void fireRight()
+    {
+
+    }
+}
+public enum Expression
+{
+    NORMAL,
+    WAKE,
+    DIE,
+    ANGRY,
+    SCARED,
+    SQUINT
 }
