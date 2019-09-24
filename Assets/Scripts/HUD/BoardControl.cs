@@ -16,25 +16,17 @@ public class BoardControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         totalTiles = 0;
         gameManager.OnTilesChanged.AddListener(UpdateScore);
         gameManager.OnSessionStart.AddListener(Init);
-        gameManager.OnMapLoaded.AddListener(Clear);
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    
+        gameManager.OnMapLoaded.AddListener(Clear);       
     }
 
     void UpdateScore()
     {
         gameObject.SetActive(true);
         totalTiles = gameManager.sessionData.score.GetTotalTiles();
-        Debug.Log("Total Tiles: " + totalTiles);
+        //Debug.Log("Total Tiles: " + totalTiles);
         foreach (ScoreClass teamscore in gameManager.sessionData.score.currentTeams)
         {
             //Inefficient- oops
@@ -42,7 +34,7 @@ public class BoardControl : MonoBehaviour
             {
                 if (ri.color == gameManager.teamManager.GetTeam(teamscore.teamID).color)
                 {
-                    if(teamscore.numTiles > 0) { Debug.Log("Team " + teamscore.teamID + " tiles: " + teamscore.numTiles); }                    
+                    //if(teamscore.numTiles > 0) { Debug.Log("Team " + teamscore.teamID + " tiles: " + teamscore.numTiles); }                    
                     RectTransform rt = ri.GetComponent<RectTransform>();                    
                     rt.sizeDelta = new Vector2(teamscore.numTiles / totalTiles * (GetComponent<RectTransform>().rect.width)*0.96f, GetComponent<RectTransform>().rect.height*0.7f);
                 }

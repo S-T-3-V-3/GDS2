@@ -74,7 +74,19 @@ public class ScoreHandler {
         }
         return numTilesCaptured;
     }
-    
+
+    public float GetTotalScore()
+    {
+        float numTotalScore = 0;
+
+        foreach (ScoreClass team in currentTeams)
+        {
+            if (team.teamID != TeamID.NONE)
+                numTotalScore += team.score;
+        }
+        return numTotalScore;
+    }
+
 }
 
 public class ScoreClass {
