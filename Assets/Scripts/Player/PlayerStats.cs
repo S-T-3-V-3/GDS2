@@ -14,7 +14,7 @@ public class Stats {
     public float projectileLifetime;
 
     // Events
-    public UnityEvent OnDeath;
+    public V3Event OnDeath;
     public UnityEvent OnTakeDamage;
 
     // Functions
@@ -28,7 +28,7 @@ public class Stats {
         damage = PlayerStatsBase.damage;
         projectileLifetime = PlayerStatsBase.projectileLifetime;
 
-        OnDeath = new UnityEvent();
+        OnDeath = new V3Event();
         OnTakeDamage = new UnityEvent();
     }
 
@@ -39,14 +39,14 @@ public class Stats {
         isAlive = true;
     }
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(int damage, Vector3 force) {
         health -= damage;
 
         OnTakeDamage.Invoke();
 
         if (health <= 0) {
             health = 0;
-            OnDeath.Invoke();
+            OnDeath.Invoke(force);
         }
     }
 }
@@ -78,4 +78,8 @@ public class PlayerStatsBase {
 
 public static class StatCalculation {
     // TODO: Fill out stat formulas/multipliers
+}
+
+public class V3Event : UnityEvent<Vector3>
+{
 }

@@ -15,18 +15,20 @@ public class PlayerController : MonoBehaviour
     public SkillPoints skillPoints;
     [Space]
     public UnityEvent OnPlayerSpawn;
-    public UnityEvent OnPlayerDeath;
+    public UnityEvent<Vector3> OnPlayerDeath;
+    public Vector3 pawnPosition = new Vector3(0,0,0);
+    public Vector3 deathForce;
     [Space]
+    public GameManager gameManager;
     public bool hasPawn = false;
 
-    public GameManager gameManager;
 
 
     void Awake() {
         currentStats = new Stats();
         currentStats.Init();
 
-        OnPlayerDeath = new UnityEvent();
+        OnPlayerDeath = new V3Event();
         OnPlayerDeath.AddListener(OnDeath);
         OnPlayerSpawn = new UnityEvent();
         OnPlayerSpawn.AddListener(OnSpawn);
@@ -77,9 +79,11 @@ public class PlayerController : MonoBehaviour
         spawnFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
     }
 
-    void OnDeath() {
-        PlayerParticle spawnFX = GameObject.Instantiate(gameManager.SpawnFXPrefab,playerModel.transform).GetComponent<PlayerParticle>();
-        spawnFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
+    void OnDeath(Vector3 force) {
+        PlayerParticle deathFX = GameObject.Instantiate(gameManager.DeathFXPrefab).GetComponent<PlayerParticle>();
+        deathFX.transform.position = playerModel.transform.position;
+        deathFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
+        deathFX.SetVector(force);
     }
 }
 
@@ -134,6 +138,7 @@ public class PlayerActiveState : State
         if (!gameManager.sessionData.roundManager.isStarted) return;
 
         doMovement();
+        playerController.pawnPosition = playerController.playerModel.transform.position;
     }
 
     void GetGuns() {
@@ -202,8 +207,8 @@ public class PlayerActiveState : State
         gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
     }
 
-    void OnDeath() {
-        playerController.OnPlayerDeath.Invoke();
+    void OnDeath(Vector3 force) {
+        playerController.OnPlayerDeath.Invoke(force);
         playerController.SetState<PlayerDeathState>();
     }
 }

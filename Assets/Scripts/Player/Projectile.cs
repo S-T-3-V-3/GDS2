@@ -75,7 +75,7 @@ public class Projectile : MonoBehaviour
         if (other.tag == "Player") {
             PlayerController hitPlayer = other.GetComponent<PlayerModelController>().owner;
 
-            hitPlayer.currentStats.TakeDamage(damage);
+            hitPlayer.currentStats.TakeDamage(damage, this.movementDirection * moveSpeed);
             
             if (hitPlayer.currentStats.health <= 0) {
                 FindObjectOfType<GameManager>().OnPlayerKilled(owningPlayer, hitPlayer);

@@ -21,7 +21,19 @@ public class PlayerParticle : MonoBehaviour
         {
             var main = ps.main;
             main.startColor = color;
-            ps.Emit(1);
+            //ps.Emit(1);
+        }
+    }
+
+    public void SetVector(Vector3 dir) {
+        foreach(ParticleSystem ps in particleSystems)
+        {
+            ps.transform.rotation = Quaternion.FromToRotation(Vector3.forward,dir);
+
+            if (ps.name != "Buzz") {
+                ParticleSystem.MainModule main = ps.main;
+                main.startSpeed = dir.magnitude;
+            }
         }
     }
 
