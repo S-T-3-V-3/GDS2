@@ -12,6 +12,11 @@ public class GameManager : MonoBehaviour
     public GameObject CameraPrefab;
     public GameObject MainMenuPrefab;
     public GameObject AnnouncementPrefab;
+    public GameObject SpawnFXPrefab;
+    public GameObject DeathFXPrefab;
+    public GameObject DeathColliderPrefab;
+    public GameObject TextPopupPrefab;
+
     public Material WallMaterial;
     public Transform playerParent;
 
@@ -108,8 +113,6 @@ public class GameManager : MonoBehaviour
 
         foreach (PlayerController player in currentPlayers) {
             if (player.teamID != TeamID.NONE) {
-                this.SpawnPlayer(player);
-
                 player.SetState<PlayerActiveState>();
             }       
         }
@@ -139,7 +142,15 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, Color.red);
+        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, teamManager.GetTeam(killer.teamID).color);
+
+        PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
+        deathHandler.transform.position = killed.pawnPosition;
+        deathHandler.targetTeam = killer.teamID;
+
+        TextPopupHandler textPopup = GameObject.Instantiate(TextPopupPrefab).GetComponent<TextPopupHandler>();
+        string textValue = "+" + gameSettings.pointsPerKill.ToString();
+        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeam(killer.teamID).color);
     }
  
     // Runs every time a player joins the game, will trigger session start if first player connected.
@@ -165,14 +176,10 @@ public class GameManager : MonoBehaviour
     // Set player spawn point, currently random spawn location
     public void SpawnPlayer(PlayerController player) {
         int index = Random.Range(0,tilePositions.Count-1);
+        player.playerModel.transform.position = tilePositions[index] + new Vector3(0,1f,0);
+        player.OnPlayerSpawn.Invoke();
 
-        player.gameObject.transform.position = new Vector3(0,0,0);
-        player.model.transform.position = new Vector3(0,0,0);
-
-        player.gameObject.transform.position = tilePositions[index] + new Vector3(0,1.5f,0);
-        
         tilePositions.RemoveAt(index);
-        
         OnPlayersChanged.Invoke();
         OnNewCameraTarget.Invoke();
     }

@@ -28,8 +28,6 @@ public class Tile : MonoBehaviour
 
     Material newTeamMat;
 
-    
-
     public void Init(GameManager gameManager, int distanceFromCenter, float meshSize) {
         this.gameManager = gameManager;
         this.mapManager = gameManager.GetComponent<MapManager>();
@@ -41,37 +39,41 @@ public class Tile : MonoBehaviour
     // Player primary control allows for status of friendly/enemy territory update prior to capture
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.isStarted == false) return;
-        
-        if (other.transform.parent.GetComponent<PlayerController>() == null || isWall) return;
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
+        if (gameManager.sessionData.roundManager.isStarted == false || isWall) return;
 
-        if (currentTeam != overlappingPlayer.teamID) {
-            gameManager.sessionData.score.UpdateTileCount(currentTeam,overlappingPlayer.teamID);
-            currentTeam = overlappingPlayer.teamID;
-            gameManager.OnTilesChanged.Invoke();
+        TeamID targetTeamID = currentTeam;
 
-            if (currentHexEffect != null) {
-                GameObject.Destroy(currentHexEffect);
+        if (other.tag == "Player")
+            targetTeamID = other.GetComponent<PlayerModelController>().owner.teamID;
+        else if (other.GetComponent<PlayerPostDeathHandler>() != null)
+            targetTeamID = other.GetComponent<PlayerPostDeathHandler>().targetTeam;
+
+        if (currentTeam != targetTeamID) {
+                gameManager.sessionData.score.UpdateTileCount(currentTeam,targetTeamID);
+                currentTeam = targetTeamID;
+                gameManager.OnTilesChanged.Invoke();
+
+                if (currentHexEffect != null) {
+                    GameObject.Destroy(currentHexEffect);
+                }
+                currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
+                currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+                currentStarsEffect = GameObject.Instantiate(StarsEffect,this.transform.position,this.transform.rotation,this.transform);
+                currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
+
+                ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
+                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
+
+                main = currentStarsEffect.GetComponent<ParticleSystem>().main;
+                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
+
+                newTeamMat = gameManager.teamManager.GetTeam(targetTeamID).tileMat;
+
+                HexSprite.DoColorChange(gameManager.teamManager.GetTeam(targetTeamID).color);
+
+                //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
             }
-            currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
-            currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
-
-            currentStarsEffect = GameObject.Instantiate(StarsEffect,this.transform.position,this.transform.rotation,this.transform);
-            currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
-
-            ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
-            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
-
-            main = currentStarsEffect.GetComponent<ParticleSystem>().main;
-            main.startColor = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color;
-
-            newTeamMat = gameManager.teamManager.GetTeam(overlappingPlayer.teamID).tileMat;
-
-            HexSprite.DoColorChange(gameManager.teamManager.GetTeam(overlappingPlayer.teamID).color);
-
-            //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
-        }
     }
 
     public TeamID GetTeam() {

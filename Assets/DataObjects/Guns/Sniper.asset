@@ -9,8 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a053a80c5b9951945aedc3baff0de3bb, type: 3}
-  m_Name: Box
+  m_Script: {fileID: 11500000, guid: cb15d83f5bfaac74d96d6efbae181f2e, type: 3}
+  m_Name: Sniper
   m_EditorClassIdentifier: 
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  material: {fileID: 2100000, guid: 597f4fef6444ee94bb3516f7c1b7c5da, type: 2}
+  gunName: 
+  projectilePrefab: {fileID: 0}
+  reloadTime: 0
+  projectileSize: 0
+  projectileSpeed: 0
+  projectileDamage: 0
+  projectileLifetime: 0

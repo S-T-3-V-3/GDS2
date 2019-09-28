@@ -6,14 +6,7 @@ public class GunComponent : MonoBehaviour
 {
     public GunType gun;
     public PlayerController owner;
-    GameObject gunModel;
     float reloadCooldown = 0f;
-
-    void Start() {
-        gunModel = GameObject.Instantiate(gun.gunPrefab,this.gameObject.transform);
-        gunModel.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
-        gunModel.GetComponent<Renderer>().material = FindObjectOfType<GameManager>().teamManager.GetTeam(owner.teamID).playerMat;
-    }
 
     void Update() {
         if (reloadCooldown > 0)
@@ -30,5 +23,7 @@ public class GunComponent : MonoBehaviour
     void DoShoot() {
         Projectile newProjectile = GameObject.Instantiate(gun.projectilePrefab, this.transform.position, this.transform.rotation).GetComponent<Projectile>();
         newProjectile.Init(owner, this.gameObject.transform.forward, gun);
+
+        owner.playerModel.GetComponent<Rigidbody>().AddForce(this.gameObject.transform.forward.normalized * -1 * gun.projectileSize * owner.gameManager.gameSettings.baseRecoilValue, ForceMode.Impulse);
     }
 }

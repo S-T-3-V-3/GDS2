@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerModelEyes : MonoBehaviour
+public class PlayerModelEyeController : MonoBehaviour
 {
-    // Start is called before the first frame update
     Material eyeMat;
     Renderer eyeRenderer;
     Color currentColor;
     float eyeFrame;
-    float frameSize;
+    //float frameSize;
 
-    void Start()
+    void Awake()
     {
-        eyeRenderer = gameObject.GetComponent<Renderer>();
+        if (this.GetComponent<MeshRenderer>() != null)
+            eyeRenderer = this.GetComponent<MeshRenderer>();
+        else
+            eyeRenderer = this.GetComponent<SkinnedMeshRenderer>();
+            
         eyeFrame = 0;
-        frameSize = 1 / 16;
+        //frameSize = 1 / 16;
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         //myRend.material.color = currentColor;
@@ -31,10 +33,13 @@ public class playerModelEyes : MonoBehaviour
     public void SetEyeColor(Color color)
     {
         currentColor = color;
-        print(color);
-        print(eyeRenderer.name);
         //myRend.material.shader = Shader.Find("HDRP/Lit");
-        eyeRenderer.material.SetColor("_BaseColor", color);
+        try {
+            eyeRenderer.material.SetColor("_BaseColor", color);
+        }
+        catch {
+
+        }
 
 
         //myRend.material.mainTextureOffset = new Vector2(.1f, 0);

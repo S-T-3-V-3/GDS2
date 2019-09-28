@@ -2,41 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModelController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    Light underLight;
-    playerModelEyes eyeScript;
-
-
-
-    Color[] colors;
-    void Start()
-    {
-        underLight = GetComponentInChildren<Light>();
-        eyeScript = GetComponentInChildren<playerModelEyes>();
-
-        colors = new Color[10];
-        colors[0] = new Color(0.9f, 0, 0);
-        colors[1] = new Color(0, 0.9f, 0);
-        colors[2] = new Color(0, 0.2f, 1);
-        colors[3] = new Color(1, 0.7f, 0);
-        colors[4] = new Color(1, 0, 1);
-        colors[5] = new Color(1, 1, 0);
-        colors[6] = new Color(1, 1, 0);
-
-    }
+    public List<Light> lights;
+    public PlayerModelEyeController eyeController;
+    public PlayerController owner;
 
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            Color tempColor = colors[Random.Range(0,6)];
-            SetPlayerColor(tempColor);
-            eyeScript.SetEyeColor(tempColor);
-        }
-
-
         if (Input.GetKeyDown("z"))
         {
             setExpression(0);
@@ -61,37 +34,38 @@ public class PlayerModel : MonoBehaviour
         {
             setExpression(5);
         }
-
     }
 
     public void SetPlayerColor(Color color)
     {
-        underLight.color = color;
+        foreach (Light currentLight in lights) {
+            currentLight.color = color;
+        }
+        
+        eyeController.SetEyeColor(color);
     }
-
-
 
     public void setExpression(int expression)
     {
         switch (expression)
         {
             case 1:
-                eyeScript.SetExpressionWake();
+                eyeController.SetExpressionWake();
                 break;
             case 2:
-                eyeScript.SetExpressionDie();
+                eyeController.SetExpressionDie();
                 break;
             case 3:
-                eyeScript.SetExpressionAngry();
+                eyeController.SetExpressionAngry();
                 break;
             case 4:
-                eyeScript.SetExpressionScared();
+                eyeController.SetExpressionScared();
                 break;
             case 5:
-                eyeScript.SetExpressionSquint();
+                eyeController.SetExpressionSquint();
                 break;
             default:
-                eyeScript.SetExpressionNormal();
+                eyeController.SetExpressionNormal();
                 break;
         }
     }

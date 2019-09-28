@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb15d83f5bfaac74d96d6efbae181f2e, type: 3}
-  m_Name: Default
+  m_Name: Shotgun
   m_EditorClassIdentifier: 
-  gunName: Default
+  gunName: Shotgun
   projectilePrefab: {fileID: 7185639305933918909, guid: e1d33f1f12ae7a243abad3c35232f70b,
     type: 3}
-  reloadTime: 0.3
-  projectileSize: 0.4
-  projectileSpeed: 11
-  projectileDamage: 5
-  projectileLifetime: 1.5
+  reloadTime: 1.5
+  projectileSize: 1
+  projectileSpeed: 20
+  projectileDamage: 20
+  projectileLifetime: 0.3

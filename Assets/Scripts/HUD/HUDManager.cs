@@ -7,8 +7,10 @@ using System.Collections.Generic;
 public class HUDManager : MonoBehaviour
 {
     public GameObject PlayerScorecardPrefab;
+    public GameObject TeamScorecardPrefab;
     public GameManager gameManager;
     public TextMeshProUGUI RoundTimer;
+    public GameObject lobby;
     public GameObject gameplay;
     public GameObject joinMessage;
     public GameObject carouselMessage;
@@ -17,9 +19,13 @@ public class HUDManager : MonoBehaviour
 
     public GameObject upperUI;
     public GameObject playersLayout;
+    public GameObject scoresLayout;
 
     public List<PlayerScorecard> playerScorecards;
+    public List<TeamScoreCard> teamScorecards;
+
     GameObject mainMenu;
+    Announcement currentAnnouncement;
 
     void Start() {
         gameManager.OnScoreUpdated.AddListener(UpdateScore);
@@ -55,9 +61,9 @@ public class HUDManager : MonoBehaviour
 
     public void Reset() {
         gameplay.SetActive(false);
-        joinMessage.SetActive(true);
-        playerLobby.SetActive(true);
+        lobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(true);
+        scoresLayout.SetActive(false);
         
         UpdatePlayers();
 
@@ -65,21 +71,40 @@ public class HUDManager : MonoBehaviour
     }
 
     public void Announcement(string message, float time, Color ? color = null) {
-        Announcement newAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
-        newAnnouncement.Init(message, time, color ?? Color.white);
+        if (currentAnnouncement != null)
+            currentAnnouncement.ForceStop();
+
+        currentAnnouncement = GameObject.Instantiate(gameManager.AnnouncementPrefab, this.transform).GetComponent<Announcement>();
+        currentAnnouncement.Init(message, time, color ?? Color.white);
     }
 
     void UpdateScore() {
+        scoresLayout.SetActive(true);
         foreach (ScoreClass teamScore in gameManager.sessionData.score.currentTeams) {
-            if (teamScore.score > 0)
-                foreach(PlayerScorecard currentScorecard in playerScorecards)
+            foreach (PlayerScorecard currentScorecard in playerScorecards)
+            {
+                if (currentScorecard.teamText.text == ("" + teamScore.teamID))
                 {
-                    if(currentScorecard.teamText.text == ("" + teamScore.teamID))
-                    {
-                        currentScorecard.pointsText.text = "" + (int)teamScore.score + " pts";
-                    }
-                    
+                    currentScorecard.pointsText.text = "" + (int)teamScore.score + " pts";
                 }
+            }
+            //Re-Order teamScorecards List
+            teamScorecards.Sort((x, y) => x.score.CompareTo(y.score));
+            teamScorecards.Reverse();       
+            foreach (TeamScoreCard currentTeamCard in teamScorecards)
+            {
+                if (currentTeamCard.team.ID == (teamScore.teamID))
+                {
+                    currentTeamCard.score = teamScore.score;
+                    currentTeamCard.pointsText.text = "" + (int)currentTeamCard.score/* + " pts" */;
+                    currentTeamCard.scoreBar.uvRect = new Rect((1f - teamScore.score / gameManager.sessionData.score.GetTotalScore()), 0, 1, 1);
+                    currentTeamCard.transform.SetSiblingIndex(teamScorecards.IndexOf(currentTeamCard));
+
+                    //Debug.Log("Index of " + currentTeamCard.team.ID + " card= " + teamScorecards.IndexOf(currentTeamCard));
+                    //Debug.Log("New Index of " + currentTeamCard.team.ID + " card= " + teamScorecards.IndexOf(currentTeamCard));
+                }
+            }
+
         }
     }
 
@@ -101,25 +126,35 @@ public class HUDManager : MonoBehaviour
     }
 
     void OnGameLoaded() {
-        gameplay.SetActive(true);
+        lobby.SetActive(true);
         GameObject.Destroy(mainMenu);
     }
 
     void OnRoundPrepare() {
+        lobby.SetActive(false);
+        gameplay.SetActive(true);
         joinMessage.SetActive(false);
         playerLobby.SetActive(false);
         connectedPlayers.gameObject.SetActive(false);
+        scoresLayout.SetActive(false);
 
+        //Initialise PlayerScorecards
         if (playerScorecards == null)
-            playerScorecards = new List<PlayerScorecard>();
-        
+            playerScorecards = new List<PlayerScorecard>();        
         foreach (PlayerScorecard ps in playerScorecards)
             GameObject.Destroy(ps.gameObject);
-
         playerScorecards.Clear();
-
         foreach (PlayerController player in gameManager.currentPlayers)
            playerScorecards.Add(CreatePlayerScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+
+        //Initialise TeamScorecards
+        if (teamScorecards == null)
+            teamScorecards = new List<TeamScoreCard>();
+        foreach (TeamScoreCard ts in teamScorecards)
+            GameObject.Destroy(ts.gameObject);
+        teamScorecards.Clear();
+        foreach (PlayerController player in gameManager.currentPlayers)
+            teamScorecards.Add(CreateTeamScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
 
         upperUI.SetActive(true);
     }
@@ -136,13 +171,29 @@ public class HUDManager : MonoBehaviour
 
     public PlayerScorecard CreatePlayerScorecard(int playerNumber, TeamID playerTeam)
     {
-        PlayerScorecard newScorecard = GameObject.Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
+        PlayerScorecard newScorecard = Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
         newScorecard.playerText.text = "Player " + playerNumber;
         newScorecard.teamText.text = "" + playerTeam;
         newScorecard.teamText.color = gameManager.teamManager.GetTeam(playerTeam).color;
         newScorecard.pointsText.color = gameManager.teamManager.GetTeam(playerTeam).color;
         newScorecard.playerHP.uvRect = new Rect(0, 0, 1, 1);
+        newScorecard.transform.localScale = Vector3.one;
+
+        return newScorecard;
+    }
+
+    public TeamScoreCard CreateTeamScorecard(int playerNumber, TeamID playerTeam)
+    {
+        TeamScoreCard newScorecard = Instantiate(TeamScorecardPrefab, scoresLayout.transform).GetComponent<TeamScoreCard>();        
+        newScorecard.team.ID = playerTeam;
+        newScorecard.scoreBar.uvRect = new Rect(0, 0, 1, 1);
+        newScorecard.scoreBar.color = gameManager.teamManager.GetTeam(playerTeam).color;
+        newScorecard.transform.localScale = Vector3.one;
+        //newScorecard.score = gameManager.sessionData.score.currentTeams.Find(x => x.teamID == playerTeam).score;
+        newScorecard.score = 0;
+        newScorecard.pointsText.text = newScorecard.score.ToString();
 
         return newScorecard;
     }
 }
+
