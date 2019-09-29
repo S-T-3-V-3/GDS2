@@ -6,9 +6,20 @@ using TMPro;
 
 public class PlayerLobbyPrefab : MonoBehaviour
 {
-    public Image portrait;
     public TextMeshProUGUI playerNumber;
+    [Space]
+    public GameObject root;
+    public Image portrait;
+    public TextMeshProUGUI portraitLeftArrow;
+    public TextMeshProUGUI portraitRightArrow;
+    [Space]
     public TextMeshProUGUI playerTeam;
+    public TextMeshProUGUI teamLeftArrow;
+    public TextMeshProUGUI teamRightArrow;
+    [Space]
+    public TextMeshProUGUI playerWeapon;
+    public TextMeshProUGUI weaponLeftArrow;
+    public TextMeshProUGUI weaponRightArrow;    
 
     // Start is called before the first frame update
     void Start()
@@ -21,4 +32,6 @@ public class PlayerLobbyPrefab : MonoBehaviour
     {
         
     }
+
+
 }

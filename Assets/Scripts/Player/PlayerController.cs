@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public TeamID teamID;
+    public int playerWeaponSelection = 0;
+    public int playerModelSelection = 0;
     public PlayerModelConfig playerModelConfig;
     public TMPro.TextMeshPro healthText;
     public StateManager playerState;
@@ -22,6 +24,9 @@ public class PlayerController : MonoBehaviour
     public GameManager gameManager;
     public bool hasPawn = false;
 
+    [Space]
+    public int currentSelection = 0;
+    public bool ready = false;
 
 
     void Awake() {
@@ -227,28 +232,97 @@ public class CharacterSelectState : State
         gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
     }
 
-    public void OnLeftStick(InputValue value) {
-        Vector2 test = (Vector2)value.Get();
+    public void OnUpArrow()
+    {
+        if (!playerController.ready)
+        {
+            if (playerController.currentSelection == 0)
+            {
+                playerController.currentSelection = 2;
+            }
+            else
+            {
+                playerController.currentSelection -= 1;
+                //Debug.Log("playerController.currentSelection: " + playerController.currentSelection);
+            }
+            gameManager.OnPlayersChanged.Invoke();
+        }
     }
 
-    public void OnBumpers(InputValue value) {        
-        gameManager.teamManager.LeaveTeam(playerController,playerController.teamID);
-        playerController.teamID += (int)value.Get<float>();
+    public void OnDownArrow()
+    {
+        if (!playerController.ready)
+        {
+            if (playerController.currentSelection == 2)
+            {
+                playerController.currentSelection = 0;
+            }
+            else
+            {
+                playerController.currentSelection += 1;
+                //Debug.Log("playerController.currentSelection: " + playerController.currentSelection);
+            }
+            gameManager.OnPlayersChanged.Invoke();
+        }
+    }
 
-        if (playerController.teamID > TeamID.NONE)
-            playerController.teamID = TeamID.BLUE;
+    public void OnBumpers(InputValue value) {
+        if (!playerController.ready)
+        {
 
-        if (playerController.teamID < TeamID.BLUE)
-            playerController.teamID = TeamID.NONE;
-            
-        gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
+            //Debug.Log("Bumpers pressed playerController.currentSelection: " + playerController.currentSelection);
+            if (playerController.currentSelection == 0) //Model Selection
+            {
+                playerController.playerModelSelection += (int)value.Get<float>();
+                if (playerController.playerModelSelection == 4) { playerController.playerModelSelection = 0; }
+                if (playerController.playerModelSelection == -1) { playerController.playerModelSelection = 3; }
+                playerController.playerModelConfig = gameManager.gameSettings.characterModels[playerController.playerModelSelection];
+            }
 
+            if (playerController.currentSelection == 1) //Team Selection
+            {
+                gameManager.teamManager.LeaveTeam(playerController, playerController.teamID);
+                playerController.teamID += (int)value.Get<float>();
+
+                if (playerController.teamID > TeamID.ORANGE)
+                    playerController.teamID = TeamID.BLUE;
+
+                if (playerController.teamID < TeamID.BLUE)
+                    playerController.teamID = TeamID.ORANGE;
+
+                gameManager.teamManager.JoinTeam(playerController, playerController.teamID);
+                //gameManager.OnPlayersChanged.Invoke();
+            }
+
+            if (playerController.currentSelection == 2) //Weapon Selection
+            {
+                playerController.playerWeaponSelection += (int)value.Get<float>();
+                if (playerController.playerWeaponSelection == 3) { playerController.playerWeaponSelection = 0; }
+                if (playerController.playerWeaponSelection == -1) { playerController.playerWeaponSelection = 2; }
+            }
+            gameManager.OnPlayersChanged.Invoke();
+        }
+    }
+
+    public void OnStart(InputValue value)
+    {
+        if (playerController.teamID != TeamID.NONE)
+        {
+            playerController.ready = true;
+            playerController.currentSelection = -1;
+            gameManager.ReadyCheck();
+        }
         gameManager.OnPlayersChanged.Invoke();
     }
 
-    public void OnStart(InputValue value) {
-        if (playerController.teamID != TeamID.NONE)
-            gameManager.StartNextRound();
+    public void OnFaceButtonSouth(InputValue value) //Back button
+    {
+        if (playerController.ready == true)
+        {
+            playerController.ready = false;
+            playerController.currentSelection = 0;
+        }
+        gameManager.OnPlayersChanged.Invoke();
     }
 }
 
@@ -274,11 +348,6 @@ public class BuffSelectState : State
         //int test = value.Get<int>();
     }
 
-    public void OnStart(InputValue value) {
-        if (playerController.teamID != TeamID.NONE) {
-            gameManager.StartNextRound();
-        }
-    }
 }
 
 public class PlayerInactiveState : State

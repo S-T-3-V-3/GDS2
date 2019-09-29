@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
         
         StartNextRound();
     }
-
+    
     public void StartNextRound() {
         OnMapLoaded.AddListener(SpawnPlayers);
 
@@ -146,6 +146,10 @@ public class GameManager : MonoBehaviour
     // Runs every time a player joins the game, will trigger session start if first player connected.
     public void OnPlayerJoined(PlayerInput newPlayer) {
         PlayerController newController = newPlayer.GetComponent<PlayerController>();
+
+        newController.teamID = TeamID.BLUE;
+        newController.ready = false;
+
         newController.transform.parent = playerParent;
         currentPlayers.Add(newController);
 
@@ -198,5 +202,17 @@ public class GameManager : MonoBehaviour
     //Sam
     void DespawnKoth() {
         Destroy(KingOfTheHill);
+    }
+
+    public void ReadyCheck()
+    {
+        foreach (PlayerController pc in currentPlayers)
+        {
+            Debug.Log(pc + " ready: " + pc.ready);
+            if (!pc.ready) { return; }
+        }
+        Debug.Log("All players ready.");
+
+        StartNextRound();
     }
 }

@@ -48,3 +48,8 @@ MonoBehaviour:
     modelName: Spyware
   - model: {fileID: 1136667167499195962, guid: 9bb2f06f1e85d1340bd5062ef72ab41a, type: 3}
     modelName: Bot
+  characterPortraits:
+  - {fileID: 21300000, guid: 8b86fe8b1c0aed24abfccb5795b476aa, type: 3}
+  - {fileID: 21300000, guid: 89424013f64167645a68ecd329e8ecaa, type: 3}
+  - {fileID: 21300000, guid: 855115a279274c548bef286ca0565150, type: 3}
+  - {fileID: 21300000, guid: 2efc2947aea1f564a9d1e26d2668078a, type: 3}

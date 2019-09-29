@@ -807,6 +807,22 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "UpArrow",
+                    "type": "Button",
+                    "id": "dbb32c69-5692-4ecd-b873-73db7b82b9ff",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "DownArrow",
+                    "type": "Button",
+                    "id": "425322d3-3dcc-4d4c-af1b-83ceb246a1ba",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -1027,6 +1043,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "LeftBumper",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "58111afb-b852-45e7-bdb6-6e1ba17aa5bf",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UpArrow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "afde98ce-a600-4ff0-840a-4ee310ddc0ce",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "DownArrow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

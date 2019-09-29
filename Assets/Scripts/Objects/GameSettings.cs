@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(menuName="Game Settings")]
 public class GameSettings : ScriptableObject {
@@ -25,6 +26,8 @@ public class GameSettings : ScriptableObject {
     [Space]
     public List<MapSettings> roundMapSettings;
     public List<PlayerModelConfig> characterModels;
+    [Space]
+    public List<Sprite> characterPortraits;
 
     // Can explore options with alternate game modes including base stat modifiers
     //public List<StatModifiers> baseStatModifiers;
