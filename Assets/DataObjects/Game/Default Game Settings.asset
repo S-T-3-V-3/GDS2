@@ -20,6 +20,19 @@ MonoBehaviour:
   pointsPerKill: 30
   pointsPerInterval: 50
   pointDistributionInterval: 5
+  expPerInterval: 10
+  expGainInterval: 3
+  expRequired:
+  - 100
+  - 200
+  - 300
+  - 400
+  - 500
+  - 600
+  - 700
+  - 800
+  - 900
+  - 1000
   baseRecoilValue: 2
   baseKnockbackValue: 7
   KOTHPoints: 5

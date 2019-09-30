@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [Space]
     public UnityEvent OnPlayerSpawn;
     public UnityEvent<Vector3> OnPlayerDeath;
+    public UnityEvent OnPlayerGainExp;
+    public UnityEvent OnPlayerLevelUp;
     public Vector3 pawnPosition = new Vector3(0,0,0);
     public Vector3 deathForce;
     [Space]
@@ -32,6 +34,8 @@ public class PlayerController : MonoBehaviour
         OnPlayerDeath.AddListener(OnDeath);
         OnPlayerSpawn = new UnityEvent();
         OnPlayerSpawn.AddListener(OnSpawn);
+        OnPlayerGainExp = new UnityEvent();
+        OnPlayerLevelUp.AddListener(OnGainExp);
 
         if (playerState == null)
             playerState = this.gameObject.AddComponent<StateManager>();
@@ -85,6 +89,16 @@ public class PlayerController : MonoBehaviour
         deathFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
         deathFX.SetVector(force);
     }
+
+    void OnGainExp() {
+        //UI stuff
+        Debug.Log($"Exp: {currentStats.exp}");
+    }
+
+    void OnLevelUp() {
+        //UI stuff
+        Debug.Log($"Level: {currentStats.level}");
+    }
 }
 
 public class PlayerActiveState : State
@@ -94,8 +108,11 @@ public class PlayerActiveState : State
     List<GunComponent> equippedGuns;
     Vector2 currentMovement;
     Rigidbody rigidBody;
+    PlayerLevelUp levelUpScript;
+
     float deadZoneRange = 0.17f;
     bool isShooting = false;
+    float elapsedTime = 0f;
 
     public override void BeginState()
     {
@@ -131,6 +148,9 @@ public class PlayerActiveState : State
                 gun.RequestShoot();
             }
         }
+
+        ExpUpdate();
+        LevelUpdate();
     }
 
     void FixedUpdate()
@@ -139,6 +159,30 @@ public class PlayerActiveState : State
 
         doMovement();
         playerController.pawnPosition = playerController.playerModel.transform.position;
+    }
+
+    public void ExpUpdate() {
+        elapsedTime += Time.deltaTime;
+
+        if (elapsedTime >= gameManager.gameSettings.expGainInterval) {
+            elapsedTime = 0f;
+            playerController.currentStats.exp += gameManager.gameSettings.expPerInterval;
+            if (playerController.currentStats.exp > 1000)
+                playerController.currentStats.exp = 1000;
+            playerController.OnPlayerGainExp.Invoke();
+        }
+    }
+
+    public void LevelUpdate() {
+        if (playerController.currentStats.exp >= gameManager.gameSettings.expRequired[playerController.currentStats.level-1]) {
+            playerController.currentStats.level += 1;
+
+            if (levelUpScript != null) {
+                levelUpScript = gameObject.AddComponent<PlayerLevelUp>();
+            }
+
+            playerController.OnPlayerLevelUp.Invoke();
+        }
     }
 
     void GetGuns() {
@@ -183,6 +227,30 @@ public class PlayerActiveState : State
         // playerController.currentStats.TakeDamage(10);
     }
 
+    public void OnFaceButtonNorth() {
+        if (levelUpScript != null) {
+            levelUpScript.ChooseUpgrade("north");
+        }
+    }
+
+    public void OnFaceButtonEast() {
+        if (levelUpScript != null) {
+            levelUpScript.ChooseUpgrade("east");
+        }
+    }
+
+    public void OnFaceButtonSouth() {
+        if (levelUpScript != null) {
+            levelUpScript.ChooseUpgrade("south");
+        }
+    }
+
+    public void OnFaceButtonWest() {
+        if (levelUpScript != null) {
+            levelUpScript.ChooseUpgrade("west");
+        }
+    }
+
     // Handles movement of the player
     void doMovement() {
         float dampSpeed = 3f;
@@ -210,6 +278,14 @@ public class PlayerActiveState : State
     void OnDeath(Vector3 force) {
         playerController.OnPlayerDeath.Invoke(force);
         playerController.SetState<PlayerDeathState>();
+    }
+
+    void OnGainExp() {
+
+    }
+
+    void OnLevelUp() {
+
     }
 }
 

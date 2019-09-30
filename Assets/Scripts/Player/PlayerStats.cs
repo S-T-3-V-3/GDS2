@@ -6,6 +6,8 @@ public class Stats {
     public float moveSpeed;
     public float acceleration;
     public int health;
+    public int level;
+    public float exp;
     public bool isAlive;
 
     // Events
@@ -17,6 +19,8 @@ public class Stats {
         moveSpeed = PlayerStatsBase.moveSpeed;
         acceleration = PlayerStatsBase.acceleration;
         health = PlayerStatsBase.health;
+        level = PlayerStatsBase.level;
+        exp = PlayerStatsBase.exp;
         isAlive = false;
 
         OnDeath = new V3Event();
@@ -63,6 +67,8 @@ public class PlayerStatsBase {
     public static float acceleration = 20f;
     public static int health = 100;
     public static int trailLength = 8;
+    public static int level = 1;
+    public static float exp = 0;
 }
 
 public static class StatCalculation {
