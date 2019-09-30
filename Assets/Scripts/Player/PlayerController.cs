@@ -1,35 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     public TeamID teamID;
+    public PlayerModelConfig playerModelConfig;
     public TMPro.TextMeshPro healthText;
     public StateManager playerState;
-    public PlayerCharacter character;
-    public GameObject model;
-    public Light playerGlow;
-    [Space]
-
+    public GameObject playerModel;
     public Stats currentStats;
     public SkillPoints skillPoints;
+    [Space]
+    public UnityEvent OnPlayerSpawn;
+    public UnityEvent<Vector3> OnPlayerDeath;
+    public Vector3 pawnPosition = new Vector3(0,0,0);
+    public Vector3 deathForce;
+    [Space]
+    public GameManager gameManager;
+    public bool hasPawn = false;
+
 
 
     void Awake() {
         currentStats = new Stats();
         currentStats.Init();
 
+        OnPlayerDeath = new V3Event();
+        OnPlayerDeath.AddListener(OnDeath);
+        OnPlayerSpawn = new UnityEvent();
+        OnPlayerSpawn.AddListener(OnSpawn);
+
         if (playerState == null)
             playerState = this.gameObject.AddComponent<StateManager>();
 
-        GameManager gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
+
+        int modelNum = UnityEngine.Random.Range(0,3);
+        playerModelConfig = gameManager.gameSettings.characterModels[modelNum];
 
         if (gameManager.sessionData.isGameLoaded)
             this.OnGameLoaded();
         else
             gameManager.OnGameLoaded.AddListener(OnGameLoaded);
+    }
+
+    public void CreateNewPawn() {
+        playerModel = GameObject.Instantiate(playerModelConfig.model,gameManager.playerParent);
+
+        hasPawn = true;
+
+        playerModel.GetComponent<PlayerModelController>().owner = this;
+        playerModel.GetComponent<PlayerModelController>().SetPlayerColor(gameManager.teamManager.GetTeam(teamID).color);
+    }
+
+    public void DestroyPawn()
+    {
+        if (playerModel != null) {
+            GameObject.Destroy(playerModel);
+            hasPawn = false;
+            currentStats.isAlive = false;
+        }
     }
 
     public void SetState<T>() where T : State {
@@ -38,6 +71,19 @@ public class PlayerController : MonoBehaviour
 
     void OnGameLoaded() {
         playerState.AddState<CharacterSelectState>();
+    }
+
+    void OnSpawn() {
+        PlayerParticle spawnFX = GameObject.Instantiate(gameManager.SpawnFXPrefab).GetComponent<PlayerParticle>();
+        spawnFX.transform.position = playerModel.transform.position;
+        spawnFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
+    }
+
+    void OnDeath(Vector3 force) {
+        PlayerParticle deathFX = GameObject.Instantiate(gameManager.DeathFXPrefab).GetComponent<PlayerParticle>();
+        deathFX.transform.position = playerModel.transform.position;
+        deathFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
+        deathFX.SetVector(force);
     }
 }
 
@@ -48,41 +94,38 @@ public class PlayerActiveState : State
     List<GunComponent> equippedGuns;
     Vector2 currentMovement;
     Rigidbody rigidBody;
-
     float deadZoneRange = 0.17f;
     bool isShooting = false;
 
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = GameObject.FindObjectOfType<GameManager>();
+        gameManager = playerController.gameManager;
 
-        playerController.model.SetActive(true);
-        playerController.healthText.gameObject.SetActive(true);
+        if (playerController.playerModel == null)
+            playerController.CreateNewPawn();
 
-        playerController.model.GetComponent<MeshRenderer>().material = gameManager.teamManager.GetTeam(playerController.teamID).playerMat;
-        playerController.playerGlow.color = gameManager.teamManager.GetTeam(playerController.teamID).color;
+        gameManager.SpawnPlayer(playerController);
+
+        // playerController.healthText.gameObject.SetActive(true);
 
         playerController.currentStats.Respawn();
         playerController.currentStats.OnDeath.AddListener(OnDeath);
         playerController.currentStats.OnTakeDamage.AddListener(OnDamaged);
 
-        this.GetGuns();
-        
         currentMovement = new Vector2(0,0);
-        rigidBody = this.GetComponentInChildren<Rigidbody>(true);
+        rigidBody = playerController.playerModel.GetComponent<Rigidbody>();
 
-        if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
-        playerController.healthText.text = playerController.currentStats.health.ToString();
+        this.GetGuns();
 
-        
+        //if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
+        //playerController.healthText.text = playerController.currentStats.health.ToString();
     }
-    
 
     void Update()
     {
         if (!gameManager.sessionData.roundManager.isStarted) return;
-        
+
         if (isShooting) {
             foreach (GunComponent gun in equippedGuns) {
                 gun.RequestShoot();
@@ -95,15 +138,15 @@ public class PlayerActiveState : State
         if (!gameManager.sessionData.roundManager.isStarted) return;
 
         doMovement();
+        playerController.pawnPosition = playerController.playerModel.transform.position;
     }
 
     void GetGuns() {
         if (equippedGuns == null)
             equippedGuns = new List<GunComponent>();
 
-        foreach (GunComponent gun in this.transform.GetComponentsInChildren<GunComponent>()) {
+        foreach (GunComponent gun in playerController.playerModel.GetComponentsInChildren<GunComponent>()) {
             equippedGuns.Add(gun);
-            gun.gameObject.SetActive(true);
             gun.owner = playerController;
         }
     }
@@ -120,12 +163,8 @@ public class PlayerActiveState : State
         Vector2 stickPosition = value.Get<Vector2>();
 
         if (stickPosition.magnitude > deadZoneRange) {
-            float inputRotation = Mathf.Atan2(stickPosition.x,stickPosition.y) * Mathf.Rad2Deg; 
-            playerController.model.transform.rotation = Quaternion.Euler(0,inputRotation,0);
-            isShooting = true;
-        }
-        else {
-            isShooting = false;
+            float inputRotation = Mathf.Atan2(stickPosition.x,stickPosition.y) * Mathf.Rad2Deg;
+            playerController.playerModel.transform.rotation = Quaternion.Euler(0,inputRotation,0);
         }
     }
 
@@ -140,13 +179,14 @@ public class PlayerActiveState : State
     }*/
 
     public void OnRightBumper(InputValue value) {
-        playerController.currentStats.TakeDamage(10);
+        // Debug Inflict Damage
+        // playerController.currentStats.TakeDamage(10);
     }
 
     // Handles movement of the player
     void doMovement() {
         float dampSpeed = 3f;
-        
+
         if (currentMovement.magnitude > deadZoneRange) {
             float x = currentMovement.x * PlayerStatsBase.acceleration;
             float z = currentMovement.y * PlayerStatsBase.acceleration;
@@ -163,11 +203,12 @@ public class PlayerActiveState : State
     }
 
     void OnDamaged() {
-        playerController.healthText.text = playerController.currentStats.health.ToString();
+        //playerController.healthText.text = playerController.currentStats.health.ToString();
         gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
     }
 
-    void OnDeath() {
+    void OnDeath(Vector3 force) {
+        playerController.OnPlayerDeath.Invoke(force);
         playerController.SetState<PlayerDeathState>();
     }
 }
@@ -180,11 +221,8 @@ public class CharacterSelectState : State
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = FindObjectOfType<GameManager>();
-
-        foreach (GunComponent gun in this.transform.GetComponentsInChildren<GunComponent>()) {
-            gun.gameObject.SetActive(false);
-        }
+        gameManager = playerController.gameManager;
+        playerController.DestroyPawn();
 
         gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
     }
@@ -193,7 +231,7 @@ public class CharacterSelectState : State
         Vector2 test = (Vector2)value.Get();
     }
 
-    public void OnBumpers(InputValue value) {        
+    public void OnBumpers(InputValue value) {
         gameManager.teamManager.LeaveTeam(playerController,playerController.teamID);
         playerController.teamID += (int)value.Get<float>();
 
@@ -202,7 +240,7 @@ public class CharacterSelectState : State
 
         if (playerController.teamID < TeamID.BLUE)
             playerController.teamID = TeamID.NONE;
-            
+
         gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
 
         gameManager.OnPlayersChanged.Invoke();
@@ -211,10 +249,6 @@ public class CharacterSelectState : State
     public void OnStart(InputValue value) {
         if (playerController.teamID != TeamID.NONE)
             gameManager.StartNextRound();
-    }
-
-    void SetCharacter(PlayerCharacter character) {
-        
     }
 }
 
@@ -226,10 +260,9 @@ public class BuffSelectState : State
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = playerController.gameManager;
+        playerController.DestroyPawn();
 
-        playerController.model.SetActive(false);
-        playerController.currentStats.isAlive = false;
         gameManager.OnNewCameraTarget.Invoke();
     }
 
@@ -237,7 +270,7 @@ public class BuffSelectState : State
         //Vector2 test = (Vector2)value.Get();
     }
 
-    public void OnBumpers(InputValue value) {        
+    public void OnBumpers(InputValue value) {
         //int test = value.Get<int>();
     }
 
@@ -252,17 +285,19 @@ public class PlayerInactiveState : State
 {
     PlayerController playerController;
     GameManager gameManager;
+    float dampSpeed = 3.0f;
 
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = playerController.gameManager;
     }
 
     void Update() {
-        float dampSpeed = 3.0f;
-        Rigidbody rigidBody = this.GetComponentInChildren<Rigidbody>(true);
-        rigidBody.velocity = Vector3.Lerp(rigidBody.velocity, Vector3.zero, Time.deltaTime * dampSpeed);
+        if (playerController.hasPawn) {
+            Rigidbody rigidBody = playerController.playerModel.GetComponent<Rigidbody>();
+            rigidBody.velocity = Vector3.Lerp(rigidBody.velocity, Vector3.zero, Time.deltaTime * dampSpeed);
+        }
     }
 }
 
@@ -276,11 +311,10 @@ public class PlayerDeathState : State
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = playerController.gameManager;
 
-        // TODO: Do explosion stuff then ->E
-        playerController.model.SetActive(false);
-        playerController.currentStats.isAlive = false;
+        playerController.DestroyPawn();
+
         gameManager.OnNewCameraTarget.Invoke();
     }
 
@@ -289,7 +323,6 @@ public class PlayerDeathState : State
 
         if (timeElapsed >= respawnTime) {
             playerController.SetState<PlayerActiveState>();
-            gameManager.SpawnPlayer(playerController);
             gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
         }
     }
@@ -303,10 +336,8 @@ public class PlayerMenuState : State
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = playerController.gameManager;
 
-        playerController.model.SetActive(false);
-        playerController.currentStats.isAlive = false;
         gameManager.OnNewCameraTarget.Invoke();
     }
 }

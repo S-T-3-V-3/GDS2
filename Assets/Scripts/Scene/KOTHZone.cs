@@ -54,9 +54,13 @@ public class KOTHZone : MonoBehaviour
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= gameManager.gameSettings.KOTHInterval) {
-            //ADD SCORE HERE
             foreach (PlayerController player in currentPlayers) {
                 gameManager.sessionData.score.currentTeams.Find(x => x.teamID == player.teamID).AddScore(gameManager.gameSettings.KOTHPoints);
+
+                TextPopupHandler textPopup = GameObject.Instantiate(gameManager.TextPopupPrefab).GetComponent<TextPopupHandler>();
+                string textValue = "+" + gameManager.gameSettings.KOTHPoints.ToString();
+                textPopup.Init(player.pawnPosition, textValue, gameManager.teamManager.GetTeam(player.teamID).color, 0.7f);
+                textPopup.lifetime = 0.75f;
             }
 
             // Reset time + inform listeners of score change
@@ -104,22 +108,25 @@ public class KOTHZone : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {   
-        if (gameManager.sessionData.roundManager.isStarted == false) return;        
-        if (other.transform.parent.GetComponent<PlayerActiveState>() == null) return;
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
 
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
-        currentPlayers.Add(overlappingPlayer);
+        if (other.tag == "Player") {
+            PlayerController overlappingPlayer = other.GetComponent<PlayerModelController>().owner;
+            currentPlayers.Add(overlappingPlayer);
 
-        OnPlayersChanged.Invoke();
+            OnPlayersChanged.Invoke();
+        }        
     }
 
     void OnTriggerExit (Collider other)
     {
-        if (gameManager.sessionData.roundManager.isStarted == false) return;        
+        if (gameManager.sessionData.roundManager.isStarted == false) return;
 
-        PlayerController overlappingPlayer = other.transform.parent.GetComponent<PlayerController>();
-        currentPlayers.Remove(overlappingPlayer);
+        if (other.tag == "Player") {
+            PlayerController overlappingPlayer = other.GetComponent<PlayerModelController>().owner;
+            currentPlayers.Remove(overlappingPlayer);
 
-        OnPlayersChanged.Invoke();
+            OnPlayersChanged.Invoke();
+        }
     }
 }

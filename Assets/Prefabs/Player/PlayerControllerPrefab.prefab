@@ -1,0 +1,194 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &325577945360047768
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3510173943307431120}
+  - component: {fileID: -7721188932322085470}
+  - component: {fileID: -5672023972832614332}
+  m_Layer: 0
+  m_Name: PlayerControllerPrefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3510173943307431120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325577945360047768}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-7721188932322085470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325577945360047768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0957e74ec0f7b074591b905403f3b422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamID: 6
+  playerModelConfig:
+    model: {fileID: 0}
+    modelName: 
+  healthText: {fileID: 0}
+  playerState: {fileID: 0}
+  playerModel: {fileID: 0}
+  playerGlow: {fileID: 0}
+  hasPawn: 0
+--- !u!114 &-5672023972832614332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325577945360047768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 5a684577b191f4f4ab0354e7c58fed70,
+    type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+DeviceLostEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+DeviceRegainedEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -7721188932322085470}
+        m_MethodName: OnTeamSelectNavigation
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 10b83581-9c44-436e-be9d-14693362eed1
+    m_ActionName: CharacterSelect/CharacterSelect
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 20f6f0c2-c7e0-4e29-adee-1f4c3b1dc300
+    m_ActionName: CharacterMovement/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 1e868633-39fd-42cb-8f75-879d51498e57
+    m_ActionName: CharacterMovement/Aim[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 1835210e-bc5a-4313-8f3c-c42534585603
+    m_ActionName: CharacterMovement/Shoot[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: fd3f0354-e218-493e-9602-69fe959e1cfd
+    m_ActionName: UINavigation/Navigate
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 76035a76-d642-4728-8b57-07b66e69313e
+    m_ActionName: UINavigation/Submit
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: e62718ad-2b57-4595-86cc-cf1feb1bf8fd
+    m_ActionName: UINavigation/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: efacde49-7c8e-45e8-a7b7-2d157d886c81
+    m_ActionName: UINavigation/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 242c51e6-c0d2-4eec-ac06-6db644f52a69
+    m_ActionName: UINavigation/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: ab15b3cb-d6c4-4264-b5ca-7ac40575960d
+    m_ActionName: UINavigation/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 1e4839c2-c762-4912-8d16-8c59d3c3dd9f
+    m_ActionName: UINavigation/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: aab70e09-32ab-4212-a6e4-478e28bd2b1a
+    m_ActionName: UINavigation/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 72115ef6-9f87-4c3f-8ae9-58ff50d80b61
+    m_ActionName: UINavigation/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 784614f7-7839-4426-aab4-d3fef3731a6c
+    m_ActionName: UINavigation/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 010fedaa-846e-4573-a3cc-e34f43304f70
+    m_ActionName: UINavigation/TrackedDeviceSelect
+  - m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.InputSystem.PlayerInput+ActionEvent, Unity.InputSystem,
+      Version=0.9.4.0, Culture=neutral, PublicKeyToken=null
+    m_ActionId: 4feeef79-9dec-4ebc-99b1-5443861271b5
+    m_ActionName: CharacterSelect/TeamSelectNavigation[/XInputControllerWindows/rightShoulder,/XInputControllerWindows/leftShoulder]
+  m_AutoSwitchControlScheme: 0
+  m_DefaultControlScheme: Gamepad
+  m_DefaultActionMap: 3fb58b25-0e56-4858-879b-66974662c810
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}

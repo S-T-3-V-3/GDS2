@@ -57,6 +57,14 @@ public class ScoreHandler {
 
         currentTeams.Where(x => x.teamID == TeamID.NONE).First().numTiles = gameManager.GetComponent<MapManager>().tiles.Select(x => x.GetTeam()).Where(x => x == TeamID.NONE).Count();
     }
+    
+    public void ResetTileCount() {
+        if (currentTeams == null) return;
+        
+        foreach(ScoreClass team in currentTeams) {
+            team.numTiles = 0;
+        }
+    }
 
     public void UpdateTileCount(TeamID oldTeamID, TeamID newTeamID) {
         currentTeams.Where(x => x.teamID == oldTeamID).First().numTiles--;
@@ -74,7 +82,19 @@ public class ScoreHandler {
         }
         return numTilesCaptured;
     }
-    
+
+    public float GetTotalScore()
+    {
+        float numTotalScore = 0;
+
+        foreach (ScoreClass team in currentTeams)
+        {
+            if (team.teamID != TeamID.NONE)
+                numTotalScore += team.score;
+        }
+        return numTotalScore;
+    }
+
 }
 
 public class ScoreClass {

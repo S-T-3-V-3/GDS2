@@ -16,15 +16,15 @@ MonoBehaviour:
   m_AdvancedMode: 0
   mode:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 3
   toeStrength:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.322
     min: 0
     max: 1
   toeLength:
-    m_OverrideState: 0
-    m_Value: 0.5
+    m_OverrideState: 1
+    m_Value: 0.493
     min: 0
     max: 1
   shoulderStrength:
@@ -61,12 +61,12 @@ MonoBehaviour:
   m_AdvancedMode: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.346
+    m_Value: 0.268
     min: 0
     max: 1
   scatter:
     m_OverrideState: 1
-    m_Value: 0.444
+    m_Value: 0.515
     min: 0
     max: 1
   tint:
@@ -130,7 +130,7 @@ MonoBehaviour:
     m_Value: {fileID: 0}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.13
+    m_Value: 0.235
     min: 0
     max: 1
   maxSamples:
@@ -163,7 +163,7 @@ MonoBehaviour:
     m_Value: 1
   fixedExposure:
     m_OverrideState: 1
-    m_Value: 0.27
+    m_Value: 0
   compensation:
     m_OverrideState: 0
     m_Value: 0

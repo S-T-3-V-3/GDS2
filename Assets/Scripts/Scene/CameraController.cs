@@ -8,9 +8,10 @@ public class CameraController : MonoBehaviour
     public Transform cameraTransform;
     public Camera mainCamera;
     public float smoothTime = 0.3f;
-    public float minDistance = 10f;
+    public float minDistance = 14f;
     public float maxDistance = 3000f;
     public float angle = 60f;
+    public float xOffset = -0.8f;
     
     GameManager gameManager;
     List<Transform> targets;
@@ -48,7 +49,7 @@ public class CameraController : MonoBehaviour
         Vector3 newPos = Vector3.SmoothDamp(currentPos, centerPosition+distanceOffset, ref currentVelocity, smoothTime);
 
         this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
-        cameraTransform.localPosition = new Vector3(0,newPos.y,0);
+        cameraTransform.localPosition = new Vector3(xOffset,newPos.y,0);
     }
 
     public void Reset() {
@@ -60,7 +61,7 @@ public class CameraController : MonoBehaviour
         Vector3 newPos = Vector3.SmoothDamp(currentPos, resetPos, ref currentVelocity, smoothTime);
 
         this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
-        cameraTransform.localPosition = new Vector3(0,newPos.y,0);
+        cameraTransform.localPosition = new Vector3(xOffset,newPos.y,0);
 
         if ((newPos - resetPos).magnitude < 1f)
             isResetting = false;
@@ -72,8 +73,8 @@ public class CameraController : MonoBehaviour
         
         targets.Clear();
 
-        foreach (PlayerController player in gameManager.currentPlayers.Where(x => x.currentStats.isAlive)) {
-            targets.Add(player.model.gameObject.transform);
+        foreach (PlayerController player in gameManager.currentPlayers.Where(x => x.hasPawn)) {
+            targets.Add(player.playerModel.transform);
         }
     }
 
