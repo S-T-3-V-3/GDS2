@@ -5,12 +5,13 @@ using UnityEngine;
 public class PlayerLevelUp : MonoBehaviour
 {
 
-    SkillPoints skillPoints;
-    UpgradeType upgradeType = UpgradeType.NEITHER;
+    PlayerController playerController;
+    UpgradeType upgradeType;
     int upgradesRemaining;
 
     void Awake() {
-        skillPoints = gameObject.GetComponent<SkillPoints>();
+        playerController = GetComponent<PlayerController>();
+        upgradeType = UpgradeType.NEITHER;
         upgradesRemaining = 1;
     }
 
@@ -30,17 +31,21 @@ public class PlayerLevelUp : MonoBehaviour
             if (upgradesRemaining == 0) {
                 Destroy(this);
             }
-            upgradeType = UpgradeType.NEITHER;
+            else {
+                upgradeType = UpgradeType.NEITHER;
+            }
         }
     }
 
     public void ChooseUpgradeType(string button) {
         switch (button) {
-            case "east":
-                upgradeType = UpgradeType.PLAYER;
-                break;
             case "west":
+                upgradeType = UpgradeType.PLAYER;
+                Debug.Log("You chose player upgrades.");
+                break;
+            case "east":
                 upgradeType = UpgradeType.GUN;
+                Debug.Log("You chose gun upgrades.");
                 break;
             default:
                 break;
@@ -49,21 +54,25 @@ public class PlayerLevelUp : MonoBehaviour
 
     public void ChoosePlayerUpgrade(string button) {
         switch (button) {
-            case "north":
-                skillPoints.moveSpeed += 1;
-                StatCalculation.GetMoveSpeed(skillPoints.moveSpeed);
+            case "west":
+                playerController.skillPoints.moveSpeed += 1;
+                playerController.currentStats.moveSpeed = StatCalculation.GetMoveSpeed(playerController.skillPoints.moveSpeed);
+                Debug.Log($"Move speed: {playerController.skillPoints.moveSpeed}");
                 break;
             case "east":
-                skillPoints.acceleration += 1;
-                StatCalculation.GetAcceleration(skillPoints.acceleration);
+                playerController.skillPoints.acceleration += 1;
+                playerController.currentStats.acceleration = StatCalculation.GetAcceleration(playerController.skillPoints.acceleration);
+                Debug.Log($"Acceleration: {playerController.skillPoints.acceleration}");
                 break;
             case "south":
-                skillPoints.health += 1;
-                StatCalculation.GetMaxHealth(skillPoints.health);
+                playerController.skillPoints.health += 1;
+                playerController.currentStats.health = StatCalculation.GetMaxHealth(playerController.skillPoints.health);
+                Debug.Log($"Health: {playerController.skillPoints.health}");
                 break;
-            case "west":
-                skillPoints.trailLength += 1;
-                StatCalculation.GetTrailLength(skillPoints.trailLength);
+            case "north":
+                playerController.skillPoints.trailLength += 1;
+                playerController.currentStats.trailLength = StatCalculation.GetTrailLength(playerController.skillPoints.trailLength);
+                Debug.Log($"Trail length: {playerController.skillPoints.trailLength}");
                 break;
             default:
                 break;
@@ -74,8 +83,12 @@ public class PlayerLevelUp : MonoBehaviour
 
     }
 
-    public void AddUpgrade() {
-        upgradesRemaining += 1;
+    public int GetUpgradesRemaining() {
+        return upgradesRemaining;
+    }
+
+    public void IncreaseUpgradesRemaining(int amount) {
+        upgradesRemaining += amount;
     }
 
     public enum UpgradeType {

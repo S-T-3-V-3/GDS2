@@ -6,6 +6,7 @@ public class Stats {
     public float moveSpeed;
     public float acceleration;
     public int health;
+    public int trailLength = 8;
     public int level;
     public float exp;
     public bool isAlive;
@@ -19,6 +20,7 @@ public class Stats {
         moveSpeed = PlayerStatsBase.moveSpeed;
         acceleration = PlayerStatsBase.acceleration;
         health = PlayerStatsBase.health;
+        trailLength = PlayerStatsBase.trailLength;
         level = PlayerStatsBase.level;
         exp = PlayerStatsBase.exp;
         isAlive = false;

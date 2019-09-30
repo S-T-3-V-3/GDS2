@@ -24,18 +24,20 @@ public class PlayerController : MonoBehaviour
     public GameManager gameManager;
     public bool hasPawn = false;
 
-
-
     void Awake() {
         currentStats = new Stats();
         currentStats.Init();
+
+        skillPoints = new SkillPoints();
 
         OnPlayerDeath = new V3Event();
         OnPlayerDeath.AddListener(OnDeath);
         OnPlayerSpawn = new UnityEvent();
         OnPlayerSpawn.AddListener(OnSpawn);
         OnPlayerGainExp = new UnityEvent();
-        OnPlayerLevelUp.AddListener(OnGainExp);
+        OnPlayerGainExp.AddListener(OnGainExp);
+        OnPlayerLevelUp = new UnityEvent();
+        OnPlayerLevelUp.AddListener(OnLevelUp);
 
         if (playerState == null)
             playerState = this.gameObject.AddComponent<StateManager>();
@@ -92,7 +94,7 @@ public class PlayerController : MonoBehaviour
 
     void OnGainExp() {
         //UI stuff
-        Debug.Log($"Exp: {currentStats.exp}");
+        Debug.Log($"Exp: {currentStats.exp}. Exp required for next level: {gameManager.gameSettings.expRequired[currentStats.level - 1]}");
     }
 
     void OnLevelUp() {
@@ -112,12 +114,16 @@ public class PlayerActiveState : State
 
     float deadZoneRange = 0.17f;
     bool isShooting = false;
-    float elapsedTime = 0f;
+    float elapsedExpTime = 0f;
+    float elapsedFaceTime = 0f;
+    float faceCooldown = 1f;
+    List<float> expRequired;
 
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
         gameManager = playerController.gameManager;
+        expRequired = gameManager.gameSettings.expRequired;
 
         if (playerController.playerModel == null)
             playerController.CreateNewPawn();
@@ -148,9 +154,6 @@ public class PlayerActiveState : State
                 gun.RequestShoot();
             }
         }
-
-        ExpUpdate();
-        LevelUpdate();
     }
 
     void FixedUpdate()
@@ -159,27 +162,43 @@ public class PlayerActiveState : State
 
         doMovement();
         playerController.pawnPosition = playerController.playerModel.transform.position;
+
+        ExpUpdate();
+        LevelUpdate();
+
+        if (elapsedFaceTime < faceCooldown) {
+            elapsedFaceTime += Time.deltaTime;
+        }
     }
 
     public void ExpUpdate() {
-        elapsedTime += Time.deltaTime;
+        elapsedExpTime += Time.deltaTime;
 
-        if (elapsedTime >= gameManager.gameSettings.expGainInterval) {
-            elapsedTime = 0f;
-            playerController.currentStats.exp += gameManager.gameSettings.expPerInterval;
-            if (playerController.currentStats.exp > 1000)
-                playerController.currentStats.exp = 1000;
+        if (elapsedExpTime >= gameManager.gameSettings.expGainInterval) {
+            elapsedExpTime = 0f;
+            if (playerController.currentStats.exp < expRequired[expRequired.Count-1]) {
+                playerController.currentStats.exp += gameManager.gameSettings.expPerInterval;
+
+                if  (playerController.currentStats.exp > expRequired[expRequired.Count - 1]) {
+                    playerController.currentStats.exp = expRequired[expRequired.Count - 1];
+                }
+            }
             playerController.OnPlayerGainExp.Invoke();
         }
     }
 
     public void LevelUpdate() {
-        if (playerController.currentStats.exp >= gameManager.gameSettings.expRequired[playerController.currentStats.level-1]) {
+        if (playerController.currentStats.exp >= expRequired[playerController.currentStats.level-1] && playerController.currentStats.level < expRequired.Count) {
             playerController.currentStats.level += 1;
 
-            if (levelUpScript != null) {
+            if (levelUpScript == null) {
                 levelUpScript = gameObject.AddComponent<PlayerLevelUp>();
             }
+            else {
+                levelUpScript.IncreaseUpgradesRemaining(1);
+            }
+
+            Debug.Log($"You levelled up. You have {levelUpScript.GetUpgradesRemaining()} upgrades remaining.");
 
             playerController.OnPlayerLevelUp.Invoke();
         }
@@ -227,27 +246,35 @@ public class PlayerActiveState : State
         // playerController.currentStats.TakeDamage(10);
     }
 
-    public void OnFaceButtonNorth() {
-        if (levelUpScript != null) {
-            levelUpScript.ChooseUpgrade("north");
+    public void OnFaceButtonWest() {
+        if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
+            elapsedFaceTime = 0;
+            levelUpScript.ChooseUpgrade("west");
+            Debug.Log("West button pressed.");
         }
     }
 
     public void OnFaceButtonEast() {
-        if (levelUpScript != null) {
+        if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
+            elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("east");
+            Debug.Log("East button pressed.");
         }
     }
 
     public void OnFaceButtonSouth() {
-        if (levelUpScript != null) {
+        if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
+            elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("south");
+            Debug.Log("South button pressed.");
         }
     }
 
-    public void OnFaceButtonWest() {
-        if (levelUpScript != null) {
-            levelUpScript.ChooseUpgrade("west");
+    public void OnFaceButtonNorth() {
+        if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
+            elapsedFaceTime = 0;
+            levelUpScript.ChooseUpgrade("north");
+            Debug.Log("North button pressed.");
         }
     }
 
@@ -256,14 +283,14 @@ public class PlayerActiveState : State
         float dampSpeed = 3f;
 
         if (currentMovement.magnitude > deadZoneRange) {
-            float x = currentMovement.x * PlayerStatsBase.acceleration;
-            float z = currentMovement.y * PlayerStatsBase.acceleration;
+            float x = currentMovement.x * playerController.currentStats.acceleration;
+            float z = currentMovement.y * playerController.currentStats.acceleration;
             Vector3 newVelocity = rigidBody.velocity + new Vector3(x,0,z) * Time.deltaTime;
 
             // Get highest normalized value to cap movespeed for smooth acceleration/deceleration
-            float dampingAlpha = Mathf.Max(currentMovement.magnitude,rigidBody.velocity.magnitude/PlayerStatsBase.moveSpeed);
+            float dampingAlpha = Mathf.Max(currentMovement.magnitude,rigidBody.velocity.magnitude/ playerController.currentStats.moveSpeed);
 
-            rigidBody.velocity = Vector3.ClampMagnitude(newVelocity,PlayerStatsBase.moveSpeed * dampingAlpha);
+            rigidBody.velocity = Vector3.ClampMagnitude(newVelocity, playerController.currentStats.moveSpeed * dampingAlpha);
         }
         else {
             rigidBody.velocity = Vector3.Lerp(rigidBody.velocity, Vector3.zero, Time.deltaTime * dampSpeed);
