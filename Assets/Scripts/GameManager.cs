@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public GameObject DeathFXPrefab;
     public GameObject DeathColliderPrefab;
     public GameObject TextPopupPrefab;
+    public GameObject UpgradePopupPrefab;
 
     public Material WallMaterial;
     public Transform playerParent;

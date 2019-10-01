@@ -232,14 +232,14 @@ public class PlayerActiveState : State
     }
 
     // Fired upon change in shoot input
-    /*public void OnRightTrigger(InputValue value) {
+    public void OnRightTrigger(InputValue value) {
         float shootValue = value.Get<float>();
 
         if(shootValue < deadZoneRange)
             isShooting = false;
         else
             isShooting = true;
-    }*/
+    }
 
     public void OnRightBumper(InputValue value) {
         // Debug Inflict Damage

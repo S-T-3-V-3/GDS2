@@ -1,18 +1,39 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerLevelUp : MonoBehaviour
 {
-
+    GameManager gameManager;
     PlayerController playerController;
+    GameObject upgradePopup;
+    TextMeshPro upgradeTextMesh;
     UpgradeType upgradeType;
     int upgradesRemaining;
 
     void Awake() {
+        gameManager = FindObjectOfType<GameManager>();
         playerController = GetComponent<PlayerController>();
         upgradeType = UpgradeType.NEITHER;
         upgradesRemaining = 1;
+
+        upgradePopup = Instantiate(gameManager.UpgradePopupPrefab);
+        upgradeTextMesh = upgradePopup.GetComponent<TextMeshPro>();
+    }
+
+    void Update() {
+        upgradePopup.transform.position = playerController.playerModel.transform.position + new Vector3(0,0.8f,0);
+
+        if (upgradeType == UpgradeType.NEITHER) {
+            upgradeTextMesh.text = "Player ← Upgrade → Gun";
+        }
+        else if (upgradeType == UpgradeType.PLAYER) {
+            upgradeTextMesh.text = "Trail Length\n↑\nMove Speed ← Upgrade → Acceleration\n↓\nHealth";
+        }
+        else if (upgradeType == UpgradeType.GUN) {
+            upgradeTextMesh.text = "No gun upgrades yet.";
+        }
     }
 
     public void ChooseUpgrade(string button) {
@@ -29,6 +50,7 @@ public class PlayerLevelUp : MonoBehaviour
             upgradesRemaining -= 1;
             Debug.Log($"Upgrades remaining: {upgradesRemaining}");
             if (upgradesRemaining == 0) {
+                Destroy(upgradePopup.gameObject);
                 Destroy(this);
             }
             else {
@@ -77,6 +99,7 @@ public class PlayerLevelUp : MonoBehaviour
             default:
                 break;
         }
+        upgradeType = UpgradeType.NEITHER;
     }
 
     public void ChooseGunUpgrade(string button) {
