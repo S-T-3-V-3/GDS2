@@ -93,12 +93,10 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnGainExp() {
-        //UI stuff
         Debug.Log($"Exp: {currentStats.exp}. Exp required for next level: {gameManager.gameSettings.expRequired[currentStats.level - 1]}");
     }
 
     void OnLevelUp() {
-        //UI stuff
         Debug.Log($"Level: {currentStats.level}");
     }
 }
@@ -243,7 +241,7 @@ public class PlayerActiveState : State
 
     public void OnRightBumper(InputValue value) {
         // Debug Inflict Damage
-        // playerController.currentStats.TakeDamage(10);
+        // playerController.currentStats.TakeDamage(10, Vector3.zero);
     }
 
     public void OnFaceButtonWest() {
@@ -299,7 +297,7 @@ public class PlayerActiveState : State
 
     void OnDamaged() {
         //playerController.healthText.text = playerController.currentStats.health.ToString();
-        gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
+        gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health, playerController.currentStats.maxHealth);
     }
 
     void OnDeath(Vector3 force) {
@@ -426,7 +424,7 @@ public class PlayerDeathState : State
 
         if (timeElapsed >= respawnTime) {
             playerController.SetState<PlayerActiveState>();
-            gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health);
+            gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health, playerController.currentStats.maxHealth);
         }
     }
 }

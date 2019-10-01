@@ -23,7 +23,7 @@ public class PlayerLevelUp : MonoBehaviour
     }
 
     void Update() {
-        upgradePopup.transform.position = playerController.playerModel.transform.position + new Vector3(0,0.8f,0);
+        upgradePopup.transform.position = playerController.playerModel.transform.position + new Vector3(0,1,0);
 
         if (upgradeType == UpgradeType.NEITHER) {
             upgradeTextMesh.text = "Player ← Upgrade → Gun";
@@ -88,8 +88,10 @@ public class PlayerLevelUp : MonoBehaviour
                 break;
             case "south":
                 playerController.skillPoints.health += 1;
-                playerController.currentStats.health = StatCalculation.GetMaxHealth(playerController.skillPoints.health);
-                Debug.Log($"Health: {playerController.skillPoints.health}");
+                int newMaxHealth = StatCalculation.GetMaxHealth(playerController.skillPoints.health);
+                playerController.currentStats.health += StatCalculation.GetMaxHealth(playerController.skillPoints.health) - playerController.currentStats.maxHealth;
+                playerController.currentStats.maxHealth = newMaxHealth;
+                gameManager.hud.UpdateHealth(playerController, playerController.currentStats.health, playerController.currentStats.maxHealth);
                 break;
             case "north":
                 playerController.skillPoints.trailLength += 1;
