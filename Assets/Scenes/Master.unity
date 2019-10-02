@@ -7410,6 +7410,12 @@ MonoBehaviour:
     type: 3}
   DeathFXPrefab: {fileID: 2955179747389529803, guid: 0353f7b0088fdc2458a1e658be92936a,
     type: 3}
+  DeathColliderPrefab: {fileID: 72112434842683212, guid: 0a721b22cc405d4409d837fd17356f32,
+    type: 3}
+  TextPopupPrefab: {fileID: 5715327871663822395, guid: 8cd667b0f8c6f7d4587e00ae699b6483,
+    type: 3}
+  UpgradePopupPrefab: {fileID: 5715327871663822395, guid: 89cb0251022587a43bc669a7a0d80e28,
+    type: 3}
   WallMaterial: {fileID: 2100000, guid: 94b4103681e3825428a3135e1e9515ea, type: 2}
   playerParent: {fileID: 1569030456}
   KothPrefab: {fileID: 5252853446406301138, guid: a429382e3e538a04b927f0011b700f05,

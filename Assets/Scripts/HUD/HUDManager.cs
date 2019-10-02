@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public class HUDManager : MonoBehaviour
@@ -143,18 +144,25 @@ public class HUDManager : MonoBehaviour
             playerScorecards = new List<PlayerScorecard>();        
         foreach (PlayerScorecard ps in playerScorecards)
             GameObject.Destroy(ps.gameObject);
+
         playerScorecards.Clear();
+
         foreach (PlayerController player in gameManager.currentPlayers)
            playerScorecards.Add(CreatePlayerScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
 
         //Initialise TeamScorecards
         if (teamScorecards == null)
             teamScorecards = new List<TeamScoreCard>();
+
         foreach (TeamScoreCard ts in teamScorecards)
             GameObject.Destroy(ts.gameObject);
+
         teamScorecards.Clear();
-        foreach (PlayerController player in gameManager.currentPlayers)
-            teamScorecards.Add(CreateTeamScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+
+        foreach (PlayerController player in gameManager.currentPlayers) {
+            if (teamScorecards.Where(x => x.team.ID == player.teamID).Count() == 0) 
+                teamScorecards.Add(CreateTeamScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+        }
 
         upperUI.SetActive(true);
     }

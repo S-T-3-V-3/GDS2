@@ -26,14 +26,11 @@ public class PlayerController : MonoBehaviour
     public GameManager gameManager;
     public bool hasPawn = false;
 
-<<<<<<< HEAD
-=======
     [Space]
     public int currentSelection = 0;
     public bool ready = false;
 
 
->>>>>>> origin/sam
     void Awake() {
         currentStats = new Stats();
         currentStats.Init();
@@ -206,7 +203,7 @@ public class PlayerActiveState : State
                 levelUpScript.IncreaseUpgradesRemaining(1);
             }
 
-            Debug.Log($"You levelled up. You have {levelUpScript.GetUpgradesRemaining()} upgrades remaining.");
+            //Debug.Log($"You levelled up. You have {levelUpScript.GetUpgradesRemaining()} upgrades remaining.");
 
             playerController.OnPlayerLevelUp.Invoke();
         }
@@ -258,7 +255,6 @@ public class PlayerActiveState : State
         if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
             elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("west");
-            Debug.Log("West button pressed.");
         }
     }
 
@@ -266,7 +262,6 @@ public class PlayerActiveState : State
         if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
             elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("east");
-            Debug.Log("East button pressed.");
         }
     }
 
@@ -274,7 +269,6 @@ public class PlayerActiveState : State
         if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
             elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("south");
-            Debug.Log("South button pressed.");
         }
     }
 
@@ -282,7 +276,6 @@ public class PlayerActiveState : State
         if (levelUpScript != null && elapsedFaceTime > faceCooldown) {
             elapsedFaceTime = 0;
             levelUpScript.ChooseUpgrade("north");
-            Debug.Log("North button pressed.");
         }
     }
 
@@ -355,11 +348,6 @@ public class CharacterSelectState : State
         }
     }
 
-<<<<<<< HEAD
-    public void OnBumpers(InputValue value) {
-        gameManager.teamManager.LeaveTeam(playerController,playerController.teamID);
-        playerController.teamID += (int)value.Get<float>();
-=======
     public void OnDownArrow()
     {
         if (!playerController.ready)
@@ -376,12 +364,9 @@ public class CharacterSelectState : State
             gameManager.OnPlayersChanged.Invoke();
         }
     }
->>>>>>> origin/sam
 
     public void OnBumpers(InputValue value) {
-        if (!playerController.ready)
-        {
-
+        if (!playerController.ready) {
             //Debug.Log("Bumpers pressed playerController.currentSelection: " + playerController.currentSelection);
             if (playerController.currentSelection == 0) //Model Selection
             {
@@ -391,17 +376,14 @@ public class CharacterSelectState : State
                 playerController.playerModelConfig = gameManager.gameSettings.characterModels[playerController.playerModelSelection];
             }
 
-<<<<<<< HEAD
-        if (playerController.teamID < TeamID.BLUE)
-            playerController.teamID = TeamID.NONE;
+            if (playerController.teamID < TeamID.BLUE)
+                playerController.teamID = TeamID.NONE;
 
-        gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
-=======
-            if (playerController.currentSelection == 1) //Team Selection
-            {
+            gameManager.teamManager.JoinTeam(playerController,playerController.teamID);
+
+            if (playerController.currentSelection == 1) {
                 gameManager.teamManager.LeaveTeam(playerController, playerController.teamID);
                 playerController.teamID += (int)value.Get<float>();
->>>>>>> origin/sam
 
                 if (playerController.teamID > TeamID.ORANGE)
                     playerController.teamID = TeamID.BLUE;
@@ -413,12 +395,12 @@ public class CharacterSelectState : State
                 //gameManager.OnPlayersChanged.Invoke();
             }
 
-            if (playerController.currentSelection == 2) //Weapon Selection
-            {
+            if (playerController.currentSelection == 2) {
                 playerController.playerWeaponSelection += (int)value.Get<float>();
                 if (playerController.playerWeaponSelection == 3) { playerController.playerWeaponSelection = 0; }
                 if (playerController.playerWeaponSelection == -1) { playerController.playerWeaponSelection = 2; }
             }
+
             gameManager.OnPlayersChanged.Invoke();
         }
     }
@@ -455,6 +437,7 @@ public class BuffSelectState : State
         playerController = this.GetComponent<PlayerController>();
         gameManager = playerController.gameManager;
         playerController.DestroyPawn();
+        playerController.ready = false;
 
         gameManager.OnNewCameraTarget.Invoke();
     }
@@ -466,9 +449,16 @@ public class BuffSelectState : State
     public void OnBumpers(InputValue value) {
         //int test = value.Get<int>();
     }
-
+        
+    public void OnStart(InputValue value) {
+        if (playerController.teamID != TeamID.NONE)
+        {
+            playerController.ready = true;
+            gameManager.ReadyCheck();
+        }
+        gameManager.OnPlayersChanged.Invoke();
+    }
 }
-
 public class PlayerInactiveState : State
 {
     PlayerController playerController;
