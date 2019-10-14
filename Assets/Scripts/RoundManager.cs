@@ -11,7 +11,7 @@ public class RoundManager : MonoBehaviour {
     StateManager roundState;
 
     void Start() {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
 
         gameManager.sessionData.OnRoundComplete.AddListener(OnRoundComplete);
 
@@ -27,6 +27,7 @@ public class RoundManager : MonoBehaviour {
 
     public void OnRoundComplete() {
         roundNumber++;
+        SoundManager.Instance.Play("round over");
     }
 
     public void SetState<T>() where T : State {
@@ -44,7 +45,7 @@ public class RoundActiveState : State
 
     public override void BeginState()
     {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         manager = this.GetComponent<RoundManager>();
 
         manager.isStarted = true;
@@ -73,7 +74,7 @@ public class RoundInctiveState : State
 
     public override void BeginState()
     {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         manager = this.GetComponent<RoundManager>();
 
         manager.isStarted = false;
@@ -90,8 +91,10 @@ public class RoundCompleteState : State
 
     public override void BeginState()
     {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         manager = this.GetComponent<RoundManager>();
+
+        SoundManager.Instance.Play("round over");
 
         manager.isStarted = false;
 
@@ -110,7 +113,7 @@ public class RoundCompleteState : State
             if (manager.roundNumber < gameManager.gameSettings.numRounds)
                 manager.SetState<CarouselRoundState>();
             else {
-                gameManager.Reset();
+                gameManager.RestartGame();
             }
         }
     }
@@ -127,7 +130,7 @@ public class RoundCountdownState : State
 
     public override void BeginState()
     {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         manager = this.GetComponent<RoundManager>();
 
         manager.isStarted = false;
@@ -150,6 +153,9 @@ public class RoundCountdownState : State
                 manager.SetState<RoundActiveState>();
             else {
                 gameManager.hud.Announcement(countDown.ToString(),1);
+
+                if (countDown == 3)
+                    SoundManager.Instance.Play("countdown");
             }
             countDown--;
         }
@@ -163,7 +169,7 @@ public class CarouselRoundState : State
 
     public override void BeginState()
     {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         manager = this.GetComponent<RoundManager>();
 
         gameManager.UnloadMap();

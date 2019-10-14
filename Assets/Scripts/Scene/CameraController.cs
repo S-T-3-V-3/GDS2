@@ -23,7 +23,7 @@ public class CameraController : MonoBehaviour
     bool isResetting = false;
 
     void Start() {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
 
         gameManager.OnNewCameraTarget.AddListener(SetTargets);
         gameManager.sessionData.OnRoundComplete.AddListener(Reset);

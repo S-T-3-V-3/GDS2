@@ -17,7 +17,7 @@ public class MapManager : MonoBehaviour
     bool obstaclesSpawned = false;
 
     void Awake() {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         mapSettings = gameManager.GetMapSettings();
 
         tiles = new List<Tile>();

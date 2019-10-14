@@ -69,6 +69,7 @@ public class HUDManager : MonoBehaviour
         UpdatePlayers();
 
         mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
+        SoundManager.Instance.PlayMusic("menu music");
     }
 
     public void Announcement(string message, float time, Color ? color = null) {

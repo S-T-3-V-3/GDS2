@@ -13,7 +13,7 @@ public class PlayerLevelUp : MonoBehaviour
     int upgradesRemaining;
 
     void Awake() {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
         playerController = GetComponent<PlayerController>();
         upgradeType = UpgradeType.NEITHER;
         upgradesRemaining = 1;
@@ -23,6 +23,8 @@ public class PlayerLevelUp : MonoBehaviour
     }
 
     void Update() {
+        if (playerController.hasPawn == false) return;
+
         upgradePopup.transform.position = playerController.playerModel.transform.position + new Vector3(0,1,0);
 
         if (upgradeType == UpgradeType.NEITHER) {
@@ -48,7 +50,7 @@ public class PlayerLevelUp : MonoBehaviour
                 ChooseGunUpgrade(button);
             }
             upgradesRemaining -= 1;
-            Debug.Log($"Upgrades remaining: {upgradesRemaining}");
+            
             if (upgradesRemaining == 0) {
                 Destroy(upgradePopup.gameObject);
                 Destroy(this);
@@ -63,11 +65,11 @@ public class PlayerLevelUp : MonoBehaviour
         switch (button) {
             case "west":
                 upgradeType = UpgradeType.PLAYER;
-                Debug.Log("You chose player upgrades.");
+                
                 break;
             case "east":
                 upgradeType = UpgradeType.GUN;
-                Debug.Log("You chose gun upgrades.");
+                
                 break;
             default:
                 break;
@@ -79,12 +81,12 @@ public class PlayerLevelUp : MonoBehaviour
             case "west":
                 playerController.skillPoints.moveSpeed += 1;
                 playerController.currentStats.moveSpeed = StatCalculation.GetMoveSpeed(playerController.skillPoints.moveSpeed);
-                Debug.Log($"Move speed: {playerController.skillPoints.moveSpeed}");
+                
                 break;
             case "east":
                 playerController.skillPoints.acceleration += 1;
                 playerController.currentStats.acceleration = StatCalculation.GetAcceleration(playerController.skillPoints.acceleration);
-                Debug.Log($"Acceleration: {playerController.skillPoints.acceleration}");
+                
                 break;
             case "south":
                 playerController.skillPoints.health += 1;
@@ -96,7 +98,7 @@ public class PlayerLevelUp : MonoBehaviour
             case "north":
                 playerController.skillPoints.trailLength += 1;
                 playerController.currentStats.trailLength = StatCalculation.GetTrailLength(playerController.skillPoints.trailLength);
-                Debug.Log($"Trail length: {playerController.skillPoints.trailLength}");
+                
                 break;
             default:
                 break;

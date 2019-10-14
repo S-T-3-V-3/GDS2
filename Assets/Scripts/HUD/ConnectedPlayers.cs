@@ -20,7 +20,7 @@ public class ConnectedPlayers : MonoBehaviour
         if (playerLobbyPrefabList == null)
             playerLobbyPrefabList = new List<PlayerLobbyPrefab>();
 
-        GameManager gameManager = FindObjectOfType<GameManager>();
+        GameManager gameManager = GameManager.Instance;
 
         foreach (PlayerLobbyPrefab x in playerLobbyPrefabList) {
             GameObject.Destroy(x);

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Default
   m_EditorClassIdentifier: 
   gunName: Default
+  soundEffect: rifle
   projectilePrefab: {fileID: 7185639305933918909, guid: e1d33f1f12ae7a243abad3c35232f70b,
     type: 3}
   reloadTime: 0.3

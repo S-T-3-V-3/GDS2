@@ -32,7 +32,7 @@ public class KOTHZone : MonoBehaviour
         OnPlayersChanged = new UnityEvent();
         OnPlayersChanged.AddListener(SetNewColor);
         
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
         rend = GetComponent<Renderer>(); 
         targetPos = gameManager.GetRandomPosition();
     }

@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
 
     public void Init(PlayerController owningPlayer, Vector3 forwardVector, GunType gun)
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
         firedFromGun = gun;
 
         this.owningPlayer = owningPlayer;

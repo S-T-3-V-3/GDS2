@@ -22,10 +22,9 @@ public class SessionData : MonoBehaviour{
         OnCarouselBegin = new UnityEvent();
         OnCarouselEnd = new UnityEvent();
 
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         roundManager = this.gameObject.AddComponent<RoundManager>();
-        score = new ScoreHandler(gameManager);   
-
+        score = new ScoreHandler(gameManager); 
     }
 
     public void Reset() {
@@ -45,6 +44,8 @@ public class SessionData : MonoBehaviour{
     public void StartRound() {
         roundManager.SetState<RoundCountdownState>();
         score.ResetTileCount();
+
+        SoundManager.Instance.PlayMusic($"round {roundManager.roundNumber+1}");
     }
 
     public void StopRound() {

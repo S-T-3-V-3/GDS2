@@ -7,7 +7,7 @@ public class TeamManager : MonoBehaviour
     public List<Team> currentTeams;
 
     void Awake() {
-        GameManager gameManager = this.GetComponent<GameManager>();
+        GameManager gameManager = GameManager.Instance;
 
         currentTeams = new List<Team>();
 

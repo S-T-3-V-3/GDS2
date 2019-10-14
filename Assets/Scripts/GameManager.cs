@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
@@ -8,6 +7,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance = null;
     public GameObject TilePrefab;
     public GameObject CameraPrefab;
     public GameObject MainMenuPrefab;
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public SessionData sessionData;
     public HUDManager hud;
     public TeamManager teamManager;
+    public SoundManager soundManager;
 
     [Space]
     public GameObject KingOfTheHill;
@@ -50,6 +51,11 @@ public class GameManager : MonoBehaviour
     Camera mainCamera;
 
     void Awake() {
+        if (GameManager.Instance != null)
+            GameObject.Destroy(this.gameObject);
+        else
+            Instance = this;
+        
         sessionData = this.gameObject.AddComponent<SessionData>();
         teamManager = this.gameObject.AddComponent<TeamManager>();
         
@@ -91,6 +97,10 @@ public class GameManager : MonoBehaviour
         if (sessionData.isStarted) return;
         
         StartNextRound();
+    }
+
+    public void RestartGame() {
+        SceneManager.LoadScene("Master");
     }
     
     public void StartNextRound() {
@@ -219,10 +229,8 @@ public class GameManager : MonoBehaviour
     {
         foreach (PlayerController pc in currentPlayers)
         {
-            Debug.Log(pc + " ready: " + pc.ready);
             if (!pc.ready) { return; }
         }
-        Debug.Log("All players ready.");
 
         StartNextRound();
     }

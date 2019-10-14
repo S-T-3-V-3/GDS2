@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
     [Space]
     public UnityEvent OnPlayerSpawn;
     public UnityEvent<Vector3> OnPlayerDeath;
-    public UnityEvent OnPlayerGainExp;
     public UnityEvent OnPlayerLevelUp;
     public Vector3 pawnPosition = new Vector3(0,0,0);
     public Vector3 deathForce;
@@ -41,15 +40,11 @@ public class PlayerController : MonoBehaviour
         OnPlayerDeath.AddListener(OnDeath);
         OnPlayerSpawn = new UnityEvent();
         OnPlayerSpawn.AddListener(OnSpawn);
-        OnPlayerGainExp = new UnityEvent();
-        OnPlayerGainExp.AddListener(OnGainExp);
-        OnPlayerLevelUp = new UnityEvent();
-        OnPlayerLevelUp.AddListener(OnLevelUp);
 
         if (playerState == null)
             playerState = this.gameObject.AddComponent<StateManager>();
 
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
 
         int modelNum = UnityEngine.Random.Range(0,3);
         playerModelConfig = gameManager.gameSettings.characterModels[modelNum];
@@ -67,6 +62,8 @@ public class PlayerController : MonoBehaviour
 
         playerModel.GetComponent<PlayerModelController>().owner = this;
         playerModel.GetComponent<PlayerModelController>().SetPlayerColor(gameManager.teamManager.GetTeam(teamID).color);
+
+        SoundManager.Instance.Play("spawn");
     }
 
     public void DestroyPawn()
@@ -97,14 +94,6 @@ public class PlayerController : MonoBehaviour
         deathFX.transform.position = playerModel.transform.position;
         deathFX.SetColor(gameManager.teamManager.GetTeam(teamID).color);
         deathFX.SetVector(force);
-    }
-
-    void OnGainExp() {
-        Debug.Log($"Exp: {currentStats.exp}. Exp required for next level: {gameManager.gameSettings.expRequired[currentStats.level - 1]}");
-    }
-
-    void OnLevelUp() {
-        Debug.Log($"Level: {currentStats.level}");
     }
 }
 
@@ -145,6 +134,7 @@ public class PlayerActiveState : State
         rigidBody = playerController.playerModel.GetComponent<Rigidbody>();
 
         this.GetGuns();
+        SoundManager.Instance.Play("weapon deploy");
 
         //if (playerController.healthText == null) playerController.healthText = playerController.GetComponentInChildren<TMPro.TextMeshPro>();
         //playerController.healthText.text = playerController.currentStats.health.ToString();
@@ -188,7 +178,6 @@ public class PlayerActiveState : State
                     playerController.currentStats.exp = expRequired[expRequired.Count - 1];
                 }
             }
-            playerController.OnPlayerGainExp.Invoke();
         }
     }
 
@@ -305,6 +294,7 @@ public class PlayerActiveState : State
 
     void OnDeath(Vector3 force) {
         playerController.OnPlayerDeath.Invoke(force);
+        SoundManager.Instance.Play("death");
         playerController.SetState<PlayerDeathState>();
     }
 
