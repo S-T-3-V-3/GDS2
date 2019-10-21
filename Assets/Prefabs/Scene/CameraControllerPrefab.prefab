@@ -251,4 +251,7 @@ MonoBehaviour:
   minDistance: 10
   maxDistance: 3000
   angle: -30
+  focusAngle: -50
+  focusDistance: 9
   xOffset: -0.8
+  focusPlayer: {fileID: 0}

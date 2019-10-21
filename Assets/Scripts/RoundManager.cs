@@ -59,6 +59,8 @@ public class RoundActiveState : State
     }
 
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+
         manager.elapsedTime += Time.deltaTime;
 
         if (manager.elapsedTime > gameManager.gameSettings.roundTime) {
@@ -107,13 +109,15 @@ public class RoundCompleteState : State
     }
 
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+
         timeElapsed += Time.deltaTime;
 
         if (timeElapsed >= transitionTime) {
             if (manager.roundNumber < gameManager.gameSettings.numRounds)
-                manager.SetState<CarouselRoundState>();
+                manager.SetState<LoadoutRoundState>();
             else {
-                gameManager.RestartGame();
+                manager.SetState<EndGameState>();
             }
         }
     }
@@ -142,6 +146,8 @@ public class RoundCountdownState : State
     }
 
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (!isActive) return;
 
         elapsedTime -= Time.deltaTime;
@@ -162,7 +168,7 @@ public class RoundCountdownState : State
     }
 }
 
-public class CarouselRoundState : State
+public class LoadoutRoundState : State
 {
     GameManager gameManager;
     RoundManager manager;
@@ -174,14 +180,45 @@ public class CarouselRoundState : State
 
         gameManager.UnloadMap();
 
-        foreach(PlayerController player in gameManager.currentPlayers) {
-            player.SetState<BuffSelectState>();
-        }
+        gameManager.sessionData.OnLoadoutBegin.Invoke();
 
-        gameManager.sessionData.OnCarouselBegin.Invoke();
+        foreach(PlayerController player in gameManager.currentPlayers) {
+            if (player.isPlaying) player.SetState<LoadoutState>();
+        }
     }
 
     public override void EndState() {
-        gameManager.sessionData.OnCarouselEnd.Invoke();
+        gameManager.sessionData.OnLoadoutEnd.Invoke();
+    }
+}
+
+public class EndGameState : State
+{
+    GameManager gameManager;
+    RoundManager manager;
+
+    public override void BeginState()
+    {
+        gameManager = GameManager.Instance;
+        manager = this.GetComponent<RoundManager>();
+
+        gameManager.UnloadMap();
+
+        gameManager.sessionData.isStarted = false;
+        gameManager.sessionData.isComplete = true;
+        manager.isStarted = false;
+
+        gameManager.sessionData.OnEndGame.Invoke();
+
+        EndScreen endScreen = FindObjectOfType<EndScreen>();
+        endScreen.SetWinner(gameManager.sessionData.score.GetWinningTeam());
+
+        foreach(PlayerController player in gameManager.currentPlayers) {
+            if (player.isPlaying) player.SetState<EndGamePlayerState>();
+        }
+    }
+
+    public override void EndState() {
+        gameManager.sessionData.OnLoadoutEnd.Invoke();
     }
 }

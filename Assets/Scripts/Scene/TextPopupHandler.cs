@@ -26,6 +26,8 @@ public class TextPopupHandler : MonoBehaviour
 
     // TODO: Fade out then destroy
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         timeElapsed += Time.deltaTime;
 
         if (timeElapsed >= lifetime)

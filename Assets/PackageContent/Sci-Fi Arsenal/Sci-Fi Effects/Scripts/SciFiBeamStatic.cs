@@ -42,6 +42,8 @@ public class SciFiBeamStatic : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (beam) //Updates the beam
         {
             line.SetPosition(0, transform.position);

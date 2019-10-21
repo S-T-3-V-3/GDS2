@@ -4,14 +4,17 @@ using System.Collections.Generic;
 
 public class SessionData : MonoBehaviour{
     public bool isStarted = false;
+    public bool isPaused = false;
+    public bool isComplete = false;
     public bool isGameLoaded = false;
     public RoundManager roundManager;
     public ScoreHandler score;
     public UnityEvent OnRoundPrepare;
     public UnityEvent OnRoundBegin;
     public UnityEvent OnRoundComplete;
-    public UnityEvent OnCarouselBegin;
-    public UnityEvent OnCarouselEnd;
+    public UnityEvent OnLoadoutBegin;
+    public UnityEvent OnLoadoutEnd;
+    public UnityEvent OnEndGame;
 
     GameManager gameManager;
 
@@ -19,12 +22,20 @@ public class SessionData : MonoBehaviour{
         OnRoundPrepare = new UnityEvent();
         OnRoundBegin = new UnityEvent();
         OnRoundComplete = new UnityEvent();
-        OnCarouselBegin = new UnityEvent();
-        OnCarouselEnd = new UnityEvent();
+        OnLoadoutBegin = new UnityEvent();
+        OnLoadoutEnd = new UnityEvent();
+        OnEndGame = new UnityEvent();
 
         gameManager = GameManager.Instance;
         roundManager = this.gameObject.AddComponent<RoundManager>();
         score = new ScoreHandler(gameManager); 
+    }
+
+    void Update() {
+        if (isPaused) return;
+        
+        if (roundManager.isStarted)
+            score.ScoreUpdate();
     }
 
     public void Reset() {

@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01745ca0970f7449ae21babf4858174, type: 3}
   m_Name: Default Game Settings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
+  guns:
+  - {fileID: 11400000, guid: f5c4178046fe26141a54b6becfa8abd2, type: 2}
+  - {fileID: 11400000, guid: 346a82bc5ef7a8642a06ff54ac6ce96e, type: 2}
+  - {fileID: 11400000, guid: 8c1a7a30cd422954a81372ce06e46208, type: 2}
   roundTime: 60
   respawnTime: 3
   maxLives: 10
@@ -20,19 +24,6 @@ MonoBehaviour:
   pointsPerKill: 30
   pointsPerInterval: 50
   pointDistributionInterval: 5
-  expPerInterval: 10
-  expGainInterval: 3
-  expRequired:
-  - 100
-  - 200
-  - 300
-  - 400
-  - 500
-  - 600
-  - 700
-  - 800
-  - 900
-  - 1000
   baseRecoilValue: 2
   baseKnockbackValue: 7
   KOTHPoints: 5

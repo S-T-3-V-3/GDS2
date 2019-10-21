@@ -23,6 +23,8 @@ public class PlayerModelEyeController : MonoBehaviour
     
     void Update()
     {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         //myRend.material.color = currentColor;
 
         //myRend.material.mainTextureOffset = new Vector2(Time.time, Time.time*10);

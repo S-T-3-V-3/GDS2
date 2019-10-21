@@ -9,6 +9,8 @@ public class GunComponent : MonoBehaviour
     float reloadCooldown = 0f;
 
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (reloadCooldown > 0)
             reloadCooldown -= Time.deltaTime;
     }

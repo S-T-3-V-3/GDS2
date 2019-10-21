@@ -39,6 +39,7 @@ public class KOTHZone : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
         if (gameManager.sessionData.roundManager.isStarted == false) return;
 
         if (numPlayers > 0)
@@ -59,7 +60,7 @@ public class KOTHZone : MonoBehaviour
 
                 TextPopupHandler textPopup = GameObject.Instantiate(gameManager.TextPopupPrefab).GetComponent<TextPopupHandler>();
                 string textValue = "+" + gameManager.gameSettings.KOTHPoints.ToString();
-                textPopup.Init(player.pawnPosition, textValue, gameManager.teamManager.GetTeam(player.teamID).color, 0.7f);
+                textPopup.Init(player.pawnPosition, textValue, TeamManager.Instance.GetTeamColor(player.teamID), 0.7f);
                 textPopup.lifetime = 0.75f;
             }
 
@@ -77,7 +78,7 @@ public class KOTHZone : MonoBehaviour
         targetColor = baseColor;
 
         foreach (PlayerController p in currentPlayers) {
-            targetColor += gameManager.teamManager.GetTeam(p.teamID).color;
+            targetColor += TeamManager.Instance.GetTeamColor(p.teamID);
         }
 
         targetColor /= numPlayers+1;

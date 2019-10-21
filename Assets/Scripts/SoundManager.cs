@@ -1,6 +1,7 @@
 ﻿using UnityEngine.Audio;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 using System.Linq;
 
 public class SoundManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class SoundManager : MonoBehaviour
     public Sound[] sounds;
     public Sound[] music;
     GameManager gameManager;
+    List<AudioSource> pausedSounds;
 
     void Awake() {
         if (SoundManager.Instance != null)
@@ -37,7 +39,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void Play(string name) {
+    public void Play(string name, bool shiftPitch = false) {
         Sound s = Array.Find(sounds, Sound => Sound.name == name);
         if (s == null) {
             Debug.LogWarning($"Warning: File '{name}' was not found.");
@@ -47,6 +49,29 @@ public class SoundManager : MonoBehaviour
         s.source.Play();
     }
 
+    public void Pause() {
+        if (pausedSounds == null)
+            pausedSounds = new List<AudioSource>();
+        else
+            pausedSounds.Clear();
+
+        foreach (Sound s in sounds) {
+            if (s.source.isPlaying) {
+                s.source.Pause();
+                pausedSounds.Add(s.source);
+            }
+        }
+    }
+
+    public void Resume() {
+        if (pausedSounds == null) return;
+
+        foreach (AudioSource a in pausedSounds) {
+            a.Play();
+        }
+
+        pausedSounds.Clear();
+    }
     public void Stop(string name) {
         Sound s = Array.Find(sounds, Sound => Sound.name == name);
         if (s == null) {

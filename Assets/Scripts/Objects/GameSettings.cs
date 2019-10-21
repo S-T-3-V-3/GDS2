@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 [CreateAssetMenu(menuName="Game Settings")]
 public class GameSettings : ScriptableObject {
+    public List<GunType> guns;
     public int numRounds {
         get {
             return roundMapSettings.Count;
@@ -20,9 +21,6 @@ public class GameSettings : ScriptableObject {
     public int pointsPerKill = 10;
     public float pointsPerInterval = 10;
     public float pointDistributionInterval = 2f;
-    public float expPerInterval = 10f;
-    public float expGainInterval = 3f;
-    public List<float> expRequired;
     public float baseRecoilValue = 3f;
     public float baseKnockbackValue = 7f;
     [Space]

@@ -1,13 +1,20 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerModelController : MonoBehaviour
 {
     public List<Light> lights;
+    public List<GunComponent> guns;
     public PlayerModelEyeController eyeController;
     public PlayerController owner;
 
+    void Awake() {
+        guns = GetComponentsInChildren<GunComponent>().ToList();
+    }
+
+    /*
     void Update()
     {
         if (Input.GetKeyDown("z"))
@@ -35,6 +42,7 @@ public class PlayerModelController : MonoBehaviour
             setExpression(5);
         }
     }
+    */
 
     public void SetPlayerColor(Color color)
     {
@@ -45,7 +53,7 @@ public class PlayerModelController : MonoBehaviour
         eyeController.SetEyeColor(color);
     }
 
-    public void setExpression(int expression)
+    public void SetExpression(int expression)
     {
         switch (expression)
         {

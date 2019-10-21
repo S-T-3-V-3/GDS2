@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
@@ -66,16 +67,6 @@ public class GameManager : MonoBehaviour
         OnMapLoaded.AddListener(SpawnKoth); //Sam
     }
 
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
-
-        if (!sessionData.isStarted) return;
-        
-        if (!sessionData.roundManager.isStarted) return;
-        sessionData.score.ScoreUpdate();
-    }
-
     public void Reset() {
         tilePositions.Clear();
 
@@ -97,6 +88,49 @@ public class GameManager : MonoBehaviour
         if (sessionData.isStarted) return;
         
         StartNextRound();
+    }
+
+    public void PauseGame(PlayerController caller) {
+        sessionData.isPaused = !sessionData.isPaused;
+
+        if (sessionData.isPaused) {
+            CameraController.Instance.Focus(caller);
+            soundManager.Pause();
+        }
+        else {
+            CameraController.Instance.UnFocus();
+            soundManager.Resume();
+        }
+
+        foreach (PlayerController pc in currentPlayers) {
+            pc.Pause();
+        }
+
+        hud.Pause(teamManager.GetTeamColor(caller.teamID));
+
+        List<Animator> animators = FindObjectsOfType<Animator>().ToList();
+        if (sessionData.isPaused) {
+            foreach (Animator a in animators) {
+                a.speed = 0;
+            }
+        }
+        else {
+            foreach (Animator a in animators) {
+                a.speed = 1;
+            }
+        }
+
+        List<ParticleSystem> emitters = FindObjectsOfType<ParticleSystem>().ToList();
+        if (sessionData.isPaused) {
+            foreach (ParticleSystem ps in emitters) {
+                ps.Pause();
+            }
+        }
+        else {
+            foreach (ParticleSystem ps in emitters) {
+                ps.Play();
+            }
+        }
     }
 
     public void RestartGame() {
@@ -123,7 +157,7 @@ public class GameManager : MonoBehaviour
         OnMapLoaded.RemoveListener(SpawnPlayers);
 
         foreach (PlayerController player in currentPlayers) {
-            if (player.teamID != TeamID.NONE) {
+            if (player.isPlaying) {
                 player.SetState<PlayerActiveState>();
             }       
         }
@@ -153,7 +187,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, teamManager.GetTeam(killer.teamID).color);
+        hud.Announcement($"<color={killer.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killer) + 1}</color> killed <color={killed.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killed) + 1}</color>!",3);
 
         PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
         deathHandler.transform.position = killed.pawnPosition;
@@ -161,7 +195,7 @@ public class GameManager : MonoBehaviour
 
         TextPopupHandler textPopup = GameObject.Instantiate(TextPopupPrefab).GetComponent<TextPopupHandler>();
         string textValue = "+" + gameSettings.pointsPerKill.ToString();
-        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeam(killer.teamID).color);
+        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeamColor(killer.teamID));
     }
  
     // Runs every time a player joins the game, will trigger session start if first player connected.
@@ -227,11 +261,17 @@ public class GameManager : MonoBehaviour
 
     public void ReadyCheck()
     {
-        foreach (PlayerController pc in currentPlayers)
-        {
-            if (!pc.ready) { return; }
-        }
+        if (sessionData.isComplete) {
+            foreach (PlayerController pc in currentPlayers.Where(x => x.isPlaying == true))
+                if (!pc.ready) return;
 
-        StartNextRound();
+            RestartGame();
+        }
+        else {
+            foreach (PlayerController pc in currentPlayers.Where(x => x.isPlaying == true))
+                if (!pc.ready) return;
+
+            StartNextRound();
+        }
     }
 }

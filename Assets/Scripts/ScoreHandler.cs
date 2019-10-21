@@ -9,6 +9,8 @@ public class ScoreHandler {
     float elapsedTime = 0f;
 
     public void ScoreUpdate() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= gameManager.gameSettings.pointDistributionInterval) {
@@ -95,6 +97,17 @@ public class ScoreHandler {
         return numTotalScore;
     }
 
+
+    public TeamID GetWinningTeam() {
+        ScoreClass bestTeam = currentTeams[0];
+
+        foreach (ScoreClass team in currentTeams) {
+            if (team.score > bestTeam.score)
+                bestTeam = team;
+        }
+
+        return bestTeam.teamID;
+    }
 }
 
 public class ScoreClass {
