@@ -7,20 +7,26 @@ public class PlayerModelController : MonoBehaviour
     public List<Light> lights;
     public PlayerModelEyeController eyeController;
     public PlayerController owner;
+    public Color playerColor;
 
+
+    private void Start()
+    {
+        SetPlayerColor(playerColor);
+    }
     void Update()
     {
         if (Input.GetKeyDown("z"))
         {
-            setExpression(0);
+            setExpression(1);
         }
         if (Input.GetKeyDown("x"))
         {
-            setExpression(1);
+            setExpression(2);
         }
         if (Input.GetKeyDown("c"))
         {
-            setExpression(2);
+            setExpression(5);
         }
         if (Input.GetKeyDown("v"))
         {

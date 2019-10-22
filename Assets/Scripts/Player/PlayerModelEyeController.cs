@@ -5,37 +5,69 @@ using UnityEngine;
 public class PlayerModelEyeController : MonoBehaviour
 {
     Material eyeMat;
-    Renderer eyeRenderer;
-    Color currentColor;
+    public Renderer modelRenderer;
+    public Color currentColor;
     float eyeFrame;
     //float frameSize;
 
     void Awake()
     {
-        if (this.GetComponent<MeshRenderer>() != null)
-            eyeRenderer = this.GetComponent<MeshRenderer>();
-        else
-            eyeRenderer = this.GetComponent<SkinnedMeshRenderer>();
-            
-        eyeFrame = 0;
+        //if (this.GetComponent<MeshRenderer>() != null)
+        //   modelRenderer = this.GetComponent<MeshRenderer>();
+        // else
+        //   modelRenderer = this.GetComponent<SkinnedMeshRenderer>();
+        //    
+        // eyeFrame = 0;
         //frameSize = 1 / 16;
+        
     }
-    
+    void Start()
+    {
+        SetEyeColor(currentColor);
+        //setExpression(1);
+        
+    }
+
+    private void OnEnable()
+    {
+        Invoke("SetExpressionWake", 0);
+        Invoke("SetExpressionSquint", 4);
+        Invoke("SetExpressionAngry", 6);
+    }
     void Update()
     {
-        //myRend.material.color = currentColor;
-
-        //myRend.material.mainTextureOffset = new Vector2(Time.time, Time.time*10);
-        eyeFrame+=.0625f;
-        //print (eyeFrame);
-        //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, eyeFrame));
+        if (Input.GetKeyDown("z"))
+        {
+            setExpression(1);
+        }
+        if (Input.GetKeyDown("x"))
+        {
+            setExpression(2);
+        }
+        if (Input.GetKeyDown("c"))
+        {
+            setExpression(5);
+        }
+        if (Input.GetKeyDown("v"))
+        {
+            setExpression(3);
+        }
+        if (Input.GetKeyDown("b"))
+        {
+            setExpression(4);
+        }
+        if (Input.GetKeyDown("n"))
+        {
+            setExpression(5);
+        }
     }
+
     public void SetEyeColor(Color color)
     {
         currentColor = color;
         //myRend.material.shader = Shader.Find("HDRP/Lit");
         try {
-            eyeRenderer.material.SetColor("_BaseColor", color);
+            modelRenderer.materials[1].SetColor("_BaseColor", color);
         }
         catch {
 
@@ -48,7 +80,7 @@ public class PlayerModelEyeController : MonoBehaviour
     public void SetExpressionWake()
     {
         print("Awake!");
-        StartCoroutine(AnimatedSequence(8, 1, false, 1));
+        StartCoroutine(AnimatedSequence(8, 1, true, 1));
 
         //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 6));
     }
@@ -57,29 +89,29 @@ public class PlayerModelEyeController : MonoBehaviour
     {
         //eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 7));
         print("Die!");
-        StartCoroutine(AnimatedSequence(8,1,true,1));
+        StartCoroutine(AnimatedSequence(8,1,false,1));
     }
 
     public void SetExpressionAngry()
     {
         print("Angry!");
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -1));
+        modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -1));
     }
 
     public void SetExpressionScared()
     {
         print("Scared");
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -2));
+        modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -2));
     }
     public void SetExpressionNormal()
     {
         print("Normal");
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 0));
+        modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * 0));
     }
     public void SetExpressionSquint()
     {
         print("Normal");
-        eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -3));
+        modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * -3));
     }
 
     IEnumerator AnimatedSequence(int frameLength,int startFrame,bool reverse,float speed)
@@ -99,16 +131,40 @@ public class PlayerModelEyeController : MonoBehaviour
             
             if (reverse)
             {
-                eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction + (.0625f * frameLength)));
+                modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction + (.0625f * frameLength)));
             }
             else
             {
-                eyeRenderer.materials[0].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction));
+                modelRenderer.materials[1].SetTextureOffset("_BaseColorMap", new Vector2(0, .0625f * currentFrame* direction));
             }
 
             print("anim frame " + currentFrame);
 
-            yield return null;
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+    public void setExpression(int expression)
+    {
+        switch (expression)
+        {
+            case 1:
+                SetExpressionWake();
+                break;
+            case 2:
+                SetExpressionDie();
+                break;
+            case 3:
+                SetExpressionAngry();
+                break;
+            case 4:
+                SetExpressionScared();
+                break;
+            case 5:
+                SetExpressionSquint();
+                break;
+            default:
+                SetExpressionNormal();
+                break;
         }
     }
 

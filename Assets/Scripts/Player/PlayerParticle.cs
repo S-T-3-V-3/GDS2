@@ -12,13 +12,23 @@ public class PlayerParticle : MonoBehaviour
 
     public void SetColor(Color color)
     {
+        try
+        {
+
+        
         foreach(LineRenderer line in lineRenderers)
         {
             line.startColor = color;
             line.endColor = color;
         }
-        foreach(ParticleSystem ps in particleSystems)
+        }
+        catch
         {
+            print("no line renderers");
+        }
+        foreach (ParticleSystem ps in particleSystems)
+        {
+
             var main = ps.main;
             main.startColor = color;
             //ps.Emit(1);
