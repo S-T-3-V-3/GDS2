@@ -30,10 +30,11 @@ public class PlayerModelEyeController : MonoBehaviour
 
     private void OnEnable()
     {
-        Invoke("SetExpressionWake", 0);
-        Invoke("SetExpressionSquint", 4);
-        Invoke("SetExpressionAngry", 6);
+        //Invoke("SetExpressionWake", 0);
+        //Invoke("SetExpressionSquint", 4);
+        //Invoke("SetExpressionAngry", 6);
     }
+
     void Update()
     {
         if (Input.GetKeyDown("z"))

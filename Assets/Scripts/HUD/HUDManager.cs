@@ -149,6 +149,7 @@ public class HUDManager : MonoBehaviour
     void OnGameLoaded() {
         GameObject.Destroy(mainMenu);
         playerLobby = GameObject.Instantiate(PlayerLobbyPrefab,lobby.transform);
+        joinMessage.SetActive(true);
         playerList = playerLobby.GetComponentInChildren<PlayerList>();
     }
 

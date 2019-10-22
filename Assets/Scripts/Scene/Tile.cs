@@ -64,6 +64,7 @@ public class Tile : MonoBehaviour
                 if (currentHexEffect != null) {
                     GameObject.Destroy(currentHexEffect);
                 }
+                
                 currentHexEffect = GameObject.Instantiate(HexagonEffect,this.transform.position,this.transform.rotation,this.transform);
                 currentHexEffect.transform.localPosition = new Vector3(0,0,0.0101f);
 
