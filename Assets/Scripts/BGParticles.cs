@@ -24,7 +24,9 @@ public class BGParticles : MonoBehaviour
         var main = PSystems[0].GetComponent<ParticleSystem>().main;
         main.startColor = InitialColor;
 
-        //GameManager.Instance.OnNewWinningTeam.AddListener(delegate{ChangeColor(GameManager.Instance.teamManager.GetWinningTeamColor()); });
+        GameManager.Instance.OnNewWinningTeam.AddListener(delegate{ChangeColor(GameManager.Instance.teamManager.GetWinningTeamColor()); });
+
+
     }
 
     // Update is called once per frame
@@ -54,8 +56,12 @@ public class BGParticles : MonoBehaviour
 
     void RandomMenuColor()
     {
-        Color tempCol = TeamManager.Instance.GetTeamColors()[Random.Range(0, TeamManager.Instance.GetTeamColors().Count)];
-        ChangeColor(tempCol);
+        if (!GameManager.Instance.sessionData.isStarted)
+        {
+            Color tempCol = TeamManager.Instance.GetTeamColors()[Random.Range(0, TeamManager.Instance.GetTeamColors().Count)];
+            //Color tempCol = new Color(1, 0, 0);
+            ChangeColor(tempCol);
+        }
     }
 
 

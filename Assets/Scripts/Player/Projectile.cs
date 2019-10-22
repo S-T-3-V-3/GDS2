@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     public GameObject projectileBody;
     public ProjectileEvent OnProjectileOverlap;
     public ParticleSystem[] particleSystems;
+    public GameObject DestructionFX;
 
     GameManager gameManager;
     PlayerController owningPlayer;
@@ -69,7 +70,10 @@ public class Projectile : MonoBehaviour
         this.gameObject.transform.position += movementDirection * moveSpeed * Time.deltaTime;
     }
 
-    void OnDestroy() {
+    void OnDestroy()
+    {
+        Instantiate(DestructionFX, transform.position, transform.rotation);
+
         GameObject.Destroy(this.gameObject);
     }
 
