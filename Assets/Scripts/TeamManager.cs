@@ -37,6 +37,16 @@ public class TeamManager : MonoBehaviour
     public Color GetWinningTeamColor() {
         return GetTeamColor(GameManager.Instance.sessionData.score.winningTeam.teamID);
     }
+
+    public List<Color> GetTeamColors()
+    {
+        List<Color> colors = new List<Color>();
+        foreach (Team team in currentTeams)
+        {
+            colors.Add(team.color);
+        }
+        return colors;
+    }
 }
 
 [System.Serializable]

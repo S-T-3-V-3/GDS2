@@ -9751,6 +9751,8 @@ MonoBehaviour:
   - {fileID: 2299316418654687897}
   - {fileID: 9033197882475800516}
   - {fileID: 8983312339206842203}
+  DestructionFX: {fileID: 8476817692353177229, guid: 39dac477dbbf9d24baec007e11fbb240,
+    type: 3}
   initialized: 0
   lifeTime: 0
 --- !u!1 &7818079819218997860
