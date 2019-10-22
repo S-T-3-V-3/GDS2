@@ -35,7 +35,7 @@ public class TeamManager : MonoBehaviour
     }
 
     public Color GetWinningTeamColor() {
-        return GetTeamColor(GameManager.Instance.sessionData.score.GetWinningTeam());
+        return GetTeamColor(GameManager.Instance.sessionData.score.winningTeam.teamID);
     }
 }
 

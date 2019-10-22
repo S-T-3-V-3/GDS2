@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ScoreHandler {
     public List<ScoreClass> currentTeams;
+    public ScoreClass winningTeam;
     GameManager gameManager;
 
     float elapsedTime = 0f;
@@ -27,6 +28,7 @@ public class ScoreHandler {
 
     void CalculateScore() {
         int numTilesCaptured = 0;
+        ScoreClass winningTeam = currentTeams[0];
 
         foreach(ScoreClass team in currentTeams) {
             if (team.teamID != TeamID.NONE)
@@ -37,7 +39,16 @@ public class ScoreHandler {
             if (team.teamID != TeamID.NONE) {
                 if (team.numTiles > 0)
                     team.score += ((float)team.numTiles / (float)numTilesCaptured) * gameManager.gameSettings.pointsPerInterval;
+                
+                if (team.score > winningTeam.score) {
+                    winningTeam = team;
+                }
             }
+        }
+
+        if (winningTeam.teamID != this.winningTeam.teamID) {
+            this.winningTeam = winningTeam;
+            gameManager.OnNewWinningTeam.Invoke();
         }
     }
 
@@ -95,18 +106,6 @@ public class ScoreHandler {
                 numTotalScore += team.score;
         }
         return numTotalScore;
-    }
-
-
-    public TeamID GetWinningTeam() {
-        ScoreClass bestTeam = currentTeams[0];
-
-        foreach (ScoreClass team in currentTeams) {
-            if (team.score > bestTeam.score)
-                bestTeam = team;
-        }
-
-        return bestTeam.teamID;
     }
 }
 

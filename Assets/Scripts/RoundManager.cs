@@ -211,7 +211,7 @@ public class EndGameState : State
         gameManager.sessionData.OnEndGame.Invoke();
 
         EndScreen endScreen = FindObjectOfType<EndScreen>();
-        endScreen.SetWinner(gameManager.sessionData.score.GetWinningTeam());
+        endScreen.SetWinner(gameManager.sessionData.score.winningTeam.teamID);
 
         foreach(PlayerController player in gameManager.currentPlayers) {
             if (player.isPlaying) player.SetState<EndGamePlayerState>();

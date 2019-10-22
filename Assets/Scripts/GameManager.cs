@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnGameLoaded;
     public UnityEvent OnSessionStart;
     public UnityEvent OnPlayersChanged;
+    public UnityEvent OnNewWinningTeam;
     public UnityEvent OnNewCameraTarget;
     public UnityEvent OnScoreUpdated;
     public UnityEvent OnTilesChanged;
