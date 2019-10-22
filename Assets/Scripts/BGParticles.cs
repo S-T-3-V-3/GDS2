@@ -19,21 +19,23 @@ public class BGParticles : MonoBehaviour
 
         gameManager = FindObjectOfType<GameManager>();
         PSystems = new List<GameObject>();
+        
         PSystems.Add(Instantiate(ParticleSystem, transform));
         var main = PSystems[0].GetComponent<ParticleSystem>().main;
         main.startColor = InitialColor;
 
+        //GameManager.Instance.OnNewWinningTeam.AddListener(delegate{ChangeColor(GameManager.Instance.teamManager.GetWinningTeamColor()); });
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        /*
         if (Input.GetKeyDown("z"))
         {
             ChangeColor(new Color(Random.Range(0,2), Random.Range(0, 2), Random.Range(0, 2)));
         }
-        
+        */
     }
 
     void ChangeColor(Color color)
@@ -48,14 +50,11 @@ public class BGParticles : MonoBehaviour
 
         Destroy(PSystems[PSystems.Count - 2],11);
         PSystems.Remove(PSystems[PSystems.Count - 2]);
-
-        print(PSystems.Count);
     }
 
     void RandomMenuColor()
     {
-        //Should pick a color from team colors
-        Color tempCol = new Color(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2));
+        Color tempCol = TeamManager.Instance.GetTeamColors()[Random.Range(0, TeamManager.Instance.GetTeamColors().Count)];
         ChangeColor(tempCol);
     }
 
