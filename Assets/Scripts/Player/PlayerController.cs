@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     public TMPro.TextMeshPro healthText;
     public StateManager playerState;
     public GameObject playerModel;
-    public Stats currentStats;
+    public CurrentStats currentStats;
     public SkillPoints skillPoints;
     [Space]
     public UnityEvent OnPlayerSpawn;
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
 
     void Awake() {
-        currentStats = new Stats();
+        currentStats = new CurrentStats();
         currentStats.Init();
 
         skillPoints = new SkillPoints();

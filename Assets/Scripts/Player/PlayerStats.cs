@@ -1,7 +1,9 @@
-﻿using UnityEngine.Events;
+﻿using System.Linq;
+using System.Collections.Generic;
+using UnityEngine.Events;
 using UnityEngine;
 
-public class Stats {
+public class CurrentStats {
     // Player
     public float moveSpeed;
     public float acceleration;
@@ -114,6 +116,56 @@ public static class StatCalculation {
         float speedMultiplier = 0.2f;
         return (1 + speedMultiplier * (level - 1)) * gunSpeed;
     }
+}
+
+public class GameStats {
+    List<Damage> damageDealt = new List<Damage>();
+    List<Shot> shotsFired = new List<Shot>();
+    List<PlayerPoints> pointsEarned = new List<PlayerPoints>();
+
+    public void AddPlayer(int playerID) {
+        PlayerPoints points = new PlayerPoints();
+        points.playerID = playerID;
+        pointsEarned.Add(points);
+    }
+
+    public void ShotFired(Shot shot) {
+        shotsFired.Add(shot);
+    }
+
+    public void TookDamage(Damage damage) {
+        damageDealt.Add(damage);
+    }
+
+    public void EarnedPoints(int playerID) {
+        PlayerPoints player = pointsEarned.Where(x => x.playerID == playerID).First();
+        player.points++;
+    }
+}
+
+public struct Damage {
+    int fromPlayerID;
+    int toPlayerID;
+    GunType fromGun;
+    GunType toGun;
+    int round;
+    int amount;
+    bool wasKill;
+}
+
+public struct Shot {
+    int fromPlayerID;
+    GunType fromGun;
+    int round;
+}
+
+public struct PlayerPoints {
+    public int playerID;
+    public int points;
+}
+
+public struct TileCapture {
+    public int playerID;
 }
 
 public class V3Event : UnityEvent<Vector3>
