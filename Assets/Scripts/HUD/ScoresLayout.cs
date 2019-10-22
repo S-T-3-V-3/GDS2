@@ -15,10 +15,4 @@ public class ScoresLayout : MonoBehaviour
         glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;  //**
         glg.constraintCount = 1;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

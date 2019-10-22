@@ -27,6 +27,8 @@ namespace SciFiArsenal
         // Update is called once per frame
         void Update()
         {
+            if (GameManager.Instance.sessionData.isPaused) return;
+            
             if (gameObject.GetComponent<Light>())
             {
                 li.intensity -= initIntensity * (Time.deltaTime / life);

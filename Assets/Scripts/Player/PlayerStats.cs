@@ -6,6 +6,10 @@ public class Stats {
     public float moveSpeed;
     public float acceleration;
     public int health;
+    public int maxHealth;
+    public int trailLength = 8;
+    public int level;
+    public float exp;
     public bool isAlive;
 
     // Events
@@ -17,6 +21,10 @@ public class Stats {
         moveSpeed = PlayerStatsBase.moveSpeed;
         acceleration = PlayerStatsBase.acceleration;
         health = PlayerStatsBase.health;
+        maxHealth = PlayerStatsBase.maxHealth;
+        trailLength = PlayerStatsBase.trailLength;
+        level = PlayerStatsBase.level;
+        exp = PlayerStatsBase.exp;
         isAlive = false;
 
         OnDeath = new V3Event();
@@ -24,9 +32,7 @@ public class Stats {
     }
 
     public void Respawn() {
-        moveSpeed = PlayerStatsBase.moveSpeed;
-        acceleration = PlayerStatsBase.acceleration;
-        health = PlayerStatsBase.health;
+        health = maxHealth;
         isAlive = true;
     }
 
@@ -62,7 +68,10 @@ public class PlayerStatsBase {
     public static float moveSpeed = 5f;
     public static float acceleration = 20f;
     public static int health = 100;
+    public static int maxHealth = 100;
     public static int trailLength = 8;
+    public static int level = 1;
+    public static float exp = 0;
 }
 
 public static class StatCalculation {
@@ -78,7 +87,7 @@ public static class StatCalculation {
 
     public static int GetMaxHealth(int level) {
         int hpPerLevel = 20;
-        return (hpPerLevel * (level - 1)) + PlayerStatsBase.health;
+        return (hpPerLevel * (level - 1)) + PlayerStatsBase.maxHealth;
     }
 
     public static int GetTrailLength(int level) {

@@ -5,25 +5,34 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance;
     public Transform cameraTransform;
     public Camera mainCamera;
     public float smoothTime = 0.3f;
     public float minDistance = 14f;
     public float maxDistance = 3000f;
-    public float angle = 60f;
+    public float angle = -30f;
+    public float focusAngle = -50f;
+    public float focusDistance = 6f;
     public float xOffset = -0.8f;
+    public PlayerController focusPlayer;
     
     GameManager gameManager;
     List<Transform> targets;
     Vector3 currentVelocity;
 
     Vector3 resetPos;
+    Vector3 focusRotation;
+    Vector3 focusPositionOffset = new Vector3(0,0,0);
+
     float aspectRatio;
     float targetAngle;
     bool isResetting = false;
+    bool focussed = false;
 
     void Start() {
-        gameManager = FindObjectOfType<GameManager>();
+        Instance = this;
+        gameManager = GameManager.Instance;
 
         gameManager.OnNewCameraTarget.AddListener(SetTargets);
         gameManager.sessionData.OnRoundComplete.AddListener(Reset);
@@ -43,13 +52,53 @@ public class CameraController : MonoBehaviour
         if (targets.Count == 0) return;
 
         Vector3 centerPosition = GetCenterPosition();
-        Vector3 distanceOffset = new Vector3(0,Mathf.Clamp(GetDistance(), minDistance, maxDistance),0);
+
+        Vector3 distanceOffset;
+        if (focussed) {
+            distanceOffset = new Vector3(0,Mathf.Clamp(GetDistance(), focusDistance, maxDistance),0);
+        }
+        else {
+            distanceOffset = new Vector3(0,Mathf.Clamp(GetDistance(), minDistance, maxDistance),0);
+        }
 
         Vector3 currentPos = new Vector3(this.gameObject.transform.position.x, cameraTransform.localPosition.y, this.gameObject.transform.position.z);
         Vector3 newPos = Vector3.SmoothDamp(currentPos, centerPosition+distanceOffset, ref currentVelocity, smoothTime);
 
         this.gameObject.transform.position = new Vector3(newPos.x, this.gameObject.transform.position.y, newPos.z);
-        cameraTransform.localPosition = new Vector3(xOffset,newPos.y,0);
+
+        if (focussed) {
+            cameraTransform.localPosition = new Vector3(focusPositionOffset.x,newPos.y,focusPositionOffset.z);
+        }
+        else
+            cameraTransform.localPosition = new Vector3(xOffset,newPos.y,0);
+    }
+
+    public void PauseAngle(Vector2 modifier) {
+        float maxOffsetAngle = 17f;
+
+        this.transform.eulerAngles = focusRotation + new Vector3(modifier.y * maxOffsetAngle, 0, -modifier.x * maxOffsetAngle);
+    }
+
+    public void PauseOffset(Vector2 modifier) {
+        float maxOffsetDistance = 0.5f;
+
+        focusPositionOffset = new Vector3(modifier.x * maxOffsetDistance, 0, modifier.y * maxOffsetDistance);
+    }
+
+    public void Focus(PlayerController pc) {
+        focusPlayer = pc;
+        focussed = true;
+        targets.Clear();
+        targets.Add(pc.playerModel.transform);
+        focusRotation = this.transform.eulerAngles;
+        smoothTime = 0.15f;
+    }
+
+    public void UnFocus() {
+        focussed = false;
+        SetTargets();
+        smoothTime = 0.3f;
+        this.transform.eulerAngles = focusRotation;
     }
 
     public void Reset() {

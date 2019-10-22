@@ -17,7 +17,7 @@ public class MapManager : MonoBehaviour
     bool obstaclesSpawned = false;
 
     void Awake() {
-        gameManager = this.GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         mapSettings = gameManager.GetMapSettings();
 
         tiles = new List<Tile>();
@@ -59,6 +59,8 @@ public class MapManager : MonoBehaviour
 
     // TODO: This needs to be threaded
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (!innerRadiusSpawned) {
             CalculateEdges();
 

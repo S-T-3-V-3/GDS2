@@ -12,6 +12,8 @@ public class TileSprite : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (!isChanging) return;
         elapsedTime += Time.deltaTime;
 

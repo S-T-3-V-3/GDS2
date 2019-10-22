@@ -21,6 +21,8 @@ namespace SciFiArsenal
         // Update is called once per frame
         void Update()
         {
+            if (GameManager.Instance.sessionData.isPaused) return;
+            
             if (rotateSpace == spaceEnum.Local)
                 transform.Rotate(rotateVector * Time.deltaTime);
             if (rotateSpace == spaceEnum.World)

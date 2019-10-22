@@ -63,14 +63,14 @@ public class Tile : MonoBehaviour
                 currentStarsEffect.transform.localPosition = new Vector3(0,0,0.0101f);
 
                 ParticleSystem.MainModule main = currentHexEffect.GetComponent<ParticleSystem>().main;
-                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
+                main.startColor = TeamManager.Instance.GetTeamColor(targetTeamID);
 
                 main = currentStarsEffect.GetComponent<ParticleSystem>().main;
-                main.startColor = gameManager.teamManager.GetTeam(targetTeamID).color;
+                main.startColor = TeamManager.Instance.GetTeamColor(targetTeamID);
 
                 newTeamMat = gameManager.teamManager.GetTeam(targetTeamID).tileMat;
 
-                HexSprite.DoColorChange(gameManager.teamManager.GetTeam(targetTeamID).color);
+                HexSprite.DoColorChange(TeamManager.Instance.GetTeamColor(targetTeamID));
 
                 //currentHexEffect.GetComponent<ParticleEvents>().OnParticleComplete.AddListener(DoColorChange);
             }

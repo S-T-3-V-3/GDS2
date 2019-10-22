@@ -10,8 +10,4 @@ public class TeamScoreCard : MonoBehaviour
     public RawImage scoreBar;
     public Team team;
     public float score;
-
-    
-
-
 }

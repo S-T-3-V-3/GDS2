@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb15d83f5bfaac74d96d6efbae181f2e, type: 3}
   m_Name: Sniper
   m_EditorClassIdentifier: 
-  gunName: 
-  projectilePrefab: {fileID: 0}
-  reloadTime: 0
-  projectileSize: 0
-  projectileSpeed: 0
-  projectileDamage: 0
-  projectileLifetime: 0
+  gunName: Sniper
+  soundEffect: sniper
+  projectilePrefab: {fileID: 7185639305933918909, guid: e1d33f1f12ae7a243abad3c35232f70b,
+    type: 3}
+  reloadTime: 2
+  projectileSize: 0.2
+  projectileSpeed: 18
+  projectileDamage: 15
+  projectileLifetime: 2

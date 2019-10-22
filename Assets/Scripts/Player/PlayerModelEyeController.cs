@@ -23,10 +23,16 @@ public class PlayerModelEyeController : MonoBehaviour
     }
     void Start()
     {
+<<<<<<< HEAD
         SetEyeColor(currentColor);
         //setExpression(1);
         
     }
+=======
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
+        //myRend.material.color = currentColor;
+>>>>>>> 36cf176a5fe1085b6aecafa675bee494845e981c
 
     private void OnEnable()
     {

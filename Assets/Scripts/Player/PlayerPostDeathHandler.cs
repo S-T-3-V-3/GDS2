@@ -18,6 +18,8 @@ public class PlayerPostDeathHandler : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime <= expansionTime) {

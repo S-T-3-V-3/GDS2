@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
 
     public void Init(PlayerController owningPlayer, Vector3 forwardVector, GunType gun)
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
         firedFromGun = gun;
 
         this.owningPlayer = owningPlayer;
@@ -36,12 +36,12 @@ public class Projectile : MonoBehaviour
 
         projectileBody.GetComponent<MeshRenderer>().material.color = Color.white;
 
-        projectileLight.color = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
+        projectileLight.color = TeamManager.Instance.GetTeamColor(owningPlayer.teamID);
 
         foreach (ParticleSystem ps in particleSystems)
         {
             var main = ps.main;
-            main.startColor = gameManager.teamManager.GetTeam(owningPlayer.teamID).color;
+            main.startColor = TeamManager.Instance.GetTeamColor(owningPlayer.teamID);
         }
 
 
@@ -55,6 +55,8 @@ public class Projectile : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (!initialized) return;
                 
         lifeTime -= Time.deltaTime;
@@ -82,7 +84,7 @@ public class Projectile : MonoBehaviour
             
             TextPopupHandler textPopup = GameObject.Instantiate(gameManager.TextPopupPrefab).GetComponent<TextPopupHandler>();
                 string textValue = "-" + damage.ToString();
-                textPopup.Init(this.transform.position, textValue, gameManager.teamManager.GetTeam(owningPlayer.teamID).color, 0.5f);
+                textPopup.Init(this.transform.position, textValue, TeamManager.Instance.GetTeamColor(owningPlayer.teamID), 0.5f);
                 textPopup.lifetime = 0.5f;
             
             if (hitPlayer.currentStats.health <= 0) {

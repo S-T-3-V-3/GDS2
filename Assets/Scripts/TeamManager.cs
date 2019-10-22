@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class TeamManager : MonoBehaviour
 {
+    public static TeamManager Instance;
     public List<Team> currentTeams;
 
     void Awake() {
-        GameManager gameManager = this.GetComponent<GameManager>();
+        Instance = this;
+        GameManager gameManager = GameManager.Instance;
 
         currentTeams = new List<Team>();
 
@@ -26,6 +28,14 @@ public class TeamManager : MonoBehaviour
 
     public Team GetTeam(TeamID teamID) {
         return currentTeams.Where(x => x.ID == teamID).First();
+    }
+
+    public Color GetTeamColor(TeamID teamID) {
+        return GetTeam(teamID).color;
+    }
+
+    public Color GetWinningTeamColor() {
+        return GetTeamColor(GameManager.Instance.sessionData.score.winningTeam.teamID);
     }
 }
 
@@ -48,11 +58,13 @@ public class Team {
 }
 
 public enum TeamID {
+    NONE = 0,
     BLUE,
     GREEN,
     RED,
     YELLOW,
     PURPLE,
     ORANGE,
-    NONE
+    CYAN,
+    PINK
 }

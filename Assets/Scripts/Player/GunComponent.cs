@@ -9,6 +9,8 @@ public class GunComponent : MonoBehaviour
     float reloadCooldown = 0f;
 
     void Update() {
+        if (GameManager.Instance.sessionData.isPaused) return;
+        
         if (reloadCooldown > 0)
             reloadCooldown -= Time.deltaTime;
     }
@@ -23,6 +25,7 @@ public class GunComponent : MonoBehaviour
     void DoShoot() {
         Projectile newProjectile = GameObject.Instantiate(gun.projectilePrefab, this.transform.position, this.transform.rotation).GetComponent<Projectile>();
         newProjectile.Init(owner, this.gameObject.transform.forward, gun);
+        SoundManager.Instance.Play(gun.soundEffect);
 
         owner.playerModel.GetComponent<Rigidbody>().AddForce(this.gameObject.transform.forward.normalized * -1 * gun.projectileSize * owner.gameManager.gameSettings.baseRecoilValue, ForceMode.Impulse);
     }

@@ -8,6 +8,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance = null;
     public GameObject TilePrefab;
     public GameObject CameraPrefab;
     public GameObject MainMenuPrefab;
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject DeathFXPrefab;
     public GameObject DeathColliderPrefab;
     public GameObject TextPopupPrefab;
+    public GameObject UpgradePopupPrefab;
 
     public Material WallMaterial;
     public Transform playerParent;
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour
     public SessionData sessionData;
     public HUDManager hud;
     public TeamManager teamManager;
+    public SoundManager soundManager;
 
     [Space]
     public GameObject KingOfTheHill;
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnGameLoaded;
     public UnityEvent OnSessionStart;
     public UnityEvent OnPlayersChanged;
+    public UnityEvent OnNewWinningTeam;
     public UnityEvent OnNewCameraTarget;
     public UnityEvent OnScoreUpdated;
     public UnityEvent OnTilesChanged;
@@ -49,6 +53,11 @@ public class GameManager : MonoBehaviour
     Camera mainCamera;
 
     void Awake() {
+        if (GameManager.Instance != null)
+            GameObject.Destroy(this.gameObject);
+        else
+            Instance = this;
+        
         sessionData = this.gameObject.AddComponent<SessionData>();
         teamManager = this.gameObject.AddComponent<TeamManager>();
         
@@ -57,16 +66,6 @@ public class GameManager : MonoBehaviour
         sessionData.isStarted = false;
 
         OnMapLoaded.AddListener(SpawnKoth); //Sam
-    }
-
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
-
-        if (!sessionData.isStarted) return;
-        
-        if (!sessionData.roundManager.isStarted) return;
-        sessionData.score.ScoreUpdate();
     }
 
     public void Reset() {
@@ -92,6 +91,53 @@ public class GameManager : MonoBehaviour
         StartNextRound();
     }
 
+    public void PauseGame(PlayerController caller) {
+        sessionData.isPaused = !sessionData.isPaused;
+
+        if (sessionData.isPaused) {
+            CameraController.Instance.Focus(caller);
+            soundManager.Pause();
+        }
+        else {
+            CameraController.Instance.UnFocus();
+            soundManager.Resume();
+        }
+
+        foreach (PlayerController pc in currentPlayers) {
+            pc.Pause();
+        }
+
+        hud.Pause(teamManager.GetTeamColor(caller.teamID));
+
+        List<Animator> animators = FindObjectsOfType<Animator>().ToList();
+        if (sessionData.isPaused) {
+            foreach (Animator a in animators) {
+                a.speed = 0;
+            }
+        }
+        else {
+            foreach (Animator a in animators) {
+                a.speed = 1;
+            }
+        }
+
+        List<ParticleSystem> emitters = FindObjectsOfType<ParticleSystem>().ToList();
+        if (sessionData.isPaused) {
+            foreach (ParticleSystem ps in emitters) {
+                ps.Pause();
+            }
+        }
+        else {
+            foreach (ParticleSystem ps in emitters) {
+                ps.Play();
+            }
+        }
+    }
+
+    public void RestartGame() {
+        SceneManager.LoadScene("Master");
+    }
+    
     public void StartNextRound() {
         OnMapLoaded.AddListener(SpawnPlayers);
 
@@ -112,7 +158,7 @@ public class GameManager : MonoBehaviour
         OnMapLoaded.RemoveListener(SpawnPlayers);
 
         foreach (PlayerController player in currentPlayers) {
-            if (player.teamID != TeamID.NONE) {
+            if (player.isPlaying) {
                 player.SetState<PlayerActiveState>();
             }       
         }
@@ -142,7 +188,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement(killer.teamID + " player killed " + killed.teamID + " player!",3, teamManager.GetTeam(killer.teamID).color);
+        hud.Announcement($"<color={killer.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killer) + 1}</color> killed <color={killed.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killed) + 1}</color>!",3);
 
         PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
         deathHandler.transform.position = killed.pawnPosition;
@@ -150,12 +196,16 @@ public class GameManager : MonoBehaviour
 
         TextPopupHandler textPopup = GameObject.Instantiate(TextPopupPrefab).GetComponent<TextPopupHandler>();
         string textValue = "+" + gameSettings.pointsPerKill.ToString();
-        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeam(killer.teamID).color);
+        textPopup.Init(killer.pawnPosition, textValue, teamManager.GetTeamColor(killer.teamID));
     }
  
     // Runs every time a player joins the game, will trigger session start if first player connected.
     public void OnPlayerJoined(PlayerInput newPlayer) {
         PlayerController newController = newPlayer.GetComponent<PlayerController>();
+
+        newController.teamID = TeamID.BLUE;
+        newController.ready = false;
+
         newController.transform.parent = playerParent;
         currentPlayers.Add(newController);
 
@@ -208,5 +258,21 @@ public class GameManager : MonoBehaviour
     //Sam
     void DespawnKoth() {
         Destroy(KingOfTheHill);
+    }
+
+    public void ReadyCheck()
+    {
+        if (sessionData.isComplete) {
+            foreach (PlayerController pc in currentPlayers.Where(x => x.isPlaying == true))
+                if (!pc.ready) return;
+
+            RestartGame();
+        }
+        else {
+            foreach (PlayerController pc in currentPlayers.Where(x => x.isPlaying == true))
+                if (!pc.ready) return;
+
+            StartNextRound();
+        }
     }
 }
