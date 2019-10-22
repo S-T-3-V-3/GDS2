@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using System.Linq;
 using System.Collections.Generic;
 
 public class SessionData : MonoBehaviour{
@@ -9,6 +10,7 @@ public class SessionData : MonoBehaviour{
     public bool isGameLoaded = false;
     public RoundManager roundManager;
     public ScoreHandler score;
+    public GameStats gameStats;
     public UnityEvent OnRoundPrepare;
     public UnityEvent OnRoundBegin;
     public UnityEvent OnRoundComplete;
@@ -49,6 +51,8 @@ public class SessionData : MonoBehaviour{
         
         score.Reset();
         isStarted = true;
+        gameStats = new GameStats();
+        gameStats.Init(gameManager.currentPlayers.Select(x => x.playerID).ToList());
         gameManager.OnSessionStart.Invoke();
     }
 

@@ -24,6 +24,12 @@ public class Projectile : MonoBehaviour
         gameManager = GameManager.Instance;
         firedFromGun = gun;
 
+        Shot shot = new Shot();
+        shot.fromPlayerID = owningPlayer.playerID;
+        shot.fromGun = gun;
+        shot.round = gameManager.sessionData.roundManager.roundNumber;
+        gameManager.sessionData.gameStats.ShotFired(shot);
+
         this.owningPlayer = owningPlayer;
         this.owner = owningPlayer.playerModel;
         this.lifeTime = gun.projectileLifetime;
@@ -87,9 +93,21 @@ public class Projectile : MonoBehaviour
                 textPopup.Init(this.transform.position, textValue, TeamManager.Instance.GetTeamColor(owningPlayer.teamID), 0.5f);
                 textPopup.lifetime = 0.5f;
             
+            Damage d = new Damage();
+            d.fromPlayerID = owningPlayer.playerID;
+            d.toPlayerID = hitPlayer.playerID;
+            d.fromGun = firedFromGun;
+            d.amount = damage;
+            d.toGun = gameManager.gameSettings.guns[hitPlayer.playerWeaponSelection];
+            d.wasKill = false;
+
             if (hitPlayer.currentStats.health <= 0) {
                 FindObjectOfType<GameManager>().OnPlayerKilled(owningPlayer, hitPlayer);
-            }   
+                d.wasKill = true;
+            }
+
+            gameManager.sessionData.gameStats.TookDamage(d);
+            gameManager.sessionData.gameStats.EarnedPoints(owningPlayer.playerID, gameManager.gameSettings.pointsPerKill);
         }
 
         OnDestroy();

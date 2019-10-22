@@ -17,6 +17,11 @@ public class PauseScreen : MonoBehaviour
     float exitTimeElapsed = 0f;
     GameManager gameManager;
 
+    public void ShowStats(PlayerStatistics statistics) {
+        // stat data available here via statistics.X
+        // num kills is just statistics.kills.Count
+    }
+
     void Awake(){
         gameManager = GameManager.Instance;
     }

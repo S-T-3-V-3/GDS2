@@ -12,6 +12,7 @@ public class Tile : MonoBehaviour
     public bool isWall = false;
     public bool isEdge = false;
     public bool isInitialized = false;
+    public int owningPlayerID = 0;
 
 
     Vector3[] traceRotations;
@@ -42,16 +43,23 @@ public class Tile : MonoBehaviour
         if (gameManager.sessionData.roundManager.isStarted == false || isWall) return;
 
         TeamID targetTeamID = currentTeam;
+        int playerID = 0;
 
-        if (other.tag == "Player")
+        if (other.tag == "Player") {
             targetTeamID = other.GetComponent<PlayerModelController>().owner.teamID;
-        else if (other.GetComponent<PlayerPostDeathHandler>() != null)
+            playerID = other.GetComponent<PlayerModelController>().owner.playerID;
+        }
+        else if (other.GetComponent<PlayerPostDeathHandler>() != null) {
             targetTeamID = other.GetComponent<PlayerPostDeathHandler>().targetTeam;
+            playerID = other.GetComponent<PlayerPostDeathHandler>().owningPlayerID;
+        }
 
         if (currentTeam != targetTeamID) {
                 gameManager.sessionData.score.UpdateTileCount(currentTeam,targetTeamID);
                 currentTeam = targetTeamID;
                 gameManager.OnTilesChanged.Invoke();
+                owningPlayerID = playerID;
+                gameManager.sessionData.gameStats.TileCaptured(playerID);
 
                 if (currentHexEffect != null) {
                     GameObject.Destroy(currentHexEffect);

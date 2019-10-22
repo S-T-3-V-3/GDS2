@@ -62,6 +62,7 @@ public class KOTHZone : MonoBehaviour
                 string textValue = "+" + gameManager.gameSettings.KOTHPoints.ToString();
                 textPopup.Init(player.pawnPosition, textValue, TeamManager.Instance.GetTeamColor(player.teamID), 0.7f);
                 textPopup.lifetime = 0.75f;
+                gameManager.sessionData.gameStats.EarnedPoints(player.playerID, (int)gameManager.gameSettings.KOTHPoints);
             }
 
             // Reset time + inform listeners of score change

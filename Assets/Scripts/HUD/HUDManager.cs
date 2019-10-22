@@ -79,12 +79,19 @@ public class HUDManager : MonoBehaviour
         SoundManager.Instance.PlayMusic("menu music");
     }
 
-    public void Pause(Color color) {
+    public void Pause(Color color, int playerID) {
         if (gameManager.sessionData.isPaused) {
             if (pauseScreen != null)
                 GameObject.Destroy(pauseScreen);
             pauseScreen = GameObject.Instantiate(PauseScreenPrefab,this.transform);
             pauseScreen.GetComponent<PauseScreen>().targetTextColor = color;
+
+            try {
+                pauseScreen.GetComponent<PauseScreen>().ShowStats(gameManager.sessionData.gameStats.GetPlayerStats(playerID));
+            }
+            catch {
+                
+            }
         }
     }
 
@@ -131,7 +138,7 @@ public class HUDManager : MonoBehaviour
         //TO:DO Possibly add HUD animation code here? 
         foreach (PlayerScorecard currentScorecard in playerScorecards)
         {
-            if (currentScorecard.playerText.text == "Player " + (gameManager.currentPlayers.IndexOf(pc) + 1))
+            if (currentScorecard.playerText.text == "Player " + pc.playerID)
             {
                 currentScorecard.playerHPText.text = health.ToString();
                 currentScorecard.playerHP.uvRect = new Rect((1f-(float)health/maxHealth), 0, 1, 1);
@@ -174,7 +181,7 @@ public class HUDManager : MonoBehaviour
 
         foreach (PlayerController player in gameManager.currentPlayers) {
             if (teamScorecards.Where(x => x.team.ID == player.teamID).Count() == 0) 
-                teamScorecards.Add(CreateTeamScorecard((gameManager.currentPlayers.IndexOf(player) + 1), player.teamID));
+                teamScorecards.Add(CreateTeamScorecard(player.playerID, player.teamID));
         }
 
         upperUI.SetActive(true);
@@ -202,7 +209,7 @@ public class HUDManager : MonoBehaviour
         PlayerScorecard newScorecard = GameObject.Instantiate(PlayerScorecardPrefab, playersLayout.transform).GetComponent<PlayerScorecard>();
         newScorecard.team = pc.teamID;
         newScorecard.model = pc.playerModelSelection;
-        newScorecard.playerNumber = gameManager.currentPlayers.IndexOf(pc) + 1;
+        newScorecard.playerNumber = pc.playerID;
         newScorecard.Init();
         return newScorecard;
     }

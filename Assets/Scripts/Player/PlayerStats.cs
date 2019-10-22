@@ -122,8 +122,29 @@ public class GameStats {
     List<Damage> damageDealt = new List<Damage>();
     List<Shot> shotsFired = new List<Shot>();
     List<PlayerPoints> pointsEarned = new List<PlayerPoints>();
+    List<TileCapture> tilesCaptured = new List<TileCapture>();
 
-    public void AddPlayer(int playerID) {
+    public PlayerStatistics GetPlayerStats(int playerID) {
+        PlayerStatistics stats = new PlayerStatistics();
+
+        stats.kills = damageDealt.Where(x => x.fromPlayerID == playerID && x.wasKill).Select(x => x.toPlayerID).ToList();
+        stats.deaths = damageDealt.Where(x => x.toPlayerID == playerID && x.wasKill).Select(x => x.fromPlayerID).ToList();
+        stats.numShots = shotsFired.Where(x => x.fromPlayerID == playerID).Count();
+        stats.numHits = damageDealt.Where(x => x.fromPlayerID == playerID).Count();
+        stats.damageDealt = damageDealt.Where(x => x.fromPlayerID == playerID).Select(x => x.amount).Sum();
+        stats.accuracy = stats.numHits / stats.numShots;
+        stats.pointsEarned = pointsEarned.Where(x => x.playerID == playerID).Select(x => x.points).Sum();
+        stats.numTilesCaptured = tilesCaptured.Where(x => x.playerID == playerID).Count();
+
+        return stats;
+    }
+
+    public void Init(List<int> playerIDs) {
+        foreach (int i in playerIDs)
+            AddPlayer(i);
+    }
+
+    void AddPlayer(int playerID) {
         PlayerPoints points = new PlayerPoints();
         points.playerID = playerID;
         pointsEarned.Add(points);
@@ -137,26 +158,32 @@ public class GameStats {
         damageDealt.Add(damage);
     }
 
-    public void EarnedPoints(int playerID) {
+    public void EarnedPoints(int playerID, int numPoints) {
         PlayerPoints player = pointsEarned.Where(x => x.playerID == playerID).First();
-        player.points++;
+        player.points += numPoints;
+    }
+
+    public void TileCaptured(int playerID) {
+        TileCapture tc = new TileCapture();
+        tc.playerID = playerID;
+        tilesCaptured.Add(tc);
     }
 }
 
 public struct Damage {
-    int fromPlayerID;
-    int toPlayerID;
-    GunType fromGun;
-    GunType toGun;
-    int round;
-    int amount;
-    bool wasKill;
+    public int fromPlayerID;
+    public int toPlayerID;
+    public GunType fromGun;
+    public GunType toGun;
+    public int round;
+    public int amount;
+    public bool wasKill;
 }
 
 public struct Shot {
-    int fromPlayerID;
-    GunType fromGun;
-    int round;
+    public int fromPlayerID;
+    public GunType fromGun;
+    public int round;
 }
 
 public struct PlayerPoints {
@@ -166,6 +193,17 @@ public struct PlayerPoints {
 
 public struct TileCapture {
     public int playerID;
+}
+
+public struct PlayerStatistics {
+    public List<int> kills;
+    public List<int> deaths;
+    public int numShots;
+    public int numHits;
+    public float accuracy;
+    public int damageDealt;
+    public int pointsEarned;
+    public int numTilesCaptured;
 }
 
 public class V3Event : UnityEvent<Vector3>

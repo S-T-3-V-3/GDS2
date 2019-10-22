@@ -30,7 +30,7 @@ public class BoardControl : MonoBehaviour
                 foreach (RawImage ri in teamScoreBars)
                 {
                     if (ri.color == TeamManager.Instance.GetTeamColor(teamscore.teamID))
-                    {                 
+                    {
                         RectTransform rt = ri.GetComponent<RectTransform>();                    
                         rt.sizeDelta = new Vector2(teamscore.numTiles / totalTiles * (GetComponent<RectTransform>().rect.width)*0.96f, GetComponent<RectTransform>().rect.height*0.7f);
                     }

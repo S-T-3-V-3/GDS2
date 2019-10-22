@@ -47,7 +47,7 @@ public class PlayerLobbyCard : MonoBehaviour
         playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
 
         playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
-        playerNumber.text = "Player " + (gameManager.currentPlayers.IndexOf(owner) + 1);
+        playerNumber.text = "Player " + owner.playerID;
 
         Select();
     }

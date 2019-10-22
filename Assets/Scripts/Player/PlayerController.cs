@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public TeamID teamID = TeamID.NONE;
+    public int playerID;
     public int playerWeaponSelection = 0;
     public int playerModelSelection = 0;
     public PlayerModelConfig playerModelConfig;

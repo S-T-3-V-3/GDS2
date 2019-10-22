@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
             pc.Pause();
         }
 
-        hud.Pause(teamManager.GetTeamColor(caller.teamID));
+        hud.Pause(teamManager.GetTeamColor(caller.teamID), caller.playerID);
 
         List<Animator> animators = FindObjectsOfType<Animator>().ToList();
         if (sessionData.isPaused) {
@@ -188,11 +188,12 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement($"<color={killer.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killer) + 1}</color> killed <color={killed.teamID.ToString().ToLower()}>Player {currentPlayers.IndexOf(killed) + 1}</color>!",3);
+        hud.Announcement($"<color={killer.teamID.ToString().ToLower()}>Player {killer.playerID}</color> killed <color={killed.teamID.ToString().ToLower()}>Player {killed.playerID}</color>!",3);
 
         PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
         deathHandler.transform.position = killed.pawnPosition;
         deathHandler.targetTeam = killer.teamID;
+        deathHandler.owningPlayerID = killer.playerID;
 
         TextPopupHandler textPopup = GameObject.Instantiate(TextPopupPrefab).GetComponent<TextPopupHandler>();
         string textValue = "+" + gameSettings.pointsPerKill.ToString();
@@ -209,6 +210,9 @@ public class GameManager : MonoBehaviour
         newController.transform.parent = playerParent;
         currentPlayers.Add(newController);
 
+        foreach (PlayerController player in currentPlayers)
+            player.playerID = currentPlayers.IndexOf(player) + 1;
+
         OnPlayersChanged.Invoke();
     }
 
@@ -217,6 +221,9 @@ public class GameManager : MonoBehaviour
         teamManager.LeaveTeam(exitingPlayer.GetComponent<PlayerController>(), exitingPlayer.GetComponent<PlayerController>().teamID);
 
         OnNewCameraTarget.Invoke();
+
+        foreach (PlayerController player in currentPlayers)
+            player.playerID = currentPlayers.IndexOf(player) + 1;
     }
 
     public MapSettings GetMapSettings() {
