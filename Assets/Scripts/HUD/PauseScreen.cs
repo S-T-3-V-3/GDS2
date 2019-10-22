@@ -11,6 +11,7 @@ public class PauseScreen : MonoBehaviour
     public Color fadeColor;
     public Image image;
     public TextMeshProUGUI text;
+    public GameObject statContainer;
     public float transitionTime;
 
     float enterTimeElapsed = 0f;
@@ -18,8 +19,11 @@ public class PauseScreen : MonoBehaviour
     GameManager gameManager;
 
     public void ShowStats(PlayerStatistics statistics) {
-        // stat data available here via statistics.X
-        // num kills is just statistics.kills.Count
+        AddStat("Kills",statistics.kills.Count.ToString());
+        AddStat("Deaths",statistics.deaths.Count.ToString());
+        AddStat("Shots Fired",statistics.numShots.ToString());
+        AddStat("Accuracy",(statistics.accuracy * 100).ToString());
+        AddStat("Tiles Captured",statistics.numTilesCaptured.ToString());
     }
 
     void Awake(){
@@ -49,5 +53,12 @@ public class PauseScreen : MonoBehaviour
                 GameObject.Destroy(this.gameObject);
             }
         }
+    }
+
+    
+    void AddStat(string title, string value) {
+        IndividualStat stat = GameObject.Instantiate(gameManager.hud.IndividualStatPrefab,statContainer.transform).GetComponent<IndividualStat>();
+        stat.statName.text = title;
+        stat.statValue.text = value;
     }
 }

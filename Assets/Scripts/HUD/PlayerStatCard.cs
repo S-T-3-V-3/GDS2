@@ -14,6 +14,7 @@ public class PlayerStatCard : MonoBehaviour
     public TextMeshProUGUI readyText;
     [Space]
     public GameObject root;
+    public GameObject statContainer;
     public Image portrait;
     [Space]
     public TextMeshProUGUI playerTeam;
@@ -30,6 +31,8 @@ public class PlayerStatCard : MonoBehaviour
 
     Vector3 defaultScale = new Vector3(1f,1f,1f);
     Vector3 selectedScale = new Vector3(1.2f,1.2f,1.2f);
+
+    PlayerStatistics playerStats;
 
     public void Init() {
         gameManager = GameManager.Instance;
@@ -49,7 +52,20 @@ public class PlayerStatCard : MonoBehaviour
         playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
         playerNumber.text = "Player " + owner.playerID;
 
+        playerStats = gameManager.sessionData.gameStats.GetPlayerStats(owner.playerID);
+        AddStat("Kills",playerStats.kills.Count.ToString());
+        AddStat("Deaths",playerStats.deaths.Count.ToString());
+        AddStat("Shots Fired",playerStats.numShots.ToString());
+        AddStat("Accuracy",(playerStats.accuracy * 100).ToString());
+        AddStat("Tiles Captured",playerStats.numTilesCaptured.ToString());
+
         Select();
+    }
+
+    void AddStat(string title, string value) {
+        IndividualStat stat = GameObject.Instantiate(gameManager.hud.IndividualStatPrefab,statContainer.transform).GetComponent<IndividualStat>();
+        stat.statName.text = title;
+        stat.statValue.text = value;
     }
 
     public void Ready() {

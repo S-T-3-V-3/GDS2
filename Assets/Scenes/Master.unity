@@ -1033,6 +1033,8 @@ MonoBehaviour:
     type: 3}
   EndGamePrefab: {fileID: 4119661533398653999, guid: 588d798c97843fb47997c31e73f069cb,
     type: 3}
+  IndividualStatPrefab: {fileID: 6005067694505578936, guid: 9fb1f9ccd32787f46883f51933b409cc,
+    type: 3}
   gameManager: {fileID: 2080751314}
   RoundTimer: {fileID: 642086234}
   lobby: {fileID: 266683236}

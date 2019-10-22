@@ -15,6 +15,7 @@ public class HUDManager : MonoBehaviour
     public GameObject PauseScreenPrefab;
     public GameObject PlayerLobbyPrefab;
     public GameObject EndGamePrefab;
+    public GameObject IndividualStatPrefab;
     [Space]
     public GameManager gameManager;
     public TextMeshProUGUI RoundTimer;
