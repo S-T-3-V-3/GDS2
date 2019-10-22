@@ -28,6 +28,10 @@ public class ScoreHandler {
 
     void CalculateScore() {
         int numTilesCaptured = 0;
+        
+        if (this.winningTeam == null)
+            this.winningTeam = currentTeams[0];
+
         ScoreClass winningTeam = currentTeams[0];
 
         foreach(ScoreClass team in currentTeams) {
