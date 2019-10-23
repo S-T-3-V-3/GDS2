@@ -310,10 +310,10 @@ RectTransform:
   m_Father: {fileID: 738770702}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: -240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &601480553
 GameObject:
@@ -5703,7 +5703,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerScorecardPrefab: {fileID: 1962081103367103940, guid: 63f262a5d1c2125438b1d888d823f4eb,
     type: 3}
-  LobbyCardPrefab: {fileID: 7374038481693990350, guid: 23f8b5de20d8ec7488a5a27be77fb467,
+  LobbyCardPrefab: {fileID: 7374038481693990350, guid: d9794b67665cdbe44b0660861e35cf1f,
     type: 3}
   LoadoutCardPrefab: {fileID: 7374038481693990350, guid: 0a19da7269c4fb9489c9c778fb096101,
     type: 3}
@@ -7117,6 +7117,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnPlayersChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnNewWinningTeam:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
