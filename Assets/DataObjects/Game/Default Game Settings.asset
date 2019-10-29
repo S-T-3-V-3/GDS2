@@ -63,7 +63,11 @@ MonoBehaviour:
   - model: {fileID: 1136667167499195962, guid: 9bb2f06f1e85d1340bd5062ef72ab41a, type: 3}
     modelName: Bot
   characterPortraits:
-  - {fileID: 21300000, guid: 8b86fe8b1c0aed24abfccb5795b476aa, type: 3}
-  - {fileID: 21300000, guid: 89424013f64167645a68ecd329e8ecaa, type: 3}
-  - {fileID: 21300000, guid: 855115a279274c548bef286ca0565150, type: 3}
-  - {fileID: 21300000, guid: 2efc2947aea1f564a9d1e26d2668078a, type: 3}
+  - {fileID: 21300000, guid: d683c689009a712428533d739e44ba30, type: 3}
+  - {fileID: 21300000, guid: 5eec6149140ca3f4ab8d5d6a4f87822c, type: 3}
+  - {fileID: 21300000, guid: bed964af5e0710c46a335fcd781ab45a, type: 3}
+  - {fileID: 21300000, guid: e56affa963a2ad947b2e2e65d1707eac, type: 3}
+  weaponIcons:
+  - {fileID: 21300000, guid: c53bbda709693be42adf45612d1e2c1e, type: 3}
+  - {fileID: 21300000, guid: 07c8b57bbfa7b824d91f7b80169f469d, type: 3}
+  - {fileID: 21300000, guid: d60f650044b6c814998bce24f0702334, type: 3}

@@ -291,6 +291,10 @@ public class CharacterSelectState : State
             card = gameManager.hud.playerList.AddPlayer(playerController, CardType.LOBBY).GetComponent<PlayerLobbyCard>();
             playerController.isPlaying = true;
         }
+        else
+        {
+            card.Confirm();
+        }
     }
 
     public void OnFaceButtonEast() {
@@ -299,6 +303,12 @@ public class CharacterSelectState : State
             card = null;
             playerController.isPlaying = false;
         }
+        /*
+        else
+        {
+            card.Confirm();
+        }
+        */
     }
 
     void Up() {
@@ -419,7 +429,11 @@ public class LoadoutState : State
         GameObject.Destroy(card.gameObject);
     }
         
-    
+    public void OnFaceButtonEast()
+    {
+        card.Confirm();
+    }
+
     public void OnLeftStick(InputValue value)
     {
         float forwardDeadZone = 0.6f;

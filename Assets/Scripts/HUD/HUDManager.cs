@@ -28,6 +28,7 @@ public class HUDManager : MonoBehaviour
     public GameObject upperUI;
     public GameObject playersLayout;
     public GameObject scoresLayout;
+    public Image fadeOverlayImage;
 
     public List<PlayerScorecard> playerScorecards;
     public List<TeamScoreCard> teamScorecards;

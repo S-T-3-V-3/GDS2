@@ -31,6 +31,8 @@ public class GameSettings : ScriptableObject {
     public List<PlayerModelConfig> characterModels;
     [Space]
     public List<Sprite> characterPortraits;
+    [Space]
+    public List<Sprite> weaponIcons;
 
     // Can explore options with alternate game modes including base stat modifiers
     //public List<StatModifiers> baseStatModifiers;

@@ -13,18 +13,16 @@ public class PlayerLobbyCard : MonoBehaviour
     public Image readyImage;
     public TextMeshProUGUI readyText;
     [Space]
-    public GameObject root;
     public Image portrait;
-    public TextMeshProUGUI portraitLeftArrow;
-    public TextMeshProUGUI portraitRightArrow;
     [Space]
-    public TextMeshProUGUI playerTeam;
-    public TextMeshProUGUI teamLeftArrow;
-    public TextMeshProUGUI teamRightArrow;
+    public RawImage playerTeam;
     [Space]
-    public TextMeshProUGUI playerWeapon;
-    public TextMeshProUGUI weaponLeftArrow;
-    public TextMeshProUGUI weaponRightArrow;
+    public Image playerWeapon;
+    [Space]
+    public Image modelBubble, teamBubble, equipBubble;
+    [Space]
+    public Animator bubbleAnimator;
+
 
     GameManager gameManager;
     int currentSelection = 0;
@@ -43,10 +41,10 @@ public class PlayerLobbyCard : MonoBehaviour
         portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
         portrait.color = TeamManager.Instance.GetTeamColor(teamID);
 
-        playerTeam.text = $"{teamID}"; 
         playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
 
-        playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+        //playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+        playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
         playerNumber.text = "Player " + owner.playerID;
 
         Select();
@@ -80,63 +78,48 @@ public class PlayerLobbyCard : MonoBehaviour
 
     public void Up() {
         DeSelect();
-
         if (currentSelection > 0) {
-            currentSelection--;
+            currentSelection = 0;
         }
         else {
             currentSelection = numOptions - 1;
         }
-
         Select();
     }
 
     public void Down() {
-        DeSelect();
-               
-        if (currentSelection < numOptions - 1) {
-            currentSelection++;
+        DeSelect();               
+        if (currentSelection == 0) {
+            currentSelection = 1;
         }
         else {
             currentSelection = 0;
         }
-
         Select();
     }
 
     public void Left() {
-        if (currentSelection == 0) {
-            if (currentModel > 0)
-                currentModel--;
-            else
-                currentModel = gameManager.gameSettings.characterModels.Count - 1;
-
-            portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
-        }
-        else if (currentSelection == 1) {
-            if (teamID > 0)
-                teamID--;
-            else
-                teamID = (TeamID)gameManager.teamSettings.teams.Count - 1;
-
-            portrait.color = TeamManager.Instance.GetTeamColor(teamID);
-            playerTeam.text = $"{teamID}"; 
-            playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
-
-            Select();
-        }
-        else if (currentSelection == 2) {
-            if (currentWeapon > 0)
-                currentWeapon--;
-            else
-                currentWeapon = gameManager.gameSettings.guns.Count - 1;
-
-            playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
-        }
+        DeSelect();
+        if (currentSelection == 1) currentSelection = 2;
+        else if (currentSelection == 2) currentSelection = 1;
+        Select();
     }
 
     public void Right() {
-        if (currentSelection == 0) {
+        DeSelect();
+        if (currentSelection == 1) currentSelection = 2;
+        else if (currentSelection == 2) currentSelection = 1;
+        Select();
+
+    }
+
+    public void Confirm()
+    {
+        DeSelect();
+        Select();
+        bubbleAnimator.Play("SelectBubbleClick");
+        if (currentSelection == 0)
+        {
             if (currentModel < gameManager.gameSettings.characterModels.Count - 1)
                 currentModel++;
             else
@@ -144,44 +127,59 @@ public class PlayerLobbyCard : MonoBehaviour
 
             portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
         }
-        else if (currentSelection == 1) {
+        else if (currentSelection == 1)
+        {
             if (teamID < (TeamID)gameManager.teamSettings.teams.Count - 1)
                 teamID++;
             else
                 teamID = 0;
 
             portrait.color = TeamManager.Instance.GetTeamColor(teamID);
-            playerTeam.text = $"{teamID}"; 
             playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
 
             Select();
         }
-        else if (currentSelection == 2) {
+        else if (currentSelection == 2)
+        {
             if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
                 currentWeapon++;
             else
                 currentWeapon = 0;
-                
-            playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+
+            playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
         }
+        /*
+        //bubbleAnimator.
+        bubbleAnimator.Play("SelectBubbleIdle");
+        bubbleAnimator.SetTrigger(0);
+        */
     }
 
     void Select() {
-        options[currentSelection].transform.localScale = selectedScale;
-        List<TextMeshProUGUI> arrows = options[currentSelection].GetComponentsInChildren<TextMeshProUGUI>().Where(x => x.name.ToLower().Contains("arrow")).ToList();
-
-        foreach (TextMeshProUGUI arrow in arrows) {
-            arrow.color = TeamManager.Instance.GetTeamColor(teamID);
+        if (currentSelection == 0)
+        {
+            modelBubble.gameObject.SetActive(true);
+            bubbleAnimator = modelBubble.GetComponent<Animator>();
         }
+        else if (currentSelection == 1)
+        {
+            teamBubble.gameObject.SetActive(true);
+            bubbleAnimator = teamBubble.GetComponent<Animator>();
+        }
+        else if (currentSelection == 2)
+        {
+            equipBubble.gameObject.SetActive(true);
+            bubbleAnimator = equipBubble.GetComponent<Animator>();
+        }
+        bubbleAnimator.Play("SelectBubbleIdle");
+        //bubbleAnimator.ResetTrigger("SelectbubbleClick");
     }
 
     void DeSelect() {
-        options[currentSelection].transform.localScale = defaultScale;
-
-        List<TextMeshProUGUI> arrows = options[currentSelection].GetComponentsInChildren<TextMeshProUGUI>().Where(x => x.name.ToLower().Contains("arrow")).ToList();
-
-        foreach (TextMeshProUGUI arrow in arrows) {
-            arrow.color = Color.white;
-        }
+        //Destroy(bubbleAnimator);
+        modelBubble.gameObject.SetActive(false);
+        teamBubble.gameObject.SetActive(false);
+        equipBubble.gameObject.SetActive(false);
     }
+
 }

@@ -9,18 +9,15 @@ public class PlayerLoadoutCard : MonoBehaviour
 {
     public List<GameObject> options;
     public PlayerController owner;
-    public TextMeshProUGUI playerNumber;
+    public Image selectionBubble;
     public Image readyImage;
     public TextMeshProUGUI readyText;
     [Space]
-    public GameObject root;
+    public TextMeshProUGUI playerNumber;
     public Image portrait;
-    [Space]
-    public TextMeshProUGUI playerTeam;
-    [Space]
-    public TextMeshProUGUI playerWeapon;
-    public TextMeshProUGUI weaponLeftArrow;
-    public TextMeshProUGUI weaponRightArrow;
+    public RawImage playerTeam;
+    public Image playerWeapon;
+
 
     GameManager gameManager;
     int currentSelection = 0;
@@ -45,10 +42,11 @@ public class PlayerLoadoutCard : MonoBehaviour
         portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
         portrait.color = TeamManager.Instance.GetTeamColor(teamID);
 
-        playerTeam.text = $"{teamID}"; 
+        //playerTeam.text = $"{teamID}"; 
         playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
 
-        playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+        //playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+        playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
         playerNumber.text = "Player " + owner.playerID;
 
         Select();
@@ -83,67 +81,93 @@ public class PlayerLoadoutCard : MonoBehaviour
     public void Up() {
         DeSelect();
 
+        /*
         if (currentSelection > 0) {
-            currentSelection--;
+            currentSelection = 0;
         }
         else {
             currentSelection = numOptions - 1;
         }
+        */
 
         Select();
     }
 
     public void Down() {
         DeSelect();
-               
-        if (currentSelection < numOptions - 1) {
-            currentSelection++;
+        
+        /*
+        if(currentSelection == 0)
+        {
+            currentSelection = 1;
         }
         else {
             currentSelection = 0;
         }
+        */
 
         Select();
     }
 
     public void Left() {
-        if (currentSelection == 0) {
-            if (currentWeapon > 0)
-                currentWeapon--;
-            else
-                currentWeapon = gameManager.gameSettings.guns.Count - 1;
-
-            playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+        DeSelect();
+        /*
+        if(currentSelection > 0)
+        {
+            if (currentSelection == 1) currentSelection = 2;
+            else if (currentSelection == 2) currentSelection = 1;
         }
+        */
+        Select();
+
     }
 
     public void Right() {
+        DeSelect();
+
+        /*
+        if (currentSelection > 0)
+        {
+            if (currentSelection == 1) currentSelection = 2;
+            else if (currentSelection == 2) currentSelection = 1;
+        }
+        Select();
+        */
+
+        /*
         if (currentSelection == 0) {
             if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
                 currentWeapon++;
             else
                 currentWeapon = 0;
                 
-            playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
+            //playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
         }
+        */
+    }
+
+    public void Confirm()
+    {
+            if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
+                currentWeapon++;
+            else
+                currentWeapon = 0;
+
     }
 
     void Select() {
-        options[currentSelection].transform.localScale = selectedScale;
-        List<TextMeshProUGUI> arrows = options[currentSelection].GetComponentsInChildren<TextMeshProUGUI>().Where(x => x.name.ToLower().Contains("arrow")).ToList();
-
-        foreach (TextMeshProUGUI arrow in arrows) {
-            arrow.color = TeamManager.Instance.GetTeamColor(teamID);
-        }
+        selectionBubble.gameObject.SetActive(true);
+        //Make SelectionBubble a child of the selected option
+        //Stretch Position/Pivot to fit parent
+        selectionBubble.transform.SetParent(options[currentSelection].transform);       
+        selectionBubble.transform.position = options[currentSelection].transform.position;
+        selectionBubble.rectTransform.anchorMin = new Vector2(0, 0);
+        selectionBubble.rectTransform.anchorMax = new Vector2(1, 1);
+        selectionBubble.rectTransform.pivot = new Vector2(0.5f, 0.5f);
     }
 
     void DeSelect() {
-        options[currentSelection].transform.localScale = defaultScale;
-
-        List<TextMeshProUGUI> arrows = options[currentSelection].GetComponentsInChildren<TextMeshProUGUI>().Where(x => x.name.ToLower().Contains("arrow")).ToList();
-
-        foreach (TextMeshProUGUI arrow in arrows) {
-            arrow.color = Color.white;
-        }
+        selectionBubble.gameObject.SetActive(false);
     }
+
 }
