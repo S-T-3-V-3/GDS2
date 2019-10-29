@@ -18,6 +18,6 @@ MonoBehaviour:
     type: 3}
   reloadTime: 2
   projectileSize: 0.2
-  projectileSpeed: 18
-  projectileDamage: 15
+  projectileSpeed: 20
+  projectileDamage: 35
   projectileLifetime: 2

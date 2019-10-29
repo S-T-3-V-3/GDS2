@@ -16,56 +16,75 @@ MonoBehaviour:
   - players: []
     ID: 0
     color: {r: 1, g: 1, b: 1, a: 1}
+    hexColor: FFFFFF
     tileMat: {fileID: 0}
     playerMat: {fileID: 0}
     projectileMat: {fileID: 0}
   - players:
     - {fileID: 0}
     - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
     ID: 1
     color: {r: 0, g: 0, b: 1, a: 1}
+    hexColor: 0000FF
     tileMat: {fileID: 2100000, guid: 0b37baf520d87ce468924f969bfa788b, type: 2}
     playerMat: {fileID: 2100000, guid: 753d310b646801e4f89a0cb62c1aad95, type: 2}
     projectileMat: {fileID: 2100000, guid: 0b37baf520d87ce468924f969bfa788b, type: 2}
   - players: []
     ID: 2
     color: {r: 0, g: 1, b: 0, a: 1}
+    hexColor: 00FF00
     tileMat: {fileID: 2100000, guid: 640addf7ceb53d14db38015a1c413fb4, type: 2}
     playerMat: {fileID: 2100000, guid: d0841b6b22ddaa0418b442cdc2c8097b, type: 2}
     projectileMat: {fileID: 2100000, guid: 640addf7ceb53d14db38015a1c413fb4, type: 2}
   - players: []
     ID: 3
     color: {r: 1, g: 0, b: 0, a: 1}
+    hexColor: FF0000
     tileMat: {fileID: 2100000, guid: 616329b657dc72c4e82a28f5cac2d23b, type: 2}
     playerMat: {fileID: 2100000, guid: 9fdee39813acc98468b02604d67d69a5, type: 2}
     projectileMat: {fileID: 2100000, guid: 616329b657dc72c4e82a28f5cac2d23b, type: 2}
   - players: []
     ID: 4
     color: {r: 1, g: 1, b: 0, a: 1}
+    hexColor: FFFF00
     tileMat: {fileID: 2100000, guid: cdd17d7d91b978b41b269092eeb55141, type: 2}
     playerMat: {fileID: 2100000, guid: 293e5dd2801936247b7f4cf9e1c406fa, type: 2}
     projectileMat: {fileID: 2100000, guid: cdd17d7d91b978b41b269092eeb55141, type: 2}
   - players: []
     ID: 5
     color: {r: 0.6638317, g: 0, b: 1, a: 1}
+    hexColor: A900FF
     tileMat: {fileID: 2100000, guid: 4ea5827a27c41824dab1f321c7d00dca, type: 2}
     playerMat: {fileID: 2100000, guid: fbf0acaf9d6c0df409f5dd46eb584a64, type: 2}
     projectileMat: {fileID: 2100000, guid: 4ea5827a27c41824dab1f321c7d00dca, type: 2}
   - players: []
     ID: 6
     color: {r: 1, g: 0.47843137, b: 0, a: 1}
+    hexColor: FF7A00
     tileMat: {fileID: 2100000, guid: 9e39f8b57b46164418e766189a404ffc, type: 2}
     playerMat: {fileID: 2100000, guid: 489a4b0851081c840b7146489a89877e, type: 2}
     projectileMat: {fileID: 2100000, guid: 9e39f8b57b46164418e766189a404ffc, type: 2}
   - players: []
     ID: 7
     color: {r: 0, g: 0.86522865, b: 1, a: 1}
+    hexColor: 00DDFF
     tileMat: {fileID: 2100000, guid: 31897eb5fcbc211408c6291ca81689c5, type: 2}
     playerMat: {fileID: 2100000, guid: 38cbec01fdb2f344399ef5ffc9ea8510, type: 2}
     projectileMat: {fileID: 2100000, guid: 31897eb5fcbc211408c6291ca81689c5, type: 2}
   - players: []
     ID: 8
     color: {r: 1, g: 0.2688679, b: 0.8036357, a: 1}
+    hexColor: FF45CD
     tileMat: {fileID: 2100000, guid: bbc4166869005be40b2552bd32d527c6, type: 2}
     playerMat: {fileID: 2100000, guid: 86df9fc475792814ab6bd38093fb6d1a, type: 2}
     projectileMat: {fileID: 2100000, guid: bbc4166869005be40b2552bd32d527c6, type: 2}

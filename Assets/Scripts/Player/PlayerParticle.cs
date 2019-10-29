@@ -24,7 +24,7 @@ public class PlayerParticle : MonoBehaviour
         }
         catch
         {
-            print("no line renderers");
+            //print("no line renderers");
         }
         foreach (ParticleSystem ps in particleSystems)
         {

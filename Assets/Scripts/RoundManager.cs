@@ -52,6 +52,8 @@ public class RoundActiveState : State
         manager.elapsedTime = 0f;
         gameManager.OnNewCameraTarget.Invoke();
 
+        CameraController.Instance.SetState<CameraActiveState>();
+
         gameManager.sessionData.OnRoundBegin.Invoke();
         gameManager.hud.Announcement("GO!",2);
 
@@ -103,6 +105,8 @@ public class RoundCompleteState : State
         gameManager.sessionData.StopRound();
         gameManager.sessionData.OnRoundComplete.Invoke();
 
+        CameraController.Instance.SetState<CameraResetState>();
+
         if (manager.roundNumber == gameManager.gameSettings.numRounds) {
             gameManager.hud.Announcement("Game Over!",transitionTime);
         }
@@ -143,6 +147,7 @@ public class RoundCountdownState : State
         gameManager.sessionData.OnRoundPrepare.Invoke();
 
         gameManager.OnMapLoaded.AddListener(() => {isActive = true;});
+        CameraController.Instance.SetState<CameraResetState>();
     }
 
     void Update() {
@@ -216,9 +221,5 @@ public class EndGameState : State
         foreach(PlayerController player in gameManager.currentPlayers) {
             if (player.isPlaying) player.SetState<EndGamePlayerState>();
         }
-    }
-
-    public override void EndState() {
-        gameManager.sessionData.OnLoadoutEnd.Invoke();
     }
 }

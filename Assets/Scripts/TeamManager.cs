@@ -34,6 +34,10 @@ public class TeamManager : MonoBehaviour
         return GetTeam(teamID).color;
     }
 
+    public string GetTeamHexColor(TeamID teamID) {
+        return GetTeam(teamID).hexColor;
+    }
+
     public Color GetWinningTeamColor() {
         return GetTeamColor(GameManager.Instance.sessionData.score.winningTeam.teamID);
     }
@@ -54,6 +58,7 @@ public class Team {
     public List<PlayerController> players;
     public TeamID ID;
     public Color color;
+    public string hexColor;
     public Material tileMat;
     public Material playerMat;
     public Material projectileMat;

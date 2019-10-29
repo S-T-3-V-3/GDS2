@@ -19,5 +19,5 @@ MonoBehaviour:
   reloadTime: 0.3
   projectileSize: 0.4
   projectileSpeed: 11
-  projectileDamage: 5
-  projectileLifetime: 1.5
+  projectileDamage: 10
+  projectileLifetime: 0.5

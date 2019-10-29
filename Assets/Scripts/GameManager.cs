@@ -92,14 +92,20 @@ public class GameManager : MonoBehaviour
     }
 
     public void PauseGame(PlayerController caller) {
+        CameraController cameraController = CameraController.Instance;
         sessionData.isPaused = !sessionData.isPaused;
 
         if (sessionData.isPaused) {
-            CameraController.Instance.Focus(caller);
+            cameraController.focusPlayer = caller;
+            cameraController.SetState<CameraFocusState>();
             soundManager.Pause();
         }
         else {
-            CameraController.Instance.UnFocus();
+            if (sessionData.roundManager.isStarted)
+                cameraController.SetState<CameraActiveState>();
+            else
+                cameraController.SetState<CameraResetState>();
+            
             soundManager.Resume();
         }
 
@@ -188,7 +194,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerKilled(PlayerController killer, PlayerController killed) {
         sessionData.score.PlayerKilled(killer.teamID);
-        hud.Announcement($"<color={killer.teamID.ToString().ToLower()}>Player {killer.playerID}</color> killed <color={killed.teamID.ToString().ToLower()}>Player {killed.playerID}</color>!",3);
+        hud.Announcement($"<color=#{teamManager.GetTeamHexColor(killer.teamID)}>Player {killer.playerID}</color> killed <color=#{teamManager.GetTeamHexColor(killed.teamID)}>Player {killed.playerID}</color>!",3);
 
         PlayerPostDeathHandler deathHandler = GameObject.Instantiate(DeathColliderPrefab).GetComponent<PlayerPostDeathHandler>();
         deathHandler.transform.position = killed.pawnPosition;

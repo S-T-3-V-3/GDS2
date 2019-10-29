@@ -8,7 +8,8 @@ public class Projectile : MonoBehaviour
     public GameObject projectileBody;
     public ProjectileEvent OnProjectileOverlap;
     public ParticleSystem[] particleSystems;
-    public GameObject DestructionFX;
+    public GameObject HitObjectFX;
+    public GameObject TimeoutFX;
 
     GameManager gameManager;
     PlayerController owningPlayer;
@@ -69,18 +70,36 @@ public class Projectile : MonoBehaviour
         lifeTime -= Time.deltaTime;
 
         if (lifeTime <= 0) {
-            OnDestroy();
+            SpawnFX(false);
+            GameObject.Destroy(this.gameObject);
             return;
         }
 
         this.gameObject.transform.position += movementDirection * moveSpeed * Time.deltaTime;
     }
 
-    void OnDestroy()
+    void SpawnFX(bool wasHit)
     {
-        Instantiate(DestructionFX, transform.position, transform.rotation);
+        ParticleSystem fx;
+        ParticleSystem.MainModule fxmain;
 
-        GameObject.Destroy(this.gameObject);
+        if (wasHit) {
+            fx = GameObject.Instantiate(HitObjectFX, transform.position, transform.rotation,gameManager.transform).GetComponent<ParticleSystem>();
+            
+            fxmain = fx.main;
+            fxmain.startColor = TeamManager.Instance.GetTeamColor(owningPlayer.teamID);
+        }
+        else {
+            fx = GameObject.Instantiate(TimeoutFX, transform.position, transform.rotation,gameManager.transform).GetComponent<ParticleSystem>();
+            fx.gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.forward,movementDirection);
+
+            fxmain = fx.main;
+            fxmain.startSpeed = moveSpeed;
+            fxmain.startColor = TeamManager.Instance.GetTeamColor(owningPlayer.teamID);
+        }
+
+        ParticleSystemRenderer fxr = fx.GetComponent<ParticleSystemRenderer>();
+        fxr.material.SetColor("_TintColor",Color.white);
     }
 
     void OnCollision(GameObject other) {
@@ -114,7 +133,8 @@ public class Projectile : MonoBehaviour
             gameManager.sessionData.gameStats.EarnedPoints(owningPlayer.playerID, gameManager.gameSettings.pointsPerKill);
         }
 
-        OnDestroy();
+        SpawnFX(true);
+        GameObject.Destroy(this.gameObject);
     }
 }
 

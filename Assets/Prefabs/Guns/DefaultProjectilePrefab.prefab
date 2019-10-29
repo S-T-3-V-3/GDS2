@@ -4793,7 +4793,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6303941490885804849}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 9
   m_Type: 2
   m_Color: {r: 0, g: 0.4792924, b: 1, a: 1}
@@ -9751,7 +9751,9 @@ MonoBehaviour:
   - {fileID: 2299316418654687897}
   - {fileID: 9033197882475800516}
   - {fileID: 8983312339206842203}
-  DestructionFX: {fileID: 8476817692353177229, guid: 39dac477dbbf9d24baec007e11fbb240,
+  HitObjectFX: {fileID: 8476817692353177229, guid: 39dac477dbbf9d24baec007e11fbb240,
+    type: 3}
+  TimeoutFX: {fileID: 8476817692353177229, guid: 8cfb4404dd1940345be61a010bd0f480,
     type: 3}
   initialized: 0
   lifeTime: 0

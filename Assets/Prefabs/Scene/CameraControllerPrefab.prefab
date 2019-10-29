@@ -247,11 +247,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 4244629670455334459}
   mainCamera: {fileID: 4244629670455334456}
-  smoothTime: 0.3
-  minDistance: 10
-  maxDistance: 3000
-  angle: -30
-  focusAngle: -50
-  focusDistance: 9
-  xOffset: -0.8
+  cameraState: {fileID: 0}
   focusPlayer: {fileID: 0}
+  resetPos: {x: 0, y: 0, z: 0}

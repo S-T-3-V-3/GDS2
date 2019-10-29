@@ -5,7 +5,6 @@ using UnityEngine;
 public class BGParticles : MonoBehaviour
 {
     public GameObject ParticleSystem;
-    // Start is called before the first frame update
     public Color InitialColor;
 
     GameManager gameManager;
@@ -24,20 +23,9 @@ public class BGParticles : MonoBehaviour
         var main = PSystems[0].GetComponent<ParticleSystem>().main;
         main.startColor = InitialColor;
 
-        GameManager.Instance.OnNewWinningTeam.AddListener(delegate{ChangeColor(GameManager.Instance.teamManager.GetWinningTeamColor()); });
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        if (Input.GetKeyDown("z"))
-        {
-            ChangeColor(new Color(Random.Range(0,2), Random.Range(0, 2), Random.Range(0, 2)));
-        }
-        */
+        GameManager.Instance.OnNewWinningTeam.AddListener( delegate{
+            ChangeColor(GameManager.Instance.teamManager.GetWinningTeamColor());
+        });
     }
 
     void ChangeColor(Color color)
@@ -56,7 +44,7 @@ public class BGParticles : MonoBehaviour
 
     void RandomMenuColor()
     {
-        if (!GameManager.Instance.sessionData.isStarted)
+        if (!GameManager.Instance.sessionData.isStarted && !GameManager.Instance.sessionData.isPaused)
         {
             Color tempCol = TeamManager.Instance.GetTeamColors()[Random.Range(0, TeamManager.Instance.GetTeamColors().Count)];
             //Color tempCol = new Color(1, 0, 0);
