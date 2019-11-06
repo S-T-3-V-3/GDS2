@@ -134,7 +134,6 @@ public class RoundCountdownState : State
 
     int countDown = 3;
     float elapsedTime = 0f;
-    bool isActive = false;
 
     public override void BeginState()
     {
@@ -144,16 +143,11 @@ public class RoundCountdownState : State
         manager.isStarted = false;
         gameManager.hud.RoundTimer.gameObject.SetActive(true);
 
-        gameManager.sessionData.OnRoundPrepare.Invoke();
-
-        gameManager.OnMapLoaded.AddListener(() => {isActive = true;});
         CameraController.Instance.SetState<CameraResetState>();
     }
 
     void Update() {
         if (GameManager.Instance.sessionData.isPaused) return;
-        
-        if (!isActive) return;
 
         elapsedTime -= Time.deltaTime;
 

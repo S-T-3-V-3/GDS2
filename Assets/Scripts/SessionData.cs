@@ -57,10 +57,10 @@ public class SessionData : MonoBehaviour{
     }
 
     public void StartRound() {
-        roundManager.SetState<RoundCountdownState>();
-        score.ResetTileCount();
+            roundManager.SetState<RoundCountdownState>();
+            score.ResetTileCount();
 
-        SoundManager.Instance.PlayMusic($"round {roundManager.roundNumber+1}");
+            SoundManager.Instance.PlayMusic($"round {roundManager.roundNumber+1}");
     }
 
     public void StopRound() {

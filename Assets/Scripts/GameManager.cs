@@ -86,9 +86,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void StartGame() {
-        if (sessionData.isStarted) return;
-        
-        StartNextRound();
+        hud.FadeToBlack(1).AddListener(StartNextRound);
     }
 
     public void PauseGame(PlayerController caller) {
@@ -145,10 +143,18 @@ public class GameManager : MonoBehaviour
     }
     
     public void StartNextRound() {
-        OnMapLoaded.AddListener(SpawnPlayers);
+        hud.FadeToBlack(1).AddListener(() => {
+            GameObject.Destroy(hud.playerLobby);
+            LoadMap();
+        });
 
-        this.LoadMap();
-        sessionData.StartRound();
+        OnMapLoaded.AddListener(() => {
+            SpawnPlayers();
+
+            sessionData.OnRoundPrepare.Invoke();
+
+            hud.FadeFromBlack(1).AddListener(sessionData.StartRound);
+        });
     }
 
     public void ResetPlayers() {

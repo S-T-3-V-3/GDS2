@@ -705,6 +705,14 @@ public class PlayerMenuState : State
             hasResetY = true;
         }
     }
+
+    public void OnLeftBumper() {
+        //gameManager.hud.FadeToBlack(1);
+    }
+
+    public void OnRightBumper() {
+        //gameManager.hud.FadeFromBlack(1);
+    }
 }
 
 public class ControllerMenu {

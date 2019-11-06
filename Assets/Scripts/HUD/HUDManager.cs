@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -37,6 +38,7 @@ public class HUDManager : MonoBehaviour
 
     GameObject mainMenu;
     GameObject pauseScreen;
+    AlphaImageFader fader;
     Announcement currentAnnouncement;
 
     void Start() {
@@ -73,11 +75,36 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    public UnityEvent FadeToBlack(float time = 0.5f) {
+        if (fader != null)
+            Destroy(fader);
+
+        fader = gameObject.AddComponent<AlphaImageFader>();
+        fader.Init(fadeOverlayImage,1,time);
+
+        return fader.OnFadeComplete;
+    }
+
+    public UnityEvent FadeFromBlack(float time = 0.5f) {
+        if (fader != null)
+            Destroy(fader);
+
+        fader = gameObject.AddComponent<AlphaImageFader>();
+        fader.Init(fadeOverlayImage,0,time);
+
+        return fader.OnFadeComplete;
+    }
+
     public void Reset() {
         gameplay.SetActive(false);
         scoresLayout.SetActive(false);
 
         mainMenu = GameObject.Instantiate(gameManager.MainMenuPrefab,this.transform);
+        mainMenu.transform.SetAsFirstSibling();
+
+        fadeOverlayImage.color = new Color(0,0,0,1);
+        FadeFromBlack(2);
+
         SoundManager.Instance.PlayMusic("menu music");
     }
 
@@ -157,10 +184,9 @@ public class HUDManager : MonoBehaviour
 
     void OnRoundPrepare() {
         gameplay.SetActive(true);
+        upperUI.SetActive(true);
         joinMessage.SetActive(false);
         scoresLayout.SetActive(false);
-
-        GameObject.Destroy(playerLobby);
 
         //Initialise PlayerScorecards
         if (playerScorecards == null)
@@ -186,8 +212,6 @@ public class HUDManager : MonoBehaviour
             if (teamScorecards.Where(x => x.team.ID == player.teamID).Count() == 0) 
                 teamScorecards.Add(CreateTeamScorecard(player.playerID, player.teamID));
         }
-
-        upperUI.SetActive(true);
     }
 
     void OnLoadoutBegin()
@@ -198,7 +222,7 @@ public class HUDManager : MonoBehaviour
 
     void OnLoadoutEnd()
     {
-        GameObject.Destroy(playerLobby);
+        
     }
 
     void OnEndGame() {
