@@ -78,43 +78,58 @@ public class PlayerLobbyCard : MonoBehaviour
 
     public void Up() {
         DeSelect();
-        if (currentSelection > 0) {
-            currentSelection = 0;
+        if (currentSelection == 0) {
+            currentSelection = numOptions-1;
         }
         else {
-            currentSelection = numOptions - 1;
+            currentSelection--;
         }
         Select();
     }
 
     public void Down() {
         DeSelect();               
-        if (currentSelection == 0) {
-            currentSelection = 1;
+        if (currentSelection == numOptions-1) {
+            currentSelection = 0;
         }
         else {
-            currentSelection = 0;
+            currentSelection++;
         }
         Select();
     }
 
     public void Left() {
         DeSelect();
-        if (currentSelection == 1) currentSelection = 2;
-        else if (currentSelection == 2) currentSelection = 1;
         Select();
+        bubbleAnimator.Play("SelectBubbleClick");
+        if (currentSelection == 0)
+        {
+            if (currentModel == 0)
+                currentModel = gameManager.gameSettings.characterModels.Count - 1;
+            else
+                currentModel--;
+            portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
+        }
+        else if (currentSelection == 1)
+        {
+            if (teamID == 0)
+                teamID = (TeamID)gameManager.teamSettings.teams.Count - 1;
+            else
+                teamID--;
+            portrait.color = TeamManager.Instance.GetTeamColor(teamID);
+            playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
+        }
+        else if (currentSelection == 2)
+        {
+            if (currentWeapon == 0)
+                currentWeapon = gameManager.gameSettings.guns.Count - 1;
+            else
+                currentWeapon--;
+            playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
+        }
     }
 
     public void Right() {
-        DeSelect();
-        if (currentSelection == 1) currentSelection = 2;
-        else if (currentSelection == 2) currentSelection = 1;
-        Select();
-
-    }
-
-    public void Confirm()
-    {
         DeSelect();
         Select();
         bubbleAnimator.Play("SelectBubbleClick");
@@ -148,11 +163,6 @@ public class PlayerLobbyCard : MonoBehaviour
 
             playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
         }
-        /*
-        //bubbleAnimator.
-        bubbleAnimator.Play("SelectBubbleIdle");
-        bubbleAnimator.SetTrigger(0);
-        */
     }
 
     void Select() {
