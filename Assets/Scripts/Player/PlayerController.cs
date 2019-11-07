@@ -397,7 +397,8 @@ public class LoadoutState : State
 {
     PlayerController playerController;
     GameManager gameManager;
-    PlayerLoadoutCard card;
+
+    PlayerLobbyCard card;
 
     bool hasResetX = true;
     bool hasResetY = true;
@@ -405,23 +406,63 @@ public class LoadoutState : State
     public override void BeginState()
     {
         playerController = this.GetComponent<PlayerController>();
-        gameManager = playerController.gameManager;
+        gameManager = GameManager.Instance;
         playerController.DestroyPawn();
+
         playerController.ready = false;
-        
-        if (playerController.isPlaying)
-            card = gameManager.hud.playerList.AddPlayer(playerController, CardType.LOADOUT).GetComponent<PlayerLoadoutCard>();
 
-        gameManager.OnNewCameraTarget.Invoke();
+        gameManager.teamManager.JoinTeam(playerController, playerController.teamID);
     }
 
-    public new void EndState() {
-        GameObject.Destroy(card.gameObject);
+    public void OnFaceButtonSouth()
+    {
+        if (card == null)
+        {
+            card = gameManager.hud.playerList.AddPlayer(playerController, CardType.LOBBY).GetComponent<PlayerLobbyCard>();
+            playerController.isPlaying = true;
+        }
     }
-        
+
     public void OnFaceButtonEast()
     {
-        card.Confirm();
+        if (!playerController.ready && card != null)
+        {
+            gameManager.hud.playerList.RemovePlayer(playerController);
+            card = null;
+            playerController.isPlaying = false;
+        }
+    }
+
+    void Up()
+    {
+        if (!playerController.ready && card != null)
+        {
+            card.Up();
+        }
+    }
+
+    void Down()
+    {
+        if (!playerController.ready && card != null)
+        {
+            card.Down();
+        }
+    }
+
+    void Left()
+    {
+        if (!playerController.ready && card != null)
+        {
+            card.Left();
+        }
+    }
+
+    void Right()
+    {
+        if (!playerController.ready && card != null)
+        {
+            card.Right();
+        }
     }
 
     public void OnLeftStick(InputValue value)
@@ -431,64 +472,46 @@ public class LoadoutState : State
 
         Vector2 currentValue = value.Get<Vector2>();
 
-        if (currentValue.x > forwardDeadZone) {
-            if (hasResetX) {
-                card.Right();
+        if (currentValue.x > forwardDeadZone)
+        {
+            if (hasResetX)
+            {
+                Right();
                 hasResetX = false;
             }
         }
-        else if (currentValue.x < -forwardDeadZone) {
-            if (hasResetX) {
-                card.Left();
+        else if (currentValue.x < -forwardDeadZone)
+        {
+            if (hasResetX)
+            {
+                Left();
                 hasResetX = false;
             }
         }
-        else if (currentValue.x < resetDeadZone && currentValue.x > -resetDeadZone) {
+        else if (currentValue.x < resetDeadZone && currentValue.x > -resetDeadZone)
+        {
             hasResetX = true;
         }
 
-        if (currentValue.y > forwardDeadZone) {
-            if (hasResetY) {
-                card.Up();
+        if (currentValue.y > forwardDeadZone)
+        {
+            if (hasResetY)
+            {
+                Up();
                 hasResetY = false;
             }
         }
-        else if (currentValue.y < -forwardDeadZone) {
-            if (hasResetY) {
-                card.Down();
+        else if (currentValue.y < -forwardDeadZone)
+        {
+            if (hasResetY)
+            {
+                Down();
                 hasResetY = false;
             }
         }
-        else if (currentValue.y < resetDeadZone && currentValue.y > -resetDeadZone) {
+        else if (currentValue.y < resetDeadZone && currentValue.y > -resetDeadZone)
+        {
             hasResetY = true;
-        }
-    }
-
-    void Up() {
-        if (!playerController.ready)
-        {
-            card.Up();
-        }
-    }
-
-    void Down() {
-        if (!playerController.ready)
-        {
-            card.Down();
-        }
-    }
-
-    void Left() {
-        if (!playerController.ready)
-        {
-            card.Left();
-        }
-    }
-
-    void Right() {
-        if (!playerController.ready)
-        {
-            card.Right();
         }
     }
 
@@ -501,12 +524,14 @@ public class LoadoutState : State
     {
         Down();
     }
-    
-    public void OnLeftArrow() {
+
+    public void OnLeftArrow()
+    {
         Left();
     }
 
-    public void OnRightArrow() {
+    public void OnRightArrow()
+    {
         Right();
     }
 

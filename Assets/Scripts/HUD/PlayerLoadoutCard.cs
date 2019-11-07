@@ -9,23 +9,28 @@ public class PlayerLoadoutCard : MonoBehaviour
 {
     public List<GameObject> options;
     public PlayerController owner;
-    public Image selectionBubble;
+    public TextMeshProUGUI playerNumber;
     public Image readyImage;
     public TextMeshProUGUI readyText;
     [Space]
-    public TextMeshProUGUI playerNumber;
     public Image portrait;
+    [Space]
     public RawImage playerTeam;
+    [Space]
     public Image playerWeapon;
+    [Space]
+    public Image equipBubble;
+    [Space]
+    public Animator bubbleAnimator;
 
 
     GameManager gameManager;
     int currentSelection = 0;
-    int numOptions;
+    int numOptions = 1;
 
     TeamID teamID;
-    int currentModel;
-    int currentWeapon;
+    int currentModel = 0;
+    int currentWeapon = 0;
 
     Vector3 defaultScale = new Vector3(1f,1f,1f);
     Vector3 selectedScale = new Vector3(1.2f,1.2f,1.2f);
@@ -33,16 +38,9 @@ public class PlayerLoadoutCard : MonoBehaviour
     public void Init() {
         gameManager = GameManager.Instance;
 
-        numOptions = options.Count;
-
-        currentWeapon = owner.playerWeaponSelection;
-        currentModel = owner.playerModelSelection;
-        teamID = owner.teamID;
-
         portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
         portrait.color = TeamManager.Instance.GetTeamColor(teamID);
 
-        //playerTeam.text = $"{teamID}"; 
         playerTeam.color = TeamManager.Instance.GetTeamColor(teamID);
 
         //playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
@@ -62,7 +60,7 @@ public class PlayerLoadoutCard : MonoBehaviour
             DeSelect();
             
             owner.playerModelSelection = currentModel;
-            owner.playerWeaponSelection = currentWeapon;
+            owner.playerWeaponSelection = currentWeapon;            
             owner.teamID = teamID;
 
             readyImage.gameObject.SetActive(true);
@@ -81,93 +79,51 @@ public class PlayerLoadoutCard : MonoBehaviour
     public void Up() {
         DeSelect();
 
-        /*
-        if (currentSelection > 0) {
-            currentSelection = 0;
-        }
-        else {
-            currentSelection = numOptions - 1;
-        }
-        */
-
         Select();
     }
 
     public void Down() {
-        DeSelect();
-        
-        /*
-        if(currentSelection == 0)
-        {
-            currentSelection = 1;
-        }
-        else {
-            currentSelection = 0;
-        }
-        */
+        DeSelect();               
 
         Select();
     }
 
     public void Left() {
         DeSelect();
-        /*
-        if(currentSelection > 0)
-        {
-            if (currentSelection == 1) currentSelection = 2;
-            else if (currentSelection == 2) currentSelection = 1;
-        }
-        */
         Select();
+        bubbleAnimator.Play("SelectBubbleClick");
 
+        if (currentWeapon == 0)
+            currentWeapon = gameManager.gameSettings.guns.Count - 1;
+        else
+            currentWeapon--;
+
+        playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
     }
 
     public void Right() {
         DeSelect();
-
-        /*
-        if (currentSelection > 0)
-        {
-            if (currentSelection == 1) currentSelection = 2;
-            else if (currentSelection == 2) currentSelection = 1;
-        }
         Select();
-        */
+        bubbleAnimator.Play("SelectBubbleClick");
 
-        /*
-        if (currentSelection == 0) {
-            if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
-                currentWeapon++;
-            else
-                currentWeapon = 0;
-                
-            //playerWeapon.text = $"{gameManager.gameSettings.guns[currentWeapon].gunName}";
-        }
-        */
-    }
+        if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
+            currentWeapon++;
+        else
+            currentWeapon = 0;
 
-    public void Confirm()
-    {
-            if (currentWeapon < gameManager.gameSettings.guns.Count - 1)
-                currentWeapon++;
-            else
-                currentWeapon = 0;
-
+        playerWeapon.sprite = gameManager.gameSettings.weaponIcons[currentWeapon];
     }
 
     void Select() {
-        selectionBubble.gameObject.SetActive(true);
-        //Make SelectionBubble a child of the selected option
-        //Stretch Position/Pivot to fit parent
-        selectionBubble.transform.SetParent(options[currentSelection].transform);       
-        selectionBubble.transform.position = options[currentSelection].transform.position;
-        selectionBubble.rectTransform.anchorMin = new Vector2(0, 0);
-        selectionBubble.rectTransform.anchorMax = new Vector2(1, 1);
-        selectionBubble.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        equipBubble.gameObject.SetActive(true);
+        bubbleAnimator = equipBubble.GetComponent<Animator>();
+        bubbleAnimator.Play("SelectBubbleIdle");
+        //bubbleAnimator.ResetTrigger("SelectbubbleClick");
     }
 
     void DeSelect() {
-        selectionBubble.gameObject.SetActive(false);
+        //Destroy(bubbleAnimator);
+        equipBubble.gameObject.SetActive(false);
     }
 
 }
