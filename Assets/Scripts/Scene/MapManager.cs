@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MapManager : MonoBehaviour
 {
@@ -57,7 +58,6 @@ public class MapManager : MonoBehaviour
         gameManager.tilePositions = tiles.Select(x => x.transform.position).ToList();
     }
 
-    // TODO: This needs to be threaded
     void Update() {
         if (GameManager.Instance.sessionData.isPaused) return;
         

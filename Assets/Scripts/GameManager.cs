@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public HUDManager hud;
     public TeamManager teamManager;
     public SoundManager soundManager;
+    public MapManager mapManager;
 
     [Space]
     public GameObject KingOfTheHill;
@@ -49,7 +50,6 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnMapLoaded;
     [Space]
     
-    MapManager mapManager;
     Camera mainCamera;
 
     void Awake() {
@@ -149,11 +149,15 @@ public class GameManager : MonoBehaviour
         });
 
         OnMapLoaded.AddListener(() => {
-            SpawnPlayers();
+            MapAnimator mapAnimator = gameObject.AddComponent<MapAnimator>();
+            mapAnimator.OnComplete.AddListener(() => { 
+                SpawnPlayers();
+                sessionData.StartRound();
+            });
 
             sessionData.OnRoundPrepare.Invoke();
-
-            hud.FadeFromBlack(1).AddListener(sessionData.StartRound);
+            
+            hud.FadeFromBlack(1);
         });
     }
 

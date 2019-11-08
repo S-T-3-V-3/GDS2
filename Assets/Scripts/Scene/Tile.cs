@@ -8,6 +8,7 @@ public class Tile : MonoBehaviour
     public TileSprite HexSprite;
     [Space]
     public Tile[] neighbours;
+    public Vector3 wallOffset = new Vector3(0,1.5f,0);
     public int distanceFromCenter;
     public bool isWall = false;
     public bool isEdge = false;
@@ -16,7 +17,6 @@ public class Tile : MonoBehaviour
 
 
     Vector3[] traceRotations;
-    Vector3 wallOffset = new Vector3(0,1.5f,0);
 
     TeamID currentTeam = TeamID.NONE;
     GameManager gameManager;

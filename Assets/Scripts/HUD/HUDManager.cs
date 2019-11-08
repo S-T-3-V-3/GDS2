@@ -196,8 +196,10 @@ public class HUDManager : MonoBehaviour
 
         playerScorecards.Clear();
 
-        foreach (PlayerController player in gameManager.currentPlayers)
-           playerScorecards.Add(CreatePlayerScorecard(player));
+        foreach (PlayerController player in gameManager.currentPlayers) {
+            if (player.isPlaying)
+                playerScorecards.Add(CreatePlayerScorecard(player));
+        }
 
         //Initialise TeamScorecards
         if (teamScorecards == null)
