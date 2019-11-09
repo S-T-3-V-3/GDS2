@@ -48,7 +48,8 @@ MonoBehaviour:
   sphereCollider: {fileID: 72112434842683213}
   targetSize: 4
   expansionTime: 1
-  targetTeam: 6
+  targetTeam: 0
+  owningPlayerID: 0
 --- !u!135 &72112434842683213
 SphereCollider:
   m_ObjectHideFlags: 0

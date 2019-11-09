@@ -36,8 +36,6 @@ public class Tile : MonoBehaviour
         this.meshSize = meshSize;
     }
 
-    // TODO: Change this to be controlled externally and call an update material function
-    // Player primary control allows for status of friendly/enemy territory update prior to capture
     void OnTriggerEnter(Collider other)
     {   
         if (gameManager.sessionData.roundManager.isStarted == false || isWall) return;
