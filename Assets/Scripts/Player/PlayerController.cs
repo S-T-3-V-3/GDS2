@@ -398,7 +398,7 @@ public class LoadoutState : State
     PlayerController playerController;
     GameManager gameManager;
 
-    PlayerLobbyCard card;
+    PlayerLoadoutCard card;
 
     bool hasResetX = true;
     bool hasResetY = true;
@@ -411,26 +411,11 @@ public class LoadoutState : State
 
         playerController.ready = false;
 
+        if (playerController.isPlaying) {
+            card = gameManager.hud.playerList.AddPlayer(playerController, CardType.LOADOUT).GetComponent<PlayerLoadoutCard>();
+        }
+
         gameManager.teamManager.JoinTeam(playerController, playerController.teamID);
-    }
-
-    public void OnFaceButtonSouth()
-    {
-        if (card == null)
-        {
-            card = gameManager.hud.playerList.AddPlayer(playerController, CardType.LOBBY).GetComponent<PlayerLobbyCard>();
-            playerController.isPlaying = true;
-        }
-    }
-
-    public void OnFaceButtonEast()
-    {
-        if (!playerController.ready && card != null)
-        {
-            gameManager.hud.playerList.RemovePlayer(playerController);
-            card = null;
-            playerController.isPlaying = false;
-        }
     }
 
     void Up()

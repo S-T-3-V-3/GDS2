@@ -38,6 +38,10 @@ public class PlayerLoadoutCard : MonoBehaviour
     public void Init() {
         gameManager = GameManager.Instance;
 
+        currentModel = owner.playerModelSelection;
+        currentWeapon = owner.playerWeaponSelection;
+        teamID = owner.teamID;
+
         portrait.sprite = gameManager.gameSettings.characterPortraits[currentModel];
         portrait.color = TeamManager.Instance.GetTeamColor(teamID);
 

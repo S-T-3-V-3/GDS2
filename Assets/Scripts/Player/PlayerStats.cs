@@ -132,7 +132,7 @@ public class GameStats {
         stats.numShots = shotsFired.Where(x => x.fromPlayerID == playerID).Count();
         stats.numHits = damageDealt.Where(x => x.fromPlayerID == playerID).Count();
         stats.damageDealt = damageDealt.Where(x => x.fromPlayerID == playerID).Select(x => x.amount).Sum();
-        stats.accuracy = stats.numHits / stats.numShots;
+        stats.accuracy = Mathf.Round(((float)stats.numHits / (float)stats.numShots) * 100);
         stats.pointsEarned = pointsEarned.Where(x => x.playerID == playerID).Select(x => x.points).Sum();
         stats.numTilesCaptured = tilesCaptured.Where(x => x.playerID == playerID).Count();
 

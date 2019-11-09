@@ -16,7 +16,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f5c4178046fe26141a54b6becfa8abd2, type: 2}
   - {fileID: 11400000, guid: 346a82bc5ef7a8642a06ff54ac6ce96e, type: 2}
   - {fileID: 11400000, guid: 8c1a7a30cd422954a81372ce06e46208, type: 2}
-  roundTime: 60
+  roundTime: 10
   respawnTime: 3
   maxLives: 10
   baseTileValue: 1

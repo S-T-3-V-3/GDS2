@@ -143,6 +143,9 @@ public class GameManager : MonoBehaviour
     }
     
     public void StartNextRound() {
+        foreach (PlayerController pc in currentPlayers.Where(x => x.isPlaying))
+            pc.SetState<PlayerInactiveState>();
+            
         hud.FadeToBlack(1).AddListener(() => {
             GameObject.Destroy(hud.playerLobby);
             LoadMap();

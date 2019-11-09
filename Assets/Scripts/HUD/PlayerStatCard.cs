@@ -56,7 +56,7 @@ public class PlayerStatCard : MonoBehaviour
         AddStat("Kills",playerStats.kills.Count.ToString());
         AddStat("Deaths",playerStats.deaths.Count.ToString());
         AddStat("Shots Fired",playerStats.numShots.ToString());
-        AddStat("Accuracy",(playerStats.accuracy * 100).ToString());
+        AddStat("Accuracy",(playerStats.accuracy).ToString() + "%");
         AddStat("Tiles Captured",playerStats.numTilesCaptured.ToString());
 
         Select();

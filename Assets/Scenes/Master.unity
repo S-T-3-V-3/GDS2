@@ -1004,7 +1004,7 @@ MonoBehaviour:
     type: 3}
   LobbyCardPrefab: {fileID: 7374038481693990350, guid: d9794b67665cdbe44b0660861e35cf1f,
     type: 3}
-  LoadoutCardPrefab: {fileID: 7374038481693990350, guid: 0a19da7269c4fb9489c9c778fb096101,
+  LoadoutCardPrefab: {fileID: 7374038481693990350, guid: 0ce9e522d635b9b4188448124420f0c9,
     type: 3}
   StatCardPrefab: {fileID: 7374038481693990350, guid: 84109f3263a6a854aa19ff0cf3b44a77,
     type: 3}
@@ -2565,6 +2565,7 @@ MonoBehaviour:
   hud: {fileID: 738770698}
   teamManager: {fileID: 0}
   soundManager: {fileID: 1245554580}
+  mapManager: {fileID: 0}
   KingOfTheHill: {fileID: 0}
   currentPlayers: []
   tilePositions: []

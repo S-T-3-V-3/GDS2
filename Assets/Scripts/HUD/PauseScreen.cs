@@ -22,7 +22,7 @@ public class PauseScreen : MonoBehaviour
         AddStat("Kills",statistics.kills.Count.ToString());
         AddStat("Deaths",statistics.deaths.Count.ToString());
         AddStat("Shots Fired",statistics.numShots.ToString());
-        AddStat("Accuracy",(statistics.accuracy * 100).ToString());
+        AddStat("Accuracy",(statistics.accuracy).ToString() + "%");
         AddStat("Tiles Captured",statistics.numTilesCaptured.ToString());
     }
 
